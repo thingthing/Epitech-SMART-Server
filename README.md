@@ -13,3 +13,5 @@ IntelliJ se lance directement depuis le dossier dans lequel il a été décompre
 Un fichier de configuration d'IntelliJ suivra dans peu de temps afin d'uniformiser le formatage du code Java au sein du groupe.
 
 En cas de problème pour l'installation, me contacter (vincent.buresi@gmail.com)
+
+How to manage projects under Version Control Systems : https://intellij-support.jetbrains.com/entries/23393067
