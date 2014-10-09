@@ -9,6 +9,9 @@
         </element>
         <element id="directory" name="lib">
           <element id="file-copy" path="$PROJECT_DIR$/../cs-commons/out/artifacts/cs_commons_jar/cs-commons.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../cs-commons/libs/jackson-annotations-2.4.0.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../cs-commons/libs/jackson-core-2.4.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../cs-commons/libs/jackson-databind-2.4.3.jar" />
         </element>
       </element>
     </root>

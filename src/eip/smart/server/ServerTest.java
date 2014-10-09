@@ -28,7 +28,10 @@ public class ServerTest extends HttpServlet {
 
     protected void answer(PrintWriter writer, String requestType) {
         writer.println("Server is up and running ! Congratulations !");
-        writer.println("version : " + CSCommons.getVersion());
-        writer.println("request type : " + requestType);
+        writer.println("Server version : " + CSCommons.getVersion());
+        writer.println("Request type : " + requestType);
+        writer.println("Json version : " + CSCommons.getJacksonVersion());
+        writer.println("\n" + CSCommons.testJacksonVersion());
+        writer.println("\nEND");
     }
 }
