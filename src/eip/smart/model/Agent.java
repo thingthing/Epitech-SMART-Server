@@ -6,11 +6,11 @@ import java.util.Date;
  * Created by Pierre Demessence on 09/10/2014.
  */
 public class Agent {
-    int         ID;
-    AgentType   type;
-    Point       coordinates;
-    Date        lastContact;
-    Point       destination;
+    private int         ID;
+    private AgentType   type;
+    private Point       position;
+    private Point       destination;
+    private Date        lastContact;
 
     /**
      * Created by Pierre Demessence on 09/10/2014.
