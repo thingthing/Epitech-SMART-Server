@@ -18,4 +18,12 @@ public class Agent {
     public static enum AgentType {
         TERRESTRIAL, AERIAL, SUBMARINE;
     }
+
+    public Agent(int ID, AgentType type, Point position, Point destination, Date lastContact) {
+        this.ID = ID;
+        this.type = type;
+        this.position = position;
+        this.destination = destination;
+        this.lastContact = lastContact;
+    }
 }
