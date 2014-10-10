@@ -26,8 +26,7 @@ public class Polygon {
         return (this.points.size() > 2);
     }
 
-    public double getPerimeter()
-    {
+    public double getPerimeter() {
         double perimeter = 0;
         Point lastPoint;
 
@@ -47,8 +46,7 @@ public class Polygon {
      * Return the area of the polygon using only the x and y coordinates of the points.
      * @return the area of the polygon.
      */
-    public double getArea()
-    {
+    public double getArea() {
         double area = 0;
         int j;
 
@@ -62,5 +60,21 @@ public class Polygon {
 
     public boolean add(Point point) {
         return points.add(point);
+    }
+
+    /**
+     * Checks if the
+     * @param point the point to check.
+     * @return true if the point is inside the polygon.
+     * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html#The C Code
+     */
+    public boolean includes(Point point) {
+        boolean res = false;
+        for (int i = 0, j = this.points.size() - 1 ; i < this.points.size() ; j = i++) {
+            if ( ( (this.points.get(i).getY() > point.getY()) != (this.points.get(j).getY() > point.getY()) )
+                    && ( point.getX() < ( (this.points.get(j).getX() - this.points.get(i).getX()) * (point.getY() - this.points.get(i).getY()) / (this.points.get(j).getY() - this.points.get(i).getY()) + this.points.get(i).getX() ) ) )
+                res = !res;
+        }
+        return (res);
     }
 }
