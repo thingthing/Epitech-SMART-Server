@@ -12,4 +12,12 @@
         <servlet-name>test</servlet-name>
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>point</servlet-name>
+        <servlet-class>eip.smart.server.PointTest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>point</servlet-name>
+        <url-pattern>/point</url-pattern>
+    </servlet-mapping>
 </web-app>
