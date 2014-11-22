@@ -1,6 +1,5 @@
 package eip.smart.server;
 
-import eip.smart.cscommons.CSCommons;
 import eip.smart.model.Point;
 import eip.smart.model.Polygon;
 
@@ -34,7 +33,7 @@ public class PointTest extends HttpServlet {
         p.add(new Point(0, 5, 0));
         p.add(new Point(5, 5, 0));
         p.add(new Point(5, 0, 0));
-        writer.println("Square perimeter of size 5 : "+p.getPerimeter());
+        writer.println("Square perimeter of size 5 : " + p.getPerimeter());
         writer.println("Square area of size 5 : "+p.getArea());
     }
 }
