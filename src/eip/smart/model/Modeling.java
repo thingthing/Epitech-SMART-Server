@@ -12,13 +12,14 @@ public class Modeling {
 
     public Modeling() {
         this.areas.add(new Area());
+        this.areas.add(new Area());
 
         Agent n1 = new Agent();
-        n1.setDestination(new Point(0, 0, 0));
+        n1.setDestination(new Point(-6, -6, 8));
         this.agents.add(n1);
 
         Agent n2 = new Agent();
-        n1.setDestination(new Point(7, -4, 0));
+        n2.setDestination(new Point(7, -4, 0));
         this.agents.add(n2);
     }
 

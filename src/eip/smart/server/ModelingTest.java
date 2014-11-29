@@ -46,6 +46,7 @@ public class ModelingTest extends HttpServlet {
             System.out.println("Modeling at " + modeling.getCompletion() + "%");
             System.out.println("===== ===== ===== ===== =====");
             System.out.println();
+            Thread.currentThread().sleep(this.delay);
             while (modeling.getCompletion() < 100.0d) {
                 System.out.println();
                 System.out.println("===== ===== ===== ===== =====");
