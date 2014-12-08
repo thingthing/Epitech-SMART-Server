@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Pierre Demessence/SourceTree/cs-commons/out/artifacts/cs_commons_jar/cs-commons.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Pierre Demessence/SourceTree/cs-commons/libs"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/Tomcat 8.0"/>
-	<classpathentry kind="output" path="out/production/server"/>
-</classpath>
