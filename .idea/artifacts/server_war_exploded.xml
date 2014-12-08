@@ -6,6 +6,7 @@
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="server" />
+          <element id="library" level="module" name="libs" module-name="server" />
         </element>
         <element id="directory" name="lib">
           <element id="file-copy" path="$PROJECT_DIR$/../cs-commons/out/artifacts/cs_commons_jar/cs-commons.jar" />
