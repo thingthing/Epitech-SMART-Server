@@ -2,6 +2,8 @@ package eip.smart.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,36 +19,27 @@ import eip.smart.model.Modeling;
 @WebServlet(name = "ModelingTest", urlPatterns = "/modeling")
 public class ModelingTest extends HttpServlet {
 
-	private int	delay	= 1000;
+	private final static Logger	LOGGER	= Logger.getLogger(ModelingTest.class.getName());
+
+	private int					delay	= 1000;
 
 	protected void answer(PrintWriter writer, String requestType) {
 		Modeling modeling = new Modeling();
 
 		try {
-			System.out.println("Start of Modeling");
-			System.out.println();
-			System.out.println("===== ===== ===== ===== =====");
+			ModelingTest.LOGGER.log(Level.INFO, "Start of Modeling");
 			modeling.dumpAgents();
-			System.out.println("----- ----- ----- ----- -----");
-			System.out.println("Modeling at " + modeling.getCompletion() + "%");
-			System.out.println("===== ===== ===== ===== =====");
-			System.out.println();
+			ModelingTest.LOGGER.log(Level.INFO, "Modeling at " + modeling.getCompletion() + "%");
 			Thread.currentThread();
 			Thread.sleep(this.delay);
 			while (modeling.getCompletion() < 100.0d) {
-				System.out.println();
-				System.out.println("===== ===== ===== ===== =====");
 				modeling.run();
-				System.out.println("----- ----- ----- ----- -----");
 				modeling.dumpAgents();
-				System.out.println("----- ----- ----- ----- -----");
-				System.out.println("Modeling at " + modeling.getCompletion() + "%");
-				System.out.println("===== ===== ===== ===== =====");
-				System.out.println();
+				ModelingTest.LOGGER.log(Level.INFO, "Modeling at " + modeling.getCompletion() + "%");
 				Thread.currentThread();
 				Thread.sleep(this.delay);
 			}
-			System.out.println("End of Modeling");
+			ModelingTest.LOGGER.log(Level.INFO, "End of Modeling");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
