@@ -1,4 +1,4 @@
-package eip.smart.model;
+package eip.smart.model.geometry;
 
 import java.util.ArrayList;
 
@@ -18,34 +18,31 @@ public class Polygon {
 	}
 
 	public boolean add(Point point) {
-		return this.points.add(point);
+		return (this.points.add(point));
 	}
 
 	/**
 	 * Return the area of the polygon using only the x and y coordinates of the points.
-	 * 
+	 *
 	 * @return the area of the polygon.
 	 */
 	public double getArea() {
 		double area = 0;
-		int j;
-
-		j = this.points.size() - 1;
+		int j = this.points.size() - 1;
 		for (int i = 0; i < this.points.size(); i++) {
 			area += (this.points.get(j).getX() + this.points.get(i).getX()) * (this.points.get(j).getY() - this.points.get(i).getY());
 			j = i;
 		}
-		return (area / 2.0d);
+		return (Math.abs(area / 2.0d));
 	}
 
 	public double getPerimeter() {
 		double perimeter = 0;
-		Point lastPoint;
 
 		if (!this.isFinite())
 			return (0);
 
-		lastPoint = this.points.get(0);
+		Point lastPoint = this.points.get(0);
 		for (int i = 1; i < this.points.size(); i++) {
 			perimeter += lastPoint.getDistance(this.points.get(i));
 			lastPoint = this.points.get(i);
@@ -56,7 +53,7 @@ public class Polygon {
 
 	/**
 	 * Checks if the
-	 * 
+	 *
 	 * @param point
 	 *            the point to check.
 	 * @return true if the point is inside the polygon.
@@ -72,10 +69,18 @@ public class Polygon {
 
 	/**
 	 * Check if the polygon is "finite".
-	 * 
+	 *
 	 * @return true if the Polygon contains at least 3 points.
 	 */
 	public boolean isFinite() {
 		return (this.points.size() > 2);
+	}
+
+	@Override
+	public String toString() {
+		String res = "";
+		for (Point point : this.points)
+			res += point;
+		return (res);
 	}
 }
