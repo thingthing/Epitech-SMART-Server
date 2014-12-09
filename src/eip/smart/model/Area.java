@@ -3,50 +3,53 @@ package eip.smart.model;
 import java.util.ArrayList;
 import java.util.Random;
 
+import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.Polygon;
+
 /**
  * Created by Pierre Demessence on 10/10/2014.
  */
 public class Area {
-    private int priority = 0;
-    private ArrayList<Polygon> areaToMap = new ArrayList<Polygon>();
-    private ArrayList<Point> points = new ArrayList<Point>();
-    private ArrayList<Area> subAreas = new ArrayList<Area>();
-    private ArrayList<Agent.AgentType> capableAgentTypes = new ArrayList<Agent.AgentType>();
-    private double completion = 0.0d;
+	private int							priority			= 0;
+	private ArrayList<Polygon>			areaToMap			= new ArrayList<>();
+	private ArrayList<Point>			points				= new ArrayList<>();
+	private ArrayList<Area>				subAreas			= new ArrayList<>();
+	private ArrayList<Agent.AgentType>	capableAgentTypes	= new ArrayList<>();
+	private double						completion			= 0.0d;
 
-    public int getPriority() {
-        return priority;
-    }
+	public boolean contains(Point point) {
+		for (Polygon polygon : this.areaToMap)
+			if (polygon.includes(point))
+				return (true);
+		return (false);
+	}
 
-    public ArrayList<Polygon> getAreaToMap() {
-        return areaToMap;
-    }
+	public ArrayList<Polygon> getAreaToMap() {
+		return this.areaToMap;
+	}
 
-    public ArrayList<Point> getPoints() {
-        return points;
-    }
+	public ArrayList<Agent.AgentType> getCapableAgentTypes() {
+		return this.capableAgentTypes;
+	}
 
-    public ArrayList<Area> getSubAreas() {
-        return subAreas;
-    }
+	public double getCompletion() {
+		return (this.completion);
+	}
 
-    public ArrayList<Agent.AgentType> getCapableAgentTypes() {
-        return capableAgentTypes;
-    }
+	public ArrayList<Point> getPoints() {
+		return this.points;
+	}
 
-    public boolean contains(Point point) {
-        for (Polygon polygon : this.areaToMap)
-            if (polygon.includes(point))
-                return (true);
-        return (false);
-    }
+	public int getPriority() {
+		return this.priority;
+	}
 
-    public double getCompletion() {
-        return (completion);
-    }
+	public ArrayList<Area> getSubAreas() {
+		return this.subAreas;
+	}
 
-    public void updateCompletion() {
-        this.completion += 5.0d + (10.0d - 5.0d) * new Random().nextDouble();
-        this.completion = Math.min(this.completion, 100.0d);
-    }
+	public void updateCompletion() {
+		this.completion += 5.0d + (10.0d - 5.0d) * new Random().nextDouble();
+		this.completion = Math.min(this.completion, 100.0d);
+	}
 }

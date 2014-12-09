@@ -7,26 +7,15 @@ import java.util.logging.Logger;
 /**
  * Created by Pierre Demessence on 10/10/2014.
  */
+@SuppressWarnings("static-method")
 public class Modeling {
 
 	private final static Logger	LOGGER	= Logger.getLogger(Modeling.class.getName());
 
-	private ArrayList<Area>		areas	= new ArrayList<Area>();
-	private ArrayList<Agent>	agents	= new ArrayList<Agent>();
-	private ArrayList<Client>	clients	= new ArrayList<Client>();
+	private ArrayList<Area>		areas	= new ArrayList<>();
+	private ArrayList<Agent>	agents	= new ArrayList<>();
 
-	public Modeling() {
-		this.areas.add(new Area());
-		this.areas.add(new Area());
-
-		Agent n1 = new Agent();
-		n1.setDestination(new Point(-6, -6, 8));
-		this.agents.add(n1);
-
-		Agent n2 = new Agent();
-		n2.setDestination(new Point(7, -4, 0));
-		this.agents.add(n2);
-	}
+	public Modeling() {}
 
 	public void dumpAgents() {
 		Modeling.LOGGER.log(Level.INFO, "Dumping Agents");
@@ -53,12 +42,6 @@ public class Modeling {
 		Modeling.LOGGER.log(Level.INFO, "-->Handling Agents State...");
 	}
 
-	private void moveAgents() {
-		Modeling.LOGGER.log(Level.INFO, "-->Moving Agents... (SIMULATION)");
-		for (Agent a : this.agents)
-			a.move();
-	}
-
 	public void run() {
 		Modeling.LOGGER.log(Level.INFO, "Running Modeling");
 		this.updateAgents();
@@ -76,7 +59,6 @@ public class Modeling {
 
 	private void updateAgents() {
 		Modeling.LOGGER.log(Level.INFO, "->Updating Agents...");
-		this.moveAgents();
 		this.updateAgentsState();
 		this.handleAGentsState();
 	}
