@@ -7,7 +7,7 @@ import java.util.Random;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eip.smart.model.Point;
+import eip.smart.model.geometry.Point;
 
 public class PointCloudGenerator {
 
