@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.debug;
 
 import java.io.IOException;
 

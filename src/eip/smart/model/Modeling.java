@@ -17,6 +17,7 @@ public class Modeling {
 	private String				name;
 	private ArrayList<Area>		areas	= new ArrayList<>();
 	private ArrayList<Agent>	agents	= new ArrayList<>();
+	private long				tick	= 0;
 
 	public Modeling(String name) {
 		this.ID = Modeling.nextID++;
@@ -60,12 +61,17 @@ public class Modeling {
 		return (this.name);
 	}
 
+	public long getTick() {
+		return (this.tick);
+	}
+
 	private void handleAGentsState() {
 		Modeling.LOGGER.log(Level.INFO, "-->Handling Agents State...");
 	}
 
 	public void run() {
-		Modeling.LOGGER.log(Level.INFO, "Running Modeling");
+		++this.tick;
+		Modeling.LOGGER.log(Level.INFO, "Modeling (" + this.name + ") running (tick " + this.tick + ")");
 		this.updateAgents();
 		this.updateAreaAgentsAttributed();
 		this.updateAgentsDestination();

@@ -1,8 +1,10 @@
 package eip.smart.server;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -10,6 +12,8 @@ import javax.servlet.annotation.WebListener;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
+import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.server.servlet.debug.ModelingInfo;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -22,12 +26,17 @@ public class Server implements ServletContextListener {
 		return (Server.server);
 	}
 
-	private static Server			server;
+	private final static Logger	LOGGER			= Logger.getLogger(ModelingInfo.class.getName());
+	private static Server		server;
 
-	private Hashtable<String, File>	savedModelings	= new Hashtable<>();
-	private Modeling				currentModeling;
-	private boolean					running			= false;
-	private ArrayList<Agent>		agentsAvaiable	= new ArrayList<>();
+	private ModelingManager		manager			= new ArrayModelingManager();
+
+	private ArrayList<Agent>	agentsAvaiable	= new ArrayList<>();
+	private ExecutorService		threadPool		= Executors.newSingleThreadExecutor();
+
+	private Modeling			currentModeling	= null;
+	private ModelingTask		currentTask		= null;
+	private boolean				running			= false;
 
 	public Server() {
 		this.agentsAvaiable.add(new Agent());
@@ -41,8 +50,11 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		this.running = false;
-		Server.getServer().saveCurrentModeling();
+		Server.LOGGER.log(Level.INFO, "Server stopping");
+		if (this.currentModeling != null)
+			Server.getServer().modelingStop();
+		this.threadPool.shutdown();
+		this.threadPool.shutdownNow();
 	}
 
 	/**
@@ -50,16 +62,8 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
+		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
-		this.findSavedModelings();
-	}
-
-	public void createModeling(String name) {
-		this.currentModeling = new Modeling(name);
-	}
-
-	private void findSavedModelings() {
-		// @ TODO Récupérer tout les fichiers d'un dossier de sauvegarde et les charger dans la map.
 	}
 
 	public ArrayList<Agent> getAgentsAvaiable() {
@@ -70,30 +74,67 @@ public class Server implements ServletContextListener {
 		return (this.currentModeling);
 	}
 
+	public boolean isPaused() {
+		return (this.running && this.currentTask.isPaused());
+	}
+
 	public boolean isRunning() {
 		return (this.running);
 	}
 
-	public boolean loadModeling(String name) {
-		// @ TODO Change la modelisation courante
-		return (false);
+	public boolean modelingCreate(String name) {
+		if (this.manager.exists(name))
+			return (false);
+		this.currentModeling = new Modeling(name);
+		Server.LOGGER.log(Level.INFO, "New modeling (" + this.currentModeling.getName() + ") created.");
+		return (true);
 	}
 
-	public void saveCurrentModeling() {
-		// @ TODO Sauvegarde la modelisation courante sur le disque.
+	public boolean modelingDelete(String name) {
+		return (this.manager.delete(name));
 	}
 
-	public void startModeling() {
-		while (this.running)
-			try {
-				// @ TODO La modelisation qui tourne.
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+	public ArrayList<SimpleModelingProxy> modelingList() {
+		return (this.manager.list());
 	}
 
-	public void stopModeling() {
+	public boolean modelingLoad(String name) {
+		Modeling modeling = this.manager.load(name);
+		if (modeling == null)
+			return (false);
+		this.currentModeling = modeling;
+		return (true);
+	}
 
+	public void modelingPause() {
+		this.currentTask.pause();
+		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") paused.");
+	}
+
+	public void modelingResume() {
+		this.currentTask.resume();
+		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") resumed.");
+	}
+
+	public void modelingSave() {
+		this.manager.save(this.currentModeling);
+	}
+
+	public void modelingStart() {
+		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") started.");
+		this.running = true;
+		this.currentTask = new ModelingTask(this.currentModeling);
+		this.threadPool.execute(this.currentTask);
+	}
+
+	public void modelingStop() {
+		if (this.running) {
+			this.currentTask.stop();
+			this.running = false;
+			this.currentTask = null;
+		}
+		this.modelingSave();
+		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") stopped.");
+		this.currentModeling = null;
 	}
 }

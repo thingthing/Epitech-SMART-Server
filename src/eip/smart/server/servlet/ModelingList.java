@@ -11,16 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Agent;
-import eip.smart.model.Modeling;
-import eip.smart.model.proxy.SimpleAgentProxy;
+import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgents
+ * Servlet implementation class ModelingLoad
  */
-@WebServlet(urlPatterns = { "/get_agents" })
-public class GetAgents extends JsonServlet {
+@WebServlet(urlPatterns = { "/modeling_list" })
+public class ModelingList extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
@@ -28,14 +26,8 @@ public class GetAgents extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		ArrayList<SimpleAgentProxy> agents = new ArrayList<>();
-		Modeling currentModeling = Server.getServer().getCurrentModeling();
-		if (currentModeling != null) {
-			for (Agent agent : currentModeling.getAgents())
-				agents.add(agent.getProxy());
-			json.writeFieldName("agents");
-			this.mapper.writeValue(json, agents);
-		} else
-			this.status = Status.MODELING_NO_CURRENT;
+		ArrayList<SimpleModelingProxy> modelings = Server.getServer().modelingList();
+		json.writeFieldName("modelings");
+		this.mapper.writeValue(json, modelings);
 	}
 }

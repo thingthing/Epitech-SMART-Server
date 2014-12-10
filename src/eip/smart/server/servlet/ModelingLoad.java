@@ -25,7 +25,9 @@ public class ModelingLoad extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		if (!Server.getServer().loadModeling(request.getParameter("name")))
-			this.status = Status.TODO;
+		if (Server.getServer().getCurrentModeling() != null)
+			this.status = Status.MODELING_ALREADY_CURRENT;
+		else if (!Server.getServer().modelingLoad(request.getParameter("name")))
+			this.status = Status.MODELING_NOT_FOUND;
 	}
 }
