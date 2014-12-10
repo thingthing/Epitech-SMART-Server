@@ -13,11 +13,19 @@ import eip.smart.model.proxy.SimpleAgentProxy;
 public class Agent {
 
 	public static enum AgentState {
-		OK, LOST, STILL, NO_RETURN, LOW_BATTERY, NO_BATTERY, UNKNOWN_ERROR
+		OK,
+		LOST,
+		STILL,
+		NO_RETURN,
+		LOW_BATTERY,
+		NO_BATTERY,
+		UNKNOWN_ERROR
 	}
 
 	public static enum AgentType {
-		TERRESTRIAL, AERIAL, SUBMARINE;
+		TERRESTRIAL,
+		AERIAL,
+		SUBMARINE;
 	}
 
 	static int					nextID		= 1;

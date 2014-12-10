@@ -12,10 +12,20 @@ public class Modeling {
 
 	private final static Logger	LOGGER	= Logger.getLogger(Modeling.class.getName());
 
+	private static int			nextID	= 1;
+	private int					ID		= -1;
+	private String				name;
 	private ArrayList<Area>		areas	= new ArrayList<>();
 	private ArrayList<Agent>	agents	= new ArrayList<>();
 
-	public Modeling() {}
+	public Modeling(String name) {
+		this.ID = Modeling.nextID++;
+		this.name = name;
+	}
+
+	public void addAgent(Agent agent) {
+		this.agents.add(agent);
+	}
 
 	public void dumpAgents() {
 		Modeling.LOGGER.log(Level.INFO, "Dumping Agents");
@@ -24,6 +34,10 @@ public class Modeling {
 			Modeling.LOGGER.log(Level.INFO, "--Position : " + a.getCurrentPosition());
 			Modeling.LOGGER.log(Level.INFO, "--Destination : " + a.getDestination());
 		}
+	}
+
+	public ArrayList<Agent> getAgents() {
+		return (this.agents);
 	}
 
 	public double getCompletion() {
@@ -38,6 +52,14 @@ public class Modeling {
 		return (res);
 	}
 
+	public int getID() {
+		return (this.ID);
+	}
+
+	public String getName() {
+		return (this.name);
+	}
+
 	private void handleAGentsState() {
 		Modeling.LOGGER.log(Level.INFO, "-->Handling Agents State...");
 	}
@@ -48,13 +70,6 @@ public class Modeling {
 		this.updateAreaAgentsAttributed();
 		this.updateAgentsDestination();
 		this.updateAgentsOrders();
-	}
-
-	/**
-	 * Envoie les informations aux clients.
-	 */
-	public void sendData() {
-
 	}
 
 	private void updateAgents() {
