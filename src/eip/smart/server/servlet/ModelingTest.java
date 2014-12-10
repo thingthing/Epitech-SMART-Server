@@ -1,7 +1,6 @@
-package eip.smart.server;
+package eip.smart.server.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +22,15 @@ public class ModelingTest extends HttpServlet {
 
 	private int					delay	= 1000;
 
-	protected void answer(PrintWriter writer, String requestType) {
-		Modeling modeling = new Modeling();
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			this.delay = Integer.parseInt(req.getParameter("delay"));
+		} catch (Exception e) {
+			this.delay = 1000;
+		}
+
+		Modeling modeling = new Modeling("ModelingTest");
 
 		try {
 			ModelingTest.LOGGER.log(Level.INFO, "Start of Modeling");
@@ -45,20 +51,4 @@ public class ModelingTest extends HttpServlet {
 		}
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		PrintWriter writer = resp.getWriter();
-		try {
-			this.delay = Integer.parseInt(req.getParameter("delay"));
-		} catch (Exception e) {
-			this.delay = 1000;
-		}
-		this.answer(writer, "GET");
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		PrintWriter writer = resp.getWriter();
-		this.answer(writer, "POST");
-	}
 }
