@@ -22,6 +22,8 @@ public class Modeling {
 	public Modeling(String name) {
 		this.ID = Modeling.nextID++;
 		this.name = name;
+		this.areas.add(new Area());
+		this.areas.add(new Area());
 	}
 
 	public void addAgent(Agent agent) {
