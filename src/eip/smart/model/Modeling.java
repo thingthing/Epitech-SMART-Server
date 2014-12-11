@@ -1,97 +1,107 @@
 package eip.smart.model;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Pierre Demessence on 10/10/2014.
  */
+@SuppressWarnings("static-method")
 public class Modeling {
-    private ArrayList<Area> areas = new ArrayList<Area>();
-    private ArrayList<Agent> agents = new ArrayList<Agent>();
-    private ArrayList<Client> clients = new ArrayList<Client>();
 
-    public Modeling() {
-        this.areas.add(new Area());
-        this.areas.add(new Area());
+	private final static Logger	LOGGER	= Logger.getLogger(Modeling.class.getName());
 
-        Agent n1 = new Agent();
-        n1.setDestination(new Point(-6, -6, 8));
-        this.agents.add(n1);
+	private static int			nextID	= 1;
+	private int					ID		= -1;
+	private String				name;
+	private ArrayList<Area>		areas	= new ArrayList<>();
+	private ArrayList<Agent>	agents	= new ArrayList<>();
+	private long				tick	= 0;
 
-        Agent n2 = new Agent();
-        n2.setDestination(new Point(7, -4, 0));
-        this.agents.add(n2);
-    }
+	public Modeling(String name) {
+		this.ID = Modeling.nextID++;
+		this.name = name;
+		this.areas.add(new Area());
+		this.areas.add(new Area());
+	}
 
-    public void run() {
-        System.out.println("Running Modeling");
-        this.updateAgents();
-        this.updateAreaAgentsAttributed();
-        this.updateAgentsDestination();
-        this.updateAgentsOrders();
-    }
+	public void addAgent(Agent agent) {
+		this.agents.add(agent);
+	}
 
-    private void updateAgents() {
-        System.out.println("->Updating Agents...");
-        this.moveAgents();
-        this.updateAgentsState();
-        this.handleAGentsState();
-    }
+	public void dumpAgents() {
+		Modeling.LOGGER.log(Level.INFO, "Dumping Agents");
+		for (Agent a : this.agents) {
+			Modeling.LOGGER.log(Level.INFO, "Agent " + a.getID() + " :");
+			Modeling.LOGGER.log(Level.INFO, "--Position : " + a.getCurrentPosition());
+			Modeling.LOGGER.log(Level.INFO, "--Destination : " + a.getDestination());
+		}
+	}
 
-    public void dumpAgents() {
-        System.out.println("Dumping Agents");
-        for (Agent a : this.agents) {
-            System.out.println("Agent "+a.getID()+" :");
-            System.out.println("--Position : "+a.getCurrentPosition());
-            System.out.println("--Destination : "+a.getDestination());
-        }
-    }
+	public ArrayList<Agent> getAgents() {
+		return (this.agents);
+	}
 
-    private void moveAgents() {
-        System.out.println("-->Moving Agents... (SIMULATION)");
-        for (Agent a : this.agents)
-            a.move();
-    }
+	public double getCompletion() {
+		double res = 0;
 
-    private void updateAgentsState() {
-        System.out.println("-->Updating Agents State...");
-    }
+		if (this.areas.size() == 0)
+			return (100.0d);
 
-    private void handleAGentsState() {
-        System.out.println("-->Handling Agents State...");
-    }
+		for (Area a : this.areas)
+			res += a.getCompletion();
+		res /= this.areas.size();
+		return (res);
+	}
 
-    private void updateAreaAgentsAttributed() {
-        for (Area a : this.areas)
-            a.updateCompletion();
-        System.out.println("->Attributing number of agents for each area...");
-    }
+	public int getID() {
+		return (this.ID);
+	}
 
-    private void updateAgentsDestination() {
-        System.out.println("->Updating destination for each agent...");
-    }
+	public String getName() {
+		return (this.name);
+	}
 
-    private void updateAgentsOrders() {
-        System.out.println("->Updating orders for each agent...");
-    }
+	public long getTick() {
+		return (this.tick);
+	}
 
-    public double getCompletion() {
-        double res = 0;
+	private void handleAGentsState() {
+		Modeling.LOGGER.log(Level.INFO, "-->Handling Agents State...");
+	}
 
-        if (this.areas.size() == 0)
-            return (100.0d);
+	public void run() {
+		++this.tick;
+		Modeling.LOGGER.log(Level.INFO, "Modeling (" + this.name + ") running (tick " + this.tick + ")");
+		this.updateAgents();
+		this.updateAreaAgentsAttributed();
+		this.updateAgentsDestination();
+		this.updateAgentsOrders();
+	}
 
-        for (Area a : this.areas)
-            res += a.getCompletion();
-        res /= this.areas.size();
-        return (res);
-    }
+	private void updateAgents() {
+		Modeling.LOGGER.log(Level.INFO, "->Updating Agents...");
+		this.updateAgentsState();
+		this.handleAGentsState();
+	}
 
-    /**
-     * Envoie les informations aux clients.
-     */
-    public void sendData() {
+	private void updateAgentsDestination() {
+		Modeling.LOGGER.log(Level.INFO, "->Updating destination for each agent...");
+	}
 
-    }
+	private void updateAgentsOrders() {
+		Modeling.LOGGER.log(Level.INFO, "->Updating orders for each agent...");
+	}
+
+	private void updateAgentsState() {
+		Modeling.LOGGER.log(Level.INFO, "-->Updating Agents State...");
+	}
+
+	private void updateAreaAgentsAttributed() {
+		for (Area a : this.areas)
+			a.updateCompletion();
+		Modeling.LOGGER.log(Level.INFO, "->Attributing number of agents for each area...");
+	}
 
 }
