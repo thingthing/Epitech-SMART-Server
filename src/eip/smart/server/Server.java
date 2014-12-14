@@ -29,7 +29,7 @@ public class Server implements ServletContextListener {
 	private final static Logger	LOGGER			= Logger.getLogger(ModelingInfo.class.getName());
 	private static Server		server;
 
-	private ModelingManager		manager			= new ArrayModelingManager();
+	private ModelingManager		manager			= new FileModelingManager();
 
 	private ArrayList<Agent>	agentsAvaiable	= new ArrayList<>();
 	private ExecutorService		threadPool		= Executors.newSingleThreadExecutor();
