@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import util.PointCloudGenerator;
-
 import com.fasterxml.jackson.core.JsonGenerator;
+
+import eip.smart.util.PointCloudGenerator;
 
 /**
  * Servlet implementation class GetPoints
