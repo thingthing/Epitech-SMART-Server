@@ -24,6 +24,9 @@ public class ModelingSave extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		Server.getServer().modelingSave();
+		if (Server.getServer().getCurrentModeling() == null)
+			this.status = Status.MODELING_NO_CURRENT;
+		else
+			Server.getServer().modelingSave();
 	}
 }
