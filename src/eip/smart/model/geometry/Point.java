@@ -1,9 +1,11 @@
 package eip.smart.model.geometry;
 
+import java.io.Serializable;
+
 /**
  * Created by Pierre Demessence on 09/10/2014.
  */
-public class Point {
+public class Point implements Serializable {
 
 	public static Point add(Point p1, Point p2) {
 		return new Point(p1.getX() + p2.getX(), p1.getY() + p2.getY(), p1.getZ() + p2.getZ());

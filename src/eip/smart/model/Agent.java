@@ -1,5 +1,6 @@
 package eip.smart.model;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedList;
@@ -10,7 +11,7 @@ import eip.smart.model.proxy.SimpleAgentProxy;
 /**
  * Created by Pierre Demessence on 09/10/2014.
  */
-public class Agent {
+public class Agent implements Serializable {
 
 	public static enum AgentState {
 		OK,

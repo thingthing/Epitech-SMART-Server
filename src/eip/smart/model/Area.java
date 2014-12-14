@@ -1,21 +1,27 @@
 package eip.smart.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 import eip.smart.model.geometry.Point;
 import eip.smart.model.geometry.Polygon;
+import eip.smart.util.PointCloudGenerator;
 
 /**
  * Created by Pierre Demessence on 10/10/2014.
  */
-public class Area {
+public class Area implements Serializable {
 	private int							priority			= 0;
 	private ArrayList<Polygon>			areaToMap			= new ArrayList<>();
 	private ArrayList<Point>			points				= new ArrayList<>();
 	private ArrayList<Area>				subAreas			= new ArrayList<>();
 	private ArrayList<Agent.AgentType>	capableAgentTypes	= new ArrayList<>();
 	private double						completion			= 0.0d;
+
+	public Area() {
+		this.points = new PointCloudGenerator().generatePointCloud(20);
+	}
 
 	public boolean contains(Point point) {
 		for (Polygon polygon : this.areaToMap)
@@ -34,6 +40,10 @@ public class Area {
 
 	public double getCompletion() {
 		return (this.completion);
+	}
+
+	public int getNbPoints() {
+		return (this.points.size());
 	}
 
 	public ArrayList<Point> getPoints() {

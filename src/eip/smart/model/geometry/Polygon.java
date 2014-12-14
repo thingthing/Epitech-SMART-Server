@@ -1,11 +1,12 @@
 package eip.smart.model.geometry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Pierre Demessence on 10/10/2014.
  */
-public class Polygon {
+public class Polygon implements Serializable {
 
 	private ArrayList<Point>	points;
 

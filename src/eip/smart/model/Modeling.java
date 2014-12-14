@@ -1,5 +1,6 @@
 package eip.smart.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,7 +9,7 @@ import java.util.logging.Logger;
  * Created by Pierre Demessence on 10/10/2014.
  */
 @SuppressWarnings("static-method")
-public class Modeling {
+public class Modeling implements Serializable {
 
 	private final static Logger	LOGGER	= Logger.getLogger(Modeling.class.getName());
 
@@ -41,6 +42,10 @@ public class Modeling {
 
 	public ArrayList<Agent> getAgents() {
 		return (this.agents);
+	}
+
+	public ArrayList<Area> getAreas() {
+		return (this.areas);
 	}
 
 	public double getCompletion() {
