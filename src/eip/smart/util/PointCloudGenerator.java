@@ -11,41 +11,49 @@ import eip.smart.model.geometry.Point;
 
 public class PointCloudGenerator {
 
-	public static Point generatePoint() {
-		return (new Point(PointCloudGenerator.getRandomDouble(), PointCloudGenerator.getRandomDouble(), PointCloudGenerator.getRandomDouble()));
+	private Random	rng			= null;
+
+	private int		precision	= 3;
+	private double	min			= -42.0d;
+	private double	max			= 42.0d;
+
+	public PointCloudGenerator() {}
+
+	public PointCloudGenerator(int precision, double min, double max) {
+		this.precision = precision;
+		this.min = min;
+		this.max = max;
 	}
 
-	public static ArrayList<Point> generatePointCloud(int nb) {
+	private Point generatePoint() {
+		return (new Point(this.getRandomDouble(), this.getRandomDouble(), this.getRandomDouble()));
+	}
+
+	public ArrayList<Point> generatePointCloud(int nb) {
 		ArrayList<Point> cloud = new ArrayList<>();
 		for (int i = 0; i < nb; i++)
-			cloud.add(PointCloudGenerator.generatePoint());
+			cloud.add(this.generatePoint());
 		return (cloud);
 	}
 
-	public static String generatePointCloudJSON(int nb) {
+	public String generatePointCloudJSON(int nb) {
 		String json = "";
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			json = mapper.writeValueAsString(PointCloudGenerator.generatePointCloud(nb));
+			json = mapper.writeValueAsString(this.generatePointCloud(nb));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return (json);
 	}
 
-	private static double getRandomDouble() {
+	private double getRandomDouble() {
 		double res;
-		if (PointCloudGenerator.rng == null)
-			PointCloudGenerator.rng = new Random();
-		res = (PointCloudGenerator.MIN + PointCloudGenerator.rng.nextDouble() * ((PointCloudGenerator.MAX - PointCloudGenerator.MIN) + 1));
-		res = new BigDecimal(res).setScale(PointCloudGenerator.PRECISION, BigDecimal.ROUND_HALF_UP).doubleValue();
+		if (this.rng == null)
+			this.rng = new Random();
+		res = (this.min + this.rng.nextDouble() * ((this.max - this.min) + 1));
+		res = new BigDecimal(res).setScale(this.precision, BigDecimal.ROUND_HALF_UP).doubleValue();
 		return (res);
 	}
-
-	private static Random	rng			= null;
-
-	private static int		PRECISION	= 3;
-	private static double	MIN			= -42.0d;
-	private static double	MAX			= 42.0d;
 }

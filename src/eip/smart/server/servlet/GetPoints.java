@@ -25,7 +25,7 @@ public class GetPoints extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		json.writeFieldName("points");
-		this.mapper.writeValue(json, PointCloudGenerator.generatePointCloud(50));
+		this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
 
 		this.status = Status.SIMULATION;
 	}
