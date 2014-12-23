@@ -8,25 +8,34 @@
 	<build>
 		<plugins>
 			<plugin>
-    <groupId>org.apache.tomcat.maven</groupId>
-    <artifactId>tomcat7-maven-plugin</artifactId>
-    <version>2.2</version>
-    <configuration>
-      <port>9090</port>
-      <path>/</path>
-      <contextFile>${tomcatContextXml}</contextFile>
-      <systemProperties>
-        <appserver.base>${project.build.directory}/appserver-base</appserver.base>
-        <appserver.home>${project.build.directory}/appserver-home</appserver.home>
-        <derby.system.home>${project.build.directory}/appserver-base/logs</derby.system.home>
-        <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-      </systemProperties>
-      <useTestClasspath>false</useTestClasspath>
-      <additionalClasspathDirs>
-        <additionalClasspathDir></additionalClasspathDir>
-      </additionalClasspathDirs>
-    </configuration>
-  </plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<port>8080</port>
+					<path>/smartserver</path>
+					<contextFile>${tomcatContextXml}</contextFile>
+					<tomcatWebXml>${basedir}/web/WEB-INF/web.xml</tomcatWebXml>
+					<systemProperties>
+						<appserver.base>${project.build.directory}/appserver-base</appserver.base>
+						<appserver.home>${project.build.directory}/appserver-home</appserver.home>
+						<derby.system.home>${project.build.directory}/appserver-base/logs</derby.system.home>
+						<java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+					</systemProperties>
+					<useTestClasspath>false</useTestClasspath>
+					<additionalClasspathDirs>
+						<additionalClasspathDir></additionalClasspathDir>
+					</additionalClasspathDirs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -40,15 +49,21 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>eip.smart</groupId>
 			<artifactId>cs-commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-	<groupId>javax.servlet</groupId>
-	<artifactId>javax.servlet-api</artifactId>
-	<version>3.1.0</version>
-	<scope>provided</scope>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
