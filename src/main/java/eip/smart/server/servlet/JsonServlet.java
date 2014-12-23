@@ -25,7 +25,8 @@ public abstract class JsonServlet extends HttpServlet {
 		MODELING_NOT_RUNNING("current modeling is not running"),
 		MODELING_ALREADY_PAUSED("current modeling is already paused"),
 		MODELING_NOT_PAUSED("current modeling is not paused"),
-		AGENT_NOT_FOUND("agent with given id does not exist");
+		AGENT_NOT_FOUND("agent with given id does not exist"),
+		MODELING_NO_NAME("modeling must have a name");
 
 		private int		code;
 		private String	message;

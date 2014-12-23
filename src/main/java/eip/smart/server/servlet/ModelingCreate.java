@@ -23,6 +23,8 @@ public class ModelingCreate extends JsonServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
 		if (Server.getServer().getCurrentModeling() != null)
 			this.status = Status.MODELING_ALREADY_CURRENT;
+		else if (req.getParameter("name") == null || req.getParameter("name").equals(""))
+			this.status = Status.MODELING_NO_NAME;
 		else if (!Server.getServer().modelingCreate(req.getParameter("name")))
 			this.status = Status.MODELING_DUPLICATE_NAME;
 	}
