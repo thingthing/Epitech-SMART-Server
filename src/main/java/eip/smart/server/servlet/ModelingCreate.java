@@ -20,12 +20,12 @@ public class ModelingCreate extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		if (Server.getServer().getCurrentModeling() != null)
 			this.status = Status.MODELING_ALREADY_CURRENT;
-		else if (req.getParameter("name") == null || req.getParameter("name").equals(""))
+		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
 			this.status = Status.MODELING_NO_NAME;
-		else if (!Server.getServer().modelingCreate(req.getParameter("name")))
+		else if (!Server.getServer().modelingCreate(request.getParameter("name")))
 			this.status = Status.MODELING_DUPLICATE_NAME;
 	}
 

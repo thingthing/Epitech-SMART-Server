@@ -25,7 +25,9 @@ public class ModelingDelete extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		if (!Server.getServer().modelingDelete(request.getParameter("name")))
+		if (request.getParameter("name") == null || request.getParameter("name").equals(""))
+			this.status = Status.MODELING_NO_NAME;
+		else if (!Server.getServer().modelingDelete(request.getParameter("name")))
 			this.status = Status.MODELING_NOT_FOUND;
 	}
 }
