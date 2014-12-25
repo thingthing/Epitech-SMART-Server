@@ -14,6 +14,8 @@
 				<configuration>
 					<port>8080</port>
 					<path>/smartserver</path>
+					<url>http://localhost:8080/manager/text</url>
+					<server>TomcatServer</server>
 					<contextFile>${tomcatContextXml}</contextFile>
 					<tomcatWebXml>${basedir}/web/WEB-INF/web.xml</tomcatWebXml>
 					<systemProperties>
