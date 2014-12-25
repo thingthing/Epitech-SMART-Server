@@ -31,7 +31,7 @@ IntelliJ se lance directement depuis le dossier dans lequel il a été décompre
 * Créer une nouvelle Facet de type Web et l'ajouter au module server
 * File > Project Structure > Artifacts
 * Créer un nouvel Artifact de type Web Application : Exploded à partir du module server
-* Artifact > server:war exploded > Onglet Output Layout > Ajouter TOUS les éléments de la colonne de droite dans la colonne de gauche (double clic dessus)
+* Artifact > server:war exploded > Onglet Output Layout > Ajouter TOUS les éléments de la colonne de droite dans la colonne de gauche (double clic dessus).
 
 
 Afin de créer une configuration de lancement
