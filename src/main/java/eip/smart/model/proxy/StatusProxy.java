@@ -1,6 +1,6 @@
 package eip.smart.model.proxy;
 
-import eip.smart.server.servlet.JsonServlet.Status;
+import eip.smart.model.Status;
 
 public class StatusProxy extends Proxy<Status> {
 
@@ -8,12 +8,12 @@ public class StatusProxy extends Proxy<Status> {
 		super(object);
 	}
 
-	public String getMessage() {
-		return (this.object.getMessage());
+	public int getCode() {
+		return (this.object.getCode());
 	}
 
-	public int getStatus() {
-		return (this.object.getCode());
+	public String getMessage() {
+		return (this.object.getMessage());
 	}
 
 }

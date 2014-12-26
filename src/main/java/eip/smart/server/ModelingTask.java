@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import eip.smart.model.Modeling;
-import eip.smart.server.servlet.debug.ModelingInfo;
+import eip.smart.server.servlet.ModelingInfo;
 
 public class ModelingTask implements Runnable {
 

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**

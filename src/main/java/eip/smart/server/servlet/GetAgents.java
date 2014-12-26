@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
+import eip.smart.model.Status;
 import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
 
