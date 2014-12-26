@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebListener;
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
-import eip.smart.server.servlet.debug.ModelingInfo;
+import eip.smart.server.servlet.ModelingInfo;
 
 /**
  * Application Lifecycle Listener implementation class Server
