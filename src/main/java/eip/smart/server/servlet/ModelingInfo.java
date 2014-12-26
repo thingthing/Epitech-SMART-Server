@@ -1,4 +1,4 @@
-package eip.smart.server.servlet.debug;
+package eip.smart.server.servlet;
 
 import java.io.IOException;
 
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Modeling;
+import eip.smart.model.Status;
 import eip.smart.server.Server;
-import eip.smart.server.servlet.JsonServlet;
 
 /**
  * Created by vincent buresi on 10/2/14.

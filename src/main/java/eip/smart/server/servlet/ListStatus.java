@@ -1,4 +1,4 @@
-package eip.smart.server.servlet.debug;
+package eip.smart.server.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.model.Status;
 import eip.smart.model.proxy.StatusProxy;
-import eip.smart.server.servlet.JsonServlet;
 
 /**
  * Servlet implementation class ListStatus
