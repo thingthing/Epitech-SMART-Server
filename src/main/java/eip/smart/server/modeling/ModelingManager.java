@@ -1,4 +1,4 @@
-package eip.smart.server;
+package eip.smart.server.modeling;
 
 import java.util.ArrayList;
 

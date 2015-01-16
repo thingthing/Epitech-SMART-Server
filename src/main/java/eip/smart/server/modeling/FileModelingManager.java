@@ -1,4 +1,4 @@
-package eip.smart.server;
+package eip.smart.server.modeling;
 
 import java.io.File;
 import java.io.FileInputStream;
