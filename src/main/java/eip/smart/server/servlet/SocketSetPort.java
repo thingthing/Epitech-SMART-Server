@@ -25,6 +25,9 @@ public class SocketSetPort extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
 		int port = -1;
+				
+		if (Server.getServer().isAcceptorActive())
+			this.status = Status.SOCKET_ALREADY_RUNNING;
 		try {
 			port = Integer.parseInt(req.getParameter("port"));
 		} catch (NumberFormatException e) {}
