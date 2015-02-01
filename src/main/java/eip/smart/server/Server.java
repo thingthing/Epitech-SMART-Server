@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
@@ -28,6 +29,7 @@ import eip.smart.server.modeling.FileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
+import eip.smart.server.net.IoAgentContainer;
 import eip.smart.server.servlet.ModelingInfo;
 
 /**
@@ -41,26 +43,21 @@ public class Server implements ServletContextListener {
 		return (Server.server);
 	}
 
-	private final static Logger	LOGGER			= Logger.getLogger(ModelingInfo.class.getName());
+	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
 	private static Server		server;
 
-	private ModelingManager		manager			= new FileModelingManager();
+	private ModelingManager		manager				= new FileModelingManager();
 
-	private ArrayList<Agent>	agentsAvaiable	= new ArrayList<>();
-	private ExecutorService		threadPool		= Executors.newSingleThreadExecutor();
+	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
+	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
 
-	private Modeling			currentModeling	= null;
-	private ModelingTask		currentTask		= null;
-	private boolean				running			= false;
-	private IoAcceptor			acceptor		= new NioSocketAcceptor();
-	private int					port			= AvailablePortFinder.getNextAvailable(4200);
+	private Modeling			currentModeling		= null;
+	private ModelingTask		currentTask			= null;
+	private boolean				running				= false;
+	private IoAcceptor			acceptor			= new NioSocketAcceptor();
+	private int					port				= AvailablePortFinder.getNextAvailable(4200);
 
-	public Server() {
-		this.agentsAvaiable.add(new Agent());
-		this.agentsAvaiable.add(new Agent());
-		this.agentsAvaiable.add(new Agent());
-		this.agentsAvaiable.add(new Agent());
-	}
+	public Server() {}
 
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
@@ -87,22 +84,32 @@ public class Server implements ServletContextListener {
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
 
-		this.acceptor.setHandler(new AgentServerHandler());
+		AgentServerHandler agentHandler = new AgentServerHandler();
+		agentHandler.setIoAgentContainer(this.ioAgentContainer);
+		this.acceptor.setHandler(agentHandler);
 
 		this.acceptor.getSessionConfig().setReadBufferSize(2048);
 		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 	}
 
-	public ArrayList<Agent> getAgentsAvaiable() {
-		return (this.agentsAvaiable);
+	public ArrayList<Agent> getAgentsAvailable() {
+		return (this.ioAgentContainer.getAgents());
 	}
 
 	public Modeling getCurrentModeling() {
 		return (this.currentModeling);
 	}
 
+	public IoAgentContainer getIoAgentContainer() {
+		return (this.ioAgentContainer);
+	}
+
 	public int getPort() {
 		return (this.port);
+	}
+
+	public ArrayList<IoSession> getSessions() {
+		return (this.ioAgentContainer.getSessions());
 	}
 
 	public boolean isAcceptorActive() {

@@ -1,8 +1,5 @@
 package eip.smart.server.net;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -11,39 +8,45 @@ import eip.smart.model.Agent;
 
 public class AgentServerHandler implements IoHandler {
 
-	private HashMap<IoSession, String>	sessions	= new HashMap<>();
+	private IoAgentContainer	ioAgentContainer	= null;
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		cause.printStackTrace();
-	}
-
-	@Override
-	public void inputClosed(IoSession session) throws Exception {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void messageReceived(IoSession session, Object message) throws Exception {
-		String str = message.toString();
-		if (str.trim().equalsIgnoreCase("quit")) {
-			session.close(true);
-			return;
-		}
-		if (str.trim().matches("/login [a-zA-Z0-9]*")) {
-			this.sessions.put(session, str.trim().substring(7));
-			session.write("#SERVER: You are now : " + this.sessions.get(session));
-			return;
-		}
-		if (this.sessions.get(session).equals("")) {
-			session.write("#SERVER: Use /login to get a name.");
-			return;
-		}
+	public void inputClosed(IoSession session) throws Exception {
+		this.removeSession(session);
+	}
 
-		for (Entry<IoSession, String> ioSession : this.sessions.entrySet())
-			if (ioSession.getKey() != session)
-				ioSession.getKey().write(this.sessions.get(session) + " : " + message);
-		System.out.println(this.sessions.get(session) + " : " + message);
+	@Override
+	public void messageReceived(IoSession session, Object message) throws Exception {
+		String msg = (String) message;
+		if (msg.equals("exit"))
+			session.close(true);
+		else if (this.ioAgentContainer.getBySession(session).getAgent() == null && msg.startsWith("name:")) {
+			String name = msg.replaceFirst("name:", "");
+			if (!msg.matches("name:[a-zA-Z0-9]*") || name.isEmpty()) {
+				System.out.println("1");
+				session.write("error: invalid name");
+				return;
+			}
+			IoAgent ioAgent = this.ioAgentContainer.getByAgentName(name);
+			if (ioAgent != null) {
+				if (ioAgent.getAgent().isConnected())
+					session.write("error: name already used");
+				else {
+					this.ioAgentContainer.remove(this.ioAgentContainer.getBySession(session));
+					ioAgent.sessionCreated(session);
+				}
+			} else
+				this.ioAgentContainer.getBySession(session).createAgent(name);
+		} else {
+			Agent agent = this.ioAgentContainer.getBySession(session).getAgent();
+			if (agent != null)
+				agent.sendMessage(msg);
+		}
 	}
 
 	@Override
@@ -51,25 +54,36 @@ public class AgentServerHandler implements IoHandler {
 		// TODO Auto-generated method stub
 	}
 
+	private void removeSession(IoSession session) {
+		IoAgent ioAgent = this.ioAgentContainer.getBySession(session);
+		if (ioAgent.getAgent() == null)
+			this.ioAgentContainer.remove(ioAgent);
+		else
+			ioAgent.sessionDestroyed();
+	}
+
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
-		this.sessions.remove(session);
+		this.removeSession(session);
 	}
 
 	@Override
 	public void sessionCreated(IoSession session) throws Exception {
-		this.sessions.put(session, "");
-		session.write(new Agent());
+		this.ioAgentContainer.addSession(session);
 	}
 
 	@Override
 	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-		System.out.println("IDLE " + session.getIdleCount(status));
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
 		// TODO Auto-generated method stub
+	}
+
+	public void setIoAgentContainer(IoAgentContainer ioAgentContainer) {
+		this.ioAgentContainer = ioAgentContainer;
 	}
 
 }

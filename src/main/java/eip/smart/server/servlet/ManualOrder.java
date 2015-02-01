@@ -31,7 +31,7 @@ public class ManualOrder extends JsonServlet {
 		try {
 			id = Integer.parseInt(req.getParameter("id"));
 		} catch (NumberFormatException e) {}
-		ArrayList<Agent> agents = Server.getServer().getAgentsAvaiable();
+		ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
 		Agent agent = null;
 		for (Agent a : agents)
 			if (a.getID() == id)
