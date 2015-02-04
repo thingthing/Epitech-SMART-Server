@@ -54,10 +54,18 @@ public class FileModelingManager extends ModelingManager {
 		ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
 		for (File file : FileModelingManager.DIR.listFiles()) {
 			Modeling modeling = this.load(file.getName());
-			SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
-			if (modeling == null)
-				smp.setObsolete(true);
-			modelings.add(smp);
+			if (modeling != null)
+			{
+				SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
+				modelings.add(smp);
+			}
+			else
+			{
+				SimpleModelingProxy smpObsolete = new SimpleModelingProxy();
+				smpObsolete.setName(file.getName());
+				smpObsolete.setObsolete(true);
+				modelings.add(smpObsolete);
+			}
 		}
 		return (modelings);
 	}
