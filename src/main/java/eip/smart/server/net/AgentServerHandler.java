@@ -4,8 +4,6 @@ import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 
-import eip.smart.model.Agent;
-
 public class AgentServerHandler implements IoHandler {
 
 	private IoAgentContainer	ioAgentContainer	= null;
@@ -25,28 +23,28 @@ public class AgentServerHandler implements IoHandler {
 		String msg = (String) message;
 		if (msg.equals("exit"))
 			session.close(true);
-		else if (this.ioAgentContainer.getBySession(session).getAgent() == null && msg.startsWith("name:")) {
-			String name = msg.replaceFirst("name:", "");
-			if (!msg.matches("name:[a-zA-Z0-9]*") || name.isEmpty()) {
-				System.out.println("1");
-				session.write("error: invalid name");
-				return;
-			}
-			IoAgent ioAgent = this.ioAgentContainer.getByAgentName(name);
-			if (ioAgent != null) {
-				if (ioAgent.getAgent().isConnected())
-					session.write("error: name already used");
-				else {
-					this.ioAgentContainer.remove(this.ioAgentContainer.getBySession(session));
-					ioAgent.sessionCreated(session);
+		else if (this.ioAgentContainer.getBySession(session).getAgent() == null) {
+			if (msg.startsWith("name:")) {
+				String name = msg.replaceFirst("name:", "");
+				if (!msg.matches("name:[a-zA-Z0-9]*") || name.isEmpty()) {
+					System.out.println("1");
+					session.write("error: invalid name");
+					return;
 				}
+				IoAgent ioAgent = this.ioAgentContainer.getByAgentName(name);
+				if (ioAgent != null) {
+					if (ioAgent.getAgent().isConnected())
+						session.write("error: name already used");
+					else {
+						this.ioAgentContainer.remove(this.ioAgentContainer.getBySession(session));
+						ioAgent.sessionCreated(session);
+					}
+				} else
+					this.ioAgentContainer.getBySession(session).createAgent(name);
 			} else
-				this.ioAgentContainer.getBySession(session).createAgent(name);
-		} else {
-			Agent agent = this.ioAgentContainer.getBySession(session).getAgent();
-			if (agent != null)
-				agent.sendMessage(msg);
-		}
+				session.write("error: not authenticated");
+		} else
+			this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(msg);
 	}
 
 	@Override
