@@ -32,6 +32,8 @@ import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
 import eip.smart.server.servlet.ModelingInfo;
 
+import eip.smart.server.modeling.NewFileModelingManager;
+
 /**
  * Application Lifecycle Listener implementation class Server
  *
@@ -46,8 +48,9 @@ public class Server implements ServletContextListener {
 	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
 	private static Server		server;
 
-	private ModelingManager		manager				= new FileModelingManager();
-
+	//private ModelingManager		manager				= new FileModelingManager();
+	private ModelingManager		manager				= new NewFileModelingManager();
+	
 	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
 	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
 
