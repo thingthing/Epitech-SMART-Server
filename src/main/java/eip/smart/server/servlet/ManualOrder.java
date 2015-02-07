@@ -46,8 +46,6 @@ public class ManualOrder extends JsonServlet {
 			this.status = Status.AGENT_NOT_FOUND;
 		else if (order == null)
 			this.status = Status.ORDER_NO_GIVEN;
-		else if (Server.getServer().getCurrentModeling() == null)
-			this.status = Status.MODELING_NO_CURRENT;
 		else
 			agent.pushOrder(order);
 	}
