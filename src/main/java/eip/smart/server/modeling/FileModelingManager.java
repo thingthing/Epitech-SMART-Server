@@ -1,4 +1,4 @@
-package eip.smart.server;
+package eip.smart.server.modeling;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +55,17 @@ public class FileModelingManager extends ModelingManager {
 		for (File file : FileModelingManager.DIR.listFiles()) {
 			Modeling modeling = this.load(file.getName());
 			if (modeling != null)
-				modelings.add(new SimpleModelingProxy(modeling));
+			{
+				SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
+				modelings.add(smp);
+			}
+			else
+			{
+				SimpleModelingProxy smpObsolete = new SimpleModelingProxy();
+				smpObsolete.setName(file.getName());
+				smpObsolete.setObsolete(true);
+				modelings.add(smpObsolete);
+			}
 		}
 		return (modelings);
 	}

@@ -28,7 +28,7 @@ public class GetAgentsAvailable extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		ArrayList<SimpleAgentProxy> agents = new ArrayList<>();
-		for (Agent agent : Server.getServer().getAgentsAvaiable())
+		for (Agent agent : Server.getServer().getAgentsAvailable())
 			agents.add(agent.getProxy());
 
 		json.writeFieldName("agents");
