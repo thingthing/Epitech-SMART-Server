@@ -43,7 +43,9 @@ public class AgentServerHandler implements IoHandler {
 					this.ioAgentContainer.getBySession(session).createAgent(name);
 			} else
 				session.write("error: not authenticated");
-		} else
+		} else if (msg.equals("delete"))
+			this.ioAgentContainer.getBySession(session).removeAgent();
+		else
 			this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(msg);
 	}
 
