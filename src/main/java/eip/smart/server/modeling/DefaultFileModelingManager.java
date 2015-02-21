@@ -16,12 +16,12 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
-public class NewFileModelingManager extends ModelingManager {
+public class DefaultFileModelingManager extends ModelingManager {
 
 	private static String addExtension(String name) {
 		String res = name;
 		if (!res.matches(".*\\.modeling$"))
-			res += NewFileModelingManager.EXTENSION;
+			res += DefaultFileModelingManager.EXTENSION;
 		return (res);
 	}
 
@@ -30,31 +30,31 @@ public class NewFileModelingManager extends ModelingManager {
 
 	private static String		EXTENSION	= ".modeling";
 
-	public NewFileModelingManager() {
-		NewFileModelingManager.DIR.mkdirs();
+	public DefaultFileModelingManager() {
+		DefaultFileModelingManager.DIR.mkdirs();
 	}
 
 	@Override
 	public boolean delete(String name) {
-		name = NewFileModelingManager.addExtension(name);
+		name = DefaultFileModelingManager.addExtension(name);
 		if (!this.exists(name))
 			return (false);
-		File file = new File(NewFileModelingManager.DIR, name);
+		File file = new File(DefaultFileModelingManager.DIR, name);
 		file.delete();
 		return (true);
 	}
 
 	@Override
 	public boolean exists(String name) {
-		name = NewFileModelingManager.addExtension(name);
-		File file = new File(NewFileModelingManager.DIR, name);
+		name = DefaultFileModelingManager.addExtension(name);
+		File file = new File(DefaultFileModelingManager.DIR, name);
 		return (file.exists());
 	}
 
 	@Override
 	public ArrayList<SimpleModelingProxy> list() {
 		ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
-		for (File file : NewFileModelingManager.DIR.listFiles()) {
+		for (File file : DefaultFileModelingManager.DIR.listFiles()) {
 			Modeling modeling = this.load(file.getName());
 			if (modeling != null)
 			{
@@ -74,14 +74,15 @@ public class NewFileModelingManager extends ModelingManager {
 
 	@Override
 	public Modeling load(String name) {
-		name = NewFileModelingManager.addExtension(name);
+		name = DefaultFileModelingManager.addExtension(name);
 		
 		if (!this.exists(name))
 			return (null);
-		File file = new File(NewFileModelingManager.DIR, name);
+		File file = new File(DefaultFileModelingManager.DIR, name);
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		Modeling modeling = null;
+        LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
 
 		try {
 			fis = new FileInputStream(file);
@@ -96,7 +97,7 @@ public class NewFileModelingManager extends ModelingManager {
 			fis.close();
 		} catch (InvalidClassException e) {
 			e.printStackTrace();
-			NewFileModelingManager.LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			DefaultFileModelingManager.LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
 			return (null);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -118,34 +119,34 @@ public class NewFileModelingManager extends ModelingManager {
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(NewFileModelingManager.DIR, NewFileModelingManager.addExtension(modeling.getName()));
+		File file = new File(DefaultFileModelingManager.DIR, DefaultFileModelingManager.addExtension(modeling.getName()));
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		
 		try {
-			
 			fos = new FileOutputStream(file);
 			oos = new ObjectOutputStream(fos);
 			FileModelingProxy modelingParsed = new FileModelingProxy(modeling);
-			//oos.writeObject(modeling);
 			oos.writeObject(modelingParsed);
-			
-			oos.close();
-			fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		try {
-			if (oos != null)
-				oos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			if (fos != null)
-				fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            return ;
+		} finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        LOGGER.log(Level.INFO, "Successfully saved modelisation at " + file.getAbsolutePath());
 	}
 }
