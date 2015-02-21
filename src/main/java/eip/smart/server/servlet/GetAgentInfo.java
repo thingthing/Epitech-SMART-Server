@@ -24,13 +24,15 @@ public class GetAgentInfo extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		String name = "";
-		name = req.getParameter("name");
-		ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
+		String name = req.getParameter("name");
 		Agent agent = null;
-		for (Agent a : agents)
-			if (name.equals(a.getName()))
-				agent = a;
+		if (name != null) {
+			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
+			for (Agent a : agents)
+				if (name.equals(a.getName()))
+					agent = a;
+		}
+		System.out.println(name);
 
 		if (agent == null)
 			this.status = Status.AGENT_NOT_FOUND;
