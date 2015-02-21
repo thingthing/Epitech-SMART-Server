@@ -20,23 +20,21 @@ import eip.smart.server.Server;
 /**
  * Servlet implementation class GetAgentInfo
  */
-@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "id", value = "") })
+@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ManualOrder extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		int id = -1;
-		Point order = null;
-		try {
-			id = Integer.parseInt(req.getParameter("id"));
-		} catch (NumberFormatException e) {}
+		String name = "";
+		name = req.getParameter("name");
 		ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
 		Agent agent = null;
 		for (Agent a : agents)
-			if (a.getID() == id)
+			if (name.equals(a.getName()))
 				agent = a;
 
+		Point order = null;
 		if (req.getParameter("order") != null)
 			try {
 				order = new ObjectMapper().readValue(req.getParameter("order"), Point.class);
