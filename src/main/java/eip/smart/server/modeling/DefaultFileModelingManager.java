@@ -43,23 +43,26 @@ public class DefaultFileModelingManager extends FileModelingManager {
 			fis.close();
 		} catch (InvalidClassException e) {
 			e.printStackTrace();
-			DefaultFileModelingManager.LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
 			return (null);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-		}
-		try {
-			if (ois != null)
-				ois.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			if (fis != null)
-				fis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 		return (modeling);
 	}
 
