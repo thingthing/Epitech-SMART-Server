@@ -21,61 +21,7 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
-public class JacksonFileModelingManager extends ModelingManager {
-
-    private static String addExtension(String name) {
-        String res = name;
-        if (!res.matches(".*\\.modeling$"))
-            res += JacksonFileModelingManager.EXTENSION;
-        return (res);
-    }
-
-    private final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-    private static File			DIR			= new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
-
-    private static String		EXTENSION	= ".modeling";
-
-    public JacksonFileModelingManager() {
-        JacksonFileModelingManager.DIR.mkdirs();
-    }
-
-    @Override
-    public boolean delete(String name) {
-        name = JacksonFileModelingManager.addExtension(name);
-        if (!this.exists(name))
-            return (false);
-        File file = new File(JacksonFileModelingManager.DIR, name);
-        file.delete();
-        return (true);
-    }
-
-    @Override
-    public boolean exists(String name) {
-        name = JacksonFileModelingManager.addExtension(name);
-        File file = new File(JacksonFileModelingManager.DIR, name);
-        return (file.exists());
-    }
-
-    @Override
-    public ArrayList<SimpleModelingProxy> list() {
-        ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
-        for (File file : JacksonFileModelingManager.DIR.listFiles()) {
-            Modeling modeling = this.load(file.getName());
-            if (modeling != null)
-            {
-                SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
-                modelings.add(smp);
-            }
-            else
-            {
-                SimpleModelingProxy smpObsolete = new SimpleModelingProxy();
-                smpObsolete.setName(file.getName());
-                smpObsolete.setObsolete(true);
-                modelings.add(smpObsolete);
-            }
-        }
-        return (modelings);
-    }
+public class JacksonFileModelingManager extends FileModelingManager {
 
     @Override
     public Modeling load(String name) {

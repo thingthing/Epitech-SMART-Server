@@ -19,63 +19,9 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
-public class DefaultZippedFileModelingManager extends ModelingManager {
+public class DefaultZippedFileModelingManager extends FileModelingManager {
 
     protected int compressionLevel = -1;
-
-    private static String addExtension(String name) {
-        String res = name;
-        if (!res.matches(".*\\.modeling$"))
-            res += DefaultZippedFileModelingManager.EXTENSION;
-        return (res);
-    }
-
-    private final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-    private static File			DIR			= new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
-
-    private static String		EXTENSION	= ".modeling";
-
-    public DefaultZippedFileModelingManager() {
-        DefaultZippedFileModelingManager.DIR.mkdirs();
-    }
-
-    @Override
-    public boolean delete(String name) {
-        name = DefaultZippedFileModelingManager.addExtension(name);
-        if (!this.exists(name))
-            return (false);
-        File file = new File(DefaultZippedFileModelingManager.DIR, name);
-        file.delete();
-        return (true);
-    }
-
-    @Override
-    public boolean exists(String name) {
-        name = DefaultZippedFileModelingManager.addExtension(name);
-        File file = new File(DefaultZippedFileModelingManager.DIR, name);
-        return (file.exists());
-    }
-
-    @Override
-    public ArrayList<SimpleModelingProxy> list() {
-        ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
-        for (File file : DefaultZippedFileModelingManager.DIR.listFiles()) {
-            Modeling modeling = this.load(file.getName());
-            if (modeling != null)
-            {
-                SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
-                modelings.add(smp);
-            }
-            else
-            {
-                SimpleModelingProxy smpObsolete = new SimpleModelingProxy();
-                smpObsolete.setName(file.getName());
-                smpObsolete.setObsolete(true);
-                modelings.add(smpObsolete);
-            }
-        }
-        return (modelings);
-    }
 
     @Override
     public Modeling load(String name) {
@@ -165,5 +111,13 @@ public class DefaultZippedFileModelingManager extends ModelingManager {
                 }
             }
         }
+    }
+
+    public int getCompressionLevel() {
+        return compressionLevel;
+    }
+
+    public void setCompressionLevel(int compressionLevel) {
+        this.compressionLevel = compressionLevel;
     }
 }

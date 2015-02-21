@@ -16,61 +16,7 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
-public class DefaultFileModelingManager extends ModelingManager {
-
-	private static String addExtension(String name) {
-		String res = name;
-		if (!res.matches(".*\\.modeling$"))
-			res += DefaultFileModelingManager.EXTENSION;
-		return (res);
-	}
-
-	private final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-	private static File			DIR			= new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
-
-	private static String		EXTENSION	= ".modeling";
-
-	public DefaultFileModelingManager() {
-		DefaultFileModelingManager.DIR.mkdirs();
-	}
-
-	@Override
-	public boolean delete(String name) {
-		name = DefaultFileModelingManager.addExtension(name);
-		if (!this.exists(name))
-			return (false);
-		File file = new File(DefaultFileModelingManager.DIR, name);
-		file.delete();
-		return (true);
-	}
-
-	@Override
-	public boolean exists(String name) {
-		name = DefaultFileModelingManager.addExtension(name);
-		File file = new File(DefaultFileModelingManager.DIR, name);
-		return (file.exists());
-	}
-
-	@Override
-	public ArrayList<SimpleModelingProxy> list() {
-		ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
-		for (File file : DefaultFileModelingManager.DIR.listFiles()) {
-			Modeling modeling = this.load(file.getName());
-			if (modeling != null)
-			{
-				SimpleModelingProxy smp = new SimpleModelingProxy(modeling);
-				modelings.add(smp);
-			}
-			else
-			{
-				SimpleModelingProxy smpObsolete = new SimpleModelingProxy();
-				smpObsolete.setName(file.getName());
-				smpObsolete.setObsolete(true);
-				modelings.add(smpObsolete);
-			}
-		}
-		return (modelings);
-	}
+public class DefaultFileModelingManager extends FileModelingManager {
 
 	@Override
 	public Modeling load(String name) {
