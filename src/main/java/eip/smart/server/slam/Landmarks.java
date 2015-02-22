@@ -24,7 +24,7 @@ public class Landmarks {
 	public final static int LIFE = 40;
 	private ArrayList<Landmark> landmarkDB = new ArrayList<Landmark>();
 	private int idCounter = 0;
-	
+
 	public class Landmark {
 		public Point position = new Point(0.0, 0.0, 0.0);
 		public int id = -1;
@@ -38,7 +38,7 @@ public class Landmarks {
 		public double bearing = -1;
 		// last position of agent when landmark was observed
 		public Point agentPosition = new Point(0.0, 0.0, 0.0);
-		
+
 		public Landmark() {};
 		
 		public Landmark(Point position, int life, int totalTimeObserved, double range, double bearing, Point agentPosition) {
@@ -51,13 +51,13 @@ public class Landmarks {
 			this.id = Landmarks.this.idCounter;
 		}
 	}
-	
+
 	public Landmarks() {}
-	
+
 	public int getDBSize() {
 		return (this.landmarkDB.size());
 	}
-	
+
 	/**
 	 * Associate a landmark with its possible counterpart in DB
 	 * 
@@ -80,7 +80,7 @@ public class Landmarks {
 		}
 		return (-1);
 	}
-	
+
 	/**
 	 * Search and find which landmark in DB can be associated with param
 	 * 
@@ -96,7 +96,7 @@ public class Landmarks {
 		}
 		return (-1);
 	}
-	
+
 	/**
 	 * Add a copy of parameter to DB
 	 * 
@@ -111,9 +111,9 @@ public class Landmarks {
 			this.landmarkDB.add(new_elem);
 		} catch (Exception e) {
 			//@TODO: Show exception somewhere
-		return (-1);
-	}
-	
+			return (-1);
+		}
+		
 		++this.idCounter;
 		return (new_elem.id);
 	}
@@ -121,7 +121,7 @@ public class Landmarks {
 	public ArrayList<Landmark> getLandmarkDB() {
 		return (this.landmarkDB);
 	}
-	
+
 	/**
 	 * Get valid Landmark in DB closest to param. A valid Landmark is a Landmark
 	 * which was observed enough time (more than MINOBSERVATION)
@@ -137,7 +137,7 @@ public class Landmarks {
 	public void getClosestAssociation(Landmark lm) {
 		Landmark closestLandmark = null;
 		double leastDistance = -1;
-		
+
 		for (Landmark toCompare: this.landmarkDB) {
 			if (toCompare.totalTimeObserved > MINOBSERVATION) {
 				double temp = lm.position.getDistance(toCompare.position);
@@ -157,9 +157,9 @@ public class Landmarks {
 			lm.totalTimeObserved = closestLandmark.totalTimeObserved;
 		}
 	}
-	
+
 	/**
-	 * Function use for debug 
+	 * Function use for debug
 	 * 
 	 * @return landmark closest to Agent origin
 	 */
