@@ -42,6 +42,16 @@ public class Landmarks {
 		public Point agentPosition = new Point(0.0, 0.0, 0.0);
 		
 		public Landmark() {};
+		
+		public Landmark(Point position, int life, int totalTimeObserved, double range, double bearing, Point agentPosition) {
+			this.position = position;
+			this.life = life;
+			this.totalTimeObserved = totalTimeObserved;
+			this.range = range;
+			this.bearing = bearing;
+			this.agentPosition = agentPosition;
+			this.id = Landmarks.this.idCounter;
+		}
 	}
 	
 	public Landmarks() {}
