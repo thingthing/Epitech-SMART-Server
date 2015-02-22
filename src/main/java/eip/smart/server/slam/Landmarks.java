@@ -16,13 +16,12 @@ public class Landmarks {
 	/**
 	 * @TODO: Find a way to maybe put them in static const and unsigned
 	 */
-	public final static int MAXLANDMARKS = 3000; // Max number of landmarks
 	public final static double MAXERROR = 0.5; // If a landmarks is within this distance of another landmarks, its the same landmarks (in cm i think)
 	public final static int MINOBSERVATION = 15; // Number of times a landmark must be observed to be recognized as a landmark
 	public final static int LIFE = 40; // Use to reset life counter (counter use to determine whether to discard a landmark or not)
 
-	private ArrayList<Landmark> landmarkDB = new ArrayList<Landmark>(MAXLANDMARKS);
 	private int DBSize = 0;
+	private ArrayList<Landmark> landmarkDB = new ArrayList<Landmark>();
 	
 	public class Landmark {
 		public Point position = new Point(0.0, 0.0, 0.0);
