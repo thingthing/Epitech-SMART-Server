@@ -13,9 +13,6 @@ import eip.smart.model.geometry.Point;
  */
 public class Landmarks {
 
-	/**
-	 * @TODO: Find a way to maybe put them in static const and unsigned
-	 */
 	// If a landmarks is within this distance of another landmarks, its the same
 	// landmarks (in cm i think)
 	public final static double MAXERROR = 0.5;
