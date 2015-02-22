@@ -137,25 +137,27 @@ public class Landmarks {
 	 *            out parameter: Total time observed of closest valid Landmark
 	 *            found
 	 */
-	public void getClosestAssociation(Landmark lm, int id, int totalTimeObserved) {
+	public void getClosestAssociation(Landmark lm) {
 		Landmark closestLandmark = null;
-		double temp;
 		double leastDistance = -1;
 		
-		for (int i = 0; i < this.DBSize; ++i) {
-			if (this.landmarkDB.get(i).totalTimeObserved > MINOBSERVATION) {
-				temp = lm.position.getDistance(this.landmarkDB.get(i).position);
+		for (Landmark toCompare: this.landmarkDB) {
+			if (toCompare.totalTimeObserved > MINOBSERVATION) {
+				double temp = lm.position.getDistance(toCompare.position);
 				if (leastDistance < 0 || temp < leastDistance) {
 					leastDistance = temp;
-					closestLandmark = this.landmarkDB.get(i);
+					closestLandmark = toCompare;
 				}
 			}
 		}
-		if (leastDistance < 0 || closestLandmark == null)
-			id = -1;
+		
+		if (leastDistance < 0 || closestLandmark == null) {
+			lm.id = -1;
+			lm.totalTimeObserved = -1;
+		}
 		else {
-			id = closestLandmark.id;
-			totalTimeObserved = closestLandmark.totalTimeObserved;
+			lm.id = closestLandmark.id;
+			lm.totalTimeObserved = closestLandmark.totalTimeObserved;
 		}
 	}
 	
