@@ -16,21 +16,30 @@ public class Landmarks {
 	/**
 	 * @TODO: Find a way to maybe put them in static const and unsigned
 	 */
-	public final static double MAXERROR = 0.5; // If a landmarks is within this distance of another landmarks, its the same landmarks (in cm i think)
-	public final static int MINOBSERVATION = 15; // Number of times a landmark must be observed to be recognized as a landmark
-	public final static int LIFE = 40; // Use to reset life counter (counter use to determine whether to discard a landmark or not)
-
-	private int DBSize = 0;
+	// If a landmarks is within this distance of another landmarks, its the same
+	// landmarks (in cm i think)
+	public final static double MAXERROR = 0.5;
+	// Number of times a landmark must be observed to be recognized as a
+	// landmark
+	public final static int MINOBSERVATION = 15;
+	// Use to reset life counter (counter use to determine whether to discard a
+	// landmark or not)
+	public final static int LIFE = 40;
 	private ArrayList<Landmark> landmarkDB = new ArrayList<Landmark>();
 	
 	public class Landmark {
 		public Point position = new Point(0.0, 0.0, 0.0);
 		public int id = -1;
-		public int life = LIFE; // a life counter to determine whether to discard a landmark or not
-		public int totalTimeObserved = 0; // the number of times we have seen the landmark
-		public double range = -1; // last observed range from agent to landmark
-		public double bearing = -1; // last observed bearing from agent to landmark
-		public Point agentPosition = new Point(0.0, 0.0, 0.0); // last position of agent when landmark was observed
+		// a life counter to determine whether to discard a landmark or not
+		public int life = LIFE;
+		// the number of times we have seen the landmark
+		public int totalTimeObserved = 0;
+		// last observed range from agent to landmark
+		public double range = -1;
+		// last observed bearing from agent to landmark
+		public double bearing = -1;
+		// last position of agent when landmark was observed
+		public Point agentPosition = new Point(0.0, 0.0, 0.0);
 		
 		public Landmark() {};
 	}
@@ -43,8 +52,11 @@ public class Landmarks {
 	
 	/**
 	 * Associate a landmark with its possible counterpart in DB
-	 * @param lm Landmark we want to associate
-	 * @param idCompare Id of landmark in DB we want to check with
+	 * 
+	 * @param lm
+	 *            Landmark we want to associate
+	 * @param idCompare
+	 *            Id of landmark in DB we want to check with
 	 * @return id of associated Landmark in DB or -1
 	 */
 	public int getAssociation(Landmark lm, int idCompare) {
@@ -61,7 +73,9 @@ public class Landmarks {
 	
 	/**
 	 * Search and find which landmark in DB can be associated with param
-	 * @param lm Landmark we want to associate
+	 * 
+	 * @param lm
+	 *            Landmark we want to associate
 	 * @return id of associated Landmark in DB or -1
 	 */
 	public int getAssociation(Landmark lm) {
@@ -75,7 +89,9 @@ public class Landmarks {
 	
 	/**
 	 * Add a copy of parameter to DB
-	 * @param lm Landmark we want to add to DB
+	 * 
+	 * @param lm
+	 *            Landmark we want to add to DB
 	 * @return id of Landmark added in DB or -1 if error
 	 */
 	public int addToDB(Landmark lm) {
@@ -101,12 +117,16 @@ public class Landmarks {
 	}
 	
 	/**
-	 * Get valid Landmark in DB closest to param.
-	 * A valid Landmark is a Landmark which was observed enough time (more than MINOBSERVATION)
-	 * @TODO: See how ref works in java
-	 * @param lm Landmark we want to compare
-	 * @param id out parameter: Id of closest valid Landmark found
-	 * @param totalTimeObserved out parameter: Total time observed of closest valid Landmark found
+	 * Get valid Landmark in DB closest to param. A valid Landmark is a Landmark
+	 * which was observed enough time (more than MINOBSERVATION)
+	 * 
+	 * @param lm
+	 *            Landmark we want to compare
+	 * @param id
+	 *            out parameter: Id of closest valid Landmark found
+	 * @param totalTimeObserved
+	 *            out parameter: Total time observed of closest valid Landmark
+	 *            found
 	 */
 	public void getClosestAssociation(Landmark lm, int id, int totalTimeObserved) {
 		Landmark closestLandmark = null;
@@ -132,6 +152,7 @@ public class Landmarks {
 	
 	/**
 	 * Function use for debug 
+	 * 
 	 * @return landmark closest to Agent origin
 	 */
 	public Landmark getOrigin() {
