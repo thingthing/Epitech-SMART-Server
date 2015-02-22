@@ -71,13 +71,15 @@ public class Landmarks {
 	 * @return id of associated Landmark in DB or -1
 	 */
 	public int getAssociation(Landmark lm, int idCompare) {
-		if (lm.position.getDistance(this.landmarkDB.get(idCompare).position) < MAXERROR && this.landmarkDB.get(idCompare).id != -1) {
-			this.landmarkDB.get(idCompare).life = LIFE;
-			++this.landmarkDB.get(idCompare).totalTimeObserved;
-			this.landmarkDB.get(idCompare).bearing = lm.bearing;
-			this.landmarkDB.get(idCompare).range = lm.range;
-			this.landmarkDB.get(idCompare).agentPosition = lm.agentPosition;
-			return (this.landmarkDB.get(idCompare).id);
+		Landmark toCompare = this.landmarkDB.get(idCompare);
+		
+		if (lm.position.getDistance(toCompare.position) < MAXERROR && toCompare.id != -1) {
+			toCompare.life = LIFE;
+			++toCompare.totalTimeObserved;
+			toCompare.bearing = lm.bearing;
+			toCompare.range = lm.range;
+			toCompare.agentPosition = lm.agentPosition;
+			return (toCompare.id);
 		}
 		return (-1);
 	}
