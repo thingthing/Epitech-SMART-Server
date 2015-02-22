@@ -30,4 +30,22 @@ public class LandmarksTest {
 	public void tearDown() throws Exception {
 
 	}
+	
+	@Test
+	public void LandmarkCreateTest() {
+		Landmarks.Landmark test = this.parent.new Landmark();
+		
+		Assert.assertEquals(0.0, test.position.getX(), 0);
+		Assert.assertEquals(0.0, test.position.getY(), 0);
+		Assert.assertEquals(0.0, test.position.getZ(), 0);
+		Assert.assertEquals(-1, test.id);
+		Assert.assertEquals(Landmarks.LIFE, test.life);
+		Assert.assertEquals(0, test.totalTimeObserved);
+		Assert.assertEquals(-1.0, test.range, 0);
+		Assert.assertEquals(-1.0, test.bearing, 0);
+		Assert.assertEquals(0.0, test.agentPosition.getX(), 0);
+		Assert.assertEquals(0.0, test.agentPosition.getY(), 0);
+		Assert.assertEquals(0.0, test.agentPosition.getZ(), 0);
+	}
+	
 }
