@@ -108,23 +108,19 @@ public class Landmarks {
 	 * @return id of Landmark added in DB or -1 if error
 	 */
 	public int addToDB(Landmark lm) {
-		if (this.DBSize + 1 < this.landmarkDB.size()) {
-			Landmark new_elem = new Landmark();
-			new_elem.position = new Point(lm.position.getX(), lm.position.getY(), lm.position.getZ());
-			new_elem.life = LIFE;
-			new_elem.id = this.DBSize;
-			new_elem.totalTimeObserved = 1;
-			new_elem.bearing = lm.bearing;
-			new_elem.range = lm.range;
-			new_elem.agentPosition = new Point(lm.agentPosition.getX(), lm.agentPosition.getY(), lm.agentPosition.getZ());
-			this.landmarkDB.set(this.DBSize, new_elem);
-			
-			++this.DBSize;
-			return (new_elem.id);
-		}
+		Landmark new_elem = new Landmark(lm.position, LIFE, 1, lm.range, lm.bearing, lm.agentPosition);
+		
+		try {
+			this.landmarkDB.add(new_elem);
+		} catch (Exception e) {
+			//@TODO: Show exception somewhere
 		return (-1);
 	}
 	
+		++this.idCounter;
+		return (new_elem.id);
+	}
+
 	public ArrayList<Landmark> getLandmarkDB() {
 		return (this.landmarkDB);
 	}
