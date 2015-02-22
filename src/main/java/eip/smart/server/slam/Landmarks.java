@@ -26,6 +26,7 @@ public class Landmarks {
 	// landmark or not)
 	public final static int LIFE = 40;
 	private ArrayList<Landmark> landmarkDB = new ArrayList<Landmark>();
+	private int idCounter = 0;
 	
 	public class Landmark {
 		public Point position = new Point(0.0, 0.0, 0.0);
@@ -57,7 +58,7 @@ public class Landmarks {
 	public Landmarks() {}
 	
 	public int getDBSize() {
-		return (this.DBSize);
+		return (this.landmarkDB.size());
 	}
 	
 	/**
@@ -89,8 +90,8 @@ public class Landmarks {
 	 * @return id of associated Landmark in DB or -1
 	 */
 	public int getAssociation(Landmark lm) {
-		for (int i = 0; i < this.DBSize; ++i) {
-			int id = this.getAssociation(lm, i);
+		for (Landmark toCompare: this.landmarkDB) {
+			int id = this.getAssociation(lm, toCompare.id);
 			if (id != -1)
 				return (id);
 		}
