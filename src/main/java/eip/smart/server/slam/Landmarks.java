@@ -168,7 +168,7 @@ public class Landmarks {
 	 */
 	public Landmark getOrigin() {
 		Landmark lm = new Landmark();
-		this.getClosestAssociation(lm, lm.id, lm.totalTimeObserved);
+		this.getClosestAssociation(lm);
 		return (lm);
 	}
 }
