@@ -19,4 +19,15 @@ import eip.smart.server.slam.Landmarks.Landmark;
 @SuppressWarnings("static-method")
 public class LandmarksTest {
 
+	private Landmarks parent;
+	
+	@Before
+	public void setUp() throws Exception {
+		this.parent = new Landmarks();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+
+	}
 }
