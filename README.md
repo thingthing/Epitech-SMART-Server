@@ -41,4 +41,4 @@ Afin de créer une configuration de lancement
 Vous pourrez modifier ici les options de lancement du projet.
 
 Un warning apparait vous informant qu'aucun Artefact n'est configuré.
-* Fix et choisir l'artefact server:war exploded créé précédemment
+* Fix et choisir l'artefact server:war exploded créé précédemment.

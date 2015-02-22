@@ -70,7 +70,7 @@ public class Server implements ServletContextListener {
 		this.threadPool.shutdown();
 		this.threadPool.shutdownNow();
 
-		this.acceptor.unbind();
+		this.socketListenStop();
 	}
 
 	/**
@@ -189,6 +189,10 @@ public class Server implements ServletContextListener {
 	}
 
 	public void socketListenStop() {
+		this.acceptor.setCloseOnDeactivation(true);
+		for (IoSession session : this.acceptor.getManagedSessions().values())
+			session.close(true);
 		this.acceptor.unbind();
+		this.acceptor.dispose(false);
 	}
 }
