@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import eip.smart.model.Modeling;
-import eip.smart.model.proxy.SimpleModelingProxy;
 
 
 import eip.smart.model.proxy.FileModelingProxy;
@@ -24,7 +22,7 @@ public class DefaultFileModelingManager extends FileModelingManager {
 		
 		if (!this.exists(name))
 			return (null);
-		File file = new File(DefaultFileModelingManager.DIR, name);
+		File file = new File(DefaultFileModelingManager.DEFAULT_DIR, name);
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		Modeling modeling = null;
@@ -68,7 +66,7 @@ public class DefaultFileModelingManager extends FileModelingManager {
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(DefaultFileModelingManager.DIR, DefaultFileModelingManager.addExtension(modeling.getName()));
+		File file = new File(DefaultFileModelingManager.DEFAULT_DIR, DefaultFileModelingManager.addExtension(modeling.getName()));
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		

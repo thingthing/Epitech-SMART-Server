@@ -1,15 +1,8 @@
 package eip.smart.server.modeling;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -29,7 +22,7 @@ public class JacksonFileModelingManager extends FileModelingManager {
         Modeling modeling = null;
         if (!this.exists(name))
             return (null);
-        File file = new File(JacksonFileModelingManager.DIR, name);
+        File file = new File(JacksonFileModelingManager.DEFAULT_DIR, name);
         LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
 
         try {
@@ -49,7 +42,7 @@ public class JacksonFileModelingManager extends FileModelingManager {
 
     @Override
     public void save(Modeling modeling) {
-        File file = new File(JacksonFileModelingManager.DIR, JacksonFileModelingManager.addExtension(modeling.getName()));
+        File file = new File(JacksonFileModelingManager.DEFAULT_DIR, JacksonFileModelingManager.addExtension(modeling.getName()));
 
         try {
             ObjectMapper mapper = new ObjectMapper();

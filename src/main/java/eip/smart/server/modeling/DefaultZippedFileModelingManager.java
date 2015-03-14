@@ -7,14 +7,11 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import eip.smart.model.Modeling;
-import eip.smart.model.proxy.SimpleModelingProxy;
 
 
 import eip.smart.model.proxy.FileModelingProxy;
@@ -29,7 +26,7 @@ public class DefaultZippedFileModelingManager extends FileModelingManager {
 
         if (!this.exists(name))
             return (null);
-        File file = new File(DefaultZippedFileModelingManager.DIR, name);
+        File file = new File(DefaultZippedFileModelingManager.DEFAULT_DIR, name);
         FileInputStream fis = null;
         ZipInputStream zis = null;
         ObjectInputStream ois = null;
@@ -53,25 +50,28 @@ public class DefaultZippedFileModelingManager extends FileModelingManager {
             return (null);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
-        try {
-            if (ois != null)
-                ois.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (fis != null)
-                fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return (modeling);
     }
 
     @Override
     public void save(Modeling modeling) {
-        File file = new File(DefaultZippedFileModelingManager.DIR, DefaultZippedFileModelingManager.addExtension(modeling.getName()));
+        File file = new File(DefaultZippedFileModelingManager.DEFAULT_DIR, DefaultZippedFileModelingManager.addExtension(modeling.getName()));
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         ZipOutputStream zos = null;

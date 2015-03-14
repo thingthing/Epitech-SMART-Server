@@ -12,9 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -28,7 +26,7 @@ public class JacksonZippedFileModelingManager extends FileModelingManager {
         Modeling modeling = null;
         if (!this.exists(name))
             return (null);
-        File file = new File(JacksonZippedFileModelingManager.DIR, name);
+        File file = new File(JacksonZippedFileModelingManager.DEFAULT_DIR, name);
         FileInputStream fis = null;
         ZipInputStream zis = null;
         LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
@@ -67,7 +65,7 @@ public class JacksonZippedFileModelingManager extends FileModelingManager {
 
     @Override
     public void save(Modeling modeling) {
-        File file = new File(JacksonZippedFileModelingManager.DIR, JacksonZippedFileModelingManager.addExtension(modeling.getName()));
+        File file = new File(JacksonZippedFileModelingManager.DEFAULT_DIR, JacksonZippedFileModelingManager.addExtension(modeling.getName()));
         FileOutputStream fos = null;
         ZipOutputStream zos = null;
 

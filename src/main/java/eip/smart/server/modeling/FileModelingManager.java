@@ -1,23 +1,11 @@
 package eip.smart.server.modeling;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
-
-
-import eip.smart.model.proxy.FileModelingProxy;
 
 public abstract class FileModelingManager implements ModelingManager {
 
@@ -29,12 +17,20 @@ public abstract class FileModelingManager implements ModelingManager {
     }
 
     protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-    protected static File			DIR			= new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
+    public static final File        DEFAULT_DIR = getBaseDirectory();
 
-    private static String		EXTENSION	= ".modeling";
+    private static File getBaseDirectory() {
+        try {
+            return new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
+        } catch (NullPointerException e) { // We are not in Tomcat context, default save folder is current folder
+            return new File(".");
+        }
+    }
+
+    public static final String		EXTENSION	= ".modeling";
 
     public FileModelingManager() {
-        FileModelingManager.DIR.mkdirs();
+        FileModelingManager.DEFAULT_DIR.mkdirs();
     }
 
     @Override
@@ -42,7 +38,7 @@ public abstract class FileModelingManager implements ModelingManager {
         name = FileModelingManager.addExtension(name);
         if (!this.exists(name))
             return (false);
-        File file = new File(FileModelingManager.DIR, name);
+        File file = new File(FileModelingManager.DEFAULT_DIR, name);
         file.delete();
         return (true);
     }
@@ -50,14 +46,14 @@ public abstract class FileModelingManager implements ModelingManager {
     @Override
     public boolean exists(String name) {
         name = FileModelingManager.addExtension(name);
-        File file = new File(FileModelingManager.DIR, name);
+        File file = new File(FileModelingManager.DEFAULT_DIR, name);
         return (file.exists());
     }
 
     @Override
     public ArrayList<SimpleModelingProxy> list() {
         ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
-        for (File file : FileModelingManager.DIR.listFiles()) {
+        for (File file : FileModelingManager.DEFAULT_DIR.listFiles()) {
             Modeling modeling = this.load(file.getName());
             if (modeling != null)
             {
