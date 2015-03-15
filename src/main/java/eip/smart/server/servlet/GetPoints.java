@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.model.Modeling;
 import eip.smart.model.Status;
+import eip.smart.server.Server;
 import eip.smart.util.PointCloudGenerator;
 
 /**
@@ -25,10 +27,15 @@ public class GetPoints extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		json.writeFieldName("points");
-		this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
-
-		this.status = Status.SIMULATION;
+		Modeling modeling = Server.getServer().getCurrentModeling();
+		if (modeling == null)
+			this.status = Status.MODELING_NO_CURRENT;
+		else
+		{
+			json.writeFieldName("points");
+			this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
+			this.status = Status.SIMULATION;
+		}
 	}
 
 }

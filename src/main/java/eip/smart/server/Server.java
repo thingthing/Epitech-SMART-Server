@@ -25,12 +25,13 @@ import org.apache.mina.util.AvailablePortFinder;
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
-import eip.smart.server.modeling.FileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
 import eip.smart.server.servlet.ModelingInfo;
+
+import eip.smart.server.modeling.DefaultFileModelingManager;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -46,8 +47,9 @@ public class Server implements ServletContextListener {
 	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
 	private static Server		server;
 
-	private ModelingManager		manager				= new FileModelingManager();
-
+	//private ModelingManager		manager				= new FileModelingManager();
+	private ModelingManager		manager				= new DefaultFileModelingManager();
+	
 	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
 	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
 
