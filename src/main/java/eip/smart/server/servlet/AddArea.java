@@ -23,7 +23,6 @@ public class AddArea extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-
 		Area area = null;
 		if (req.getParameter("area") != null)
 			try {

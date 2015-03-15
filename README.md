@@ -5,7 +5,7 @@
 ### Prérequis ###
 
 * JDK 1.8 : http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-* Tomcat 8.0.12 : http://tomcat.apache.org/download-80.cgi
+* Tomcat 7 : http://tomcat.apache.org/download-80.cgi
 * Le projet EIP CS commons disponible sur le bitbucket ou vous avez trouvé ce README
 
 Afin que TomCat et Java fonctionne correctement il est nécessaire de configurer les variables d'environnemt JAVA_HOME et TOMCAT_HOME en indiquant les répertoires d'installation de tomcat et java (le dossier dans lequel vous avez décompressé les zip)
@@ -41,4 +41,4 @@ Afin de créer une configuration de lancement
 Vous pourrez modifier ici les options de lancement du projet.
 
 Un warning apparait vous informant qu'aucun Artefact n'est configuré.
-* Fix et choisir l'artefact server:war exploded créé précédemment
+* Fix et choisir l'artefact server:war exploded créé précédemment..

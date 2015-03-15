@@ -10,18 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
-import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
 
 /**
  * Servlet implementation class GetAgentInfo
  */
-@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class ManualOrder extends JsonServlet {
+@WebServlet(urlPatterns = { "/agent_delete" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class AgentDelete extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -35,17 +33,9 @@ public class ManualOrder extends JsonServlet {
 					agent = a;
 		}
 
-		Point order = null;
-		if (req.getParameter("order") != null)
-			try {
-				order = new ObjectMapper().readValue(req.getParameter("order"), Point.class);
-			} catch (IOException e) {}
-
 		if (agent == null)
 			this.status = Status.AGENT_NOT_FOUND;
-		else if (order == null)
-			this.status = Status.ORDER_NO_GIVEN;
 		else
-			agent.pushOrder(order);
+			Server.getServer().getIoAgentContainer().getByAgent(agent).removeAgent();
 	}
 }

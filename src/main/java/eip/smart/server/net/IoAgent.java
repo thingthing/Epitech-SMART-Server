@@ -37,6 +37,10 @@ public class IoAgent {
 		return (this.session);
 	}
 
+	public void removeAgent() {
+		this.agent = null;
+	}
+
 	public void sessionCreated(IoSession session) {
 		this.session = session;
 		this.agent.setConnected(true);

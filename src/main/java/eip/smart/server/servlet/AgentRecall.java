@@ -18,21 +18,20 @@ import eip.smart.server.Server;
 /**
  * Servlet implementation class GetAgentInfo
  */
-@WebServlet(urlPatterns = { "/agent_recall" }, initParams = { @WebInitParam(name = "id", value = "") })
+@WebServlet(urlPatterns = { "/agent_recall" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class AgentRecall extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		int id = -1;
-		try {
-			id = Integer.parseInt(req.getParameter("id"));
-		} catch (NumberFormatException e) {}
-		ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
+		String name = req.getParameter("name");
 		Agent agent = null;
-		for (Agent a : agents)
-			if (a.getID() == id)
-				agent = a;
+		if (name != null) {
+			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
+			for (Agent a : agents)
+				if (name.equals(a.getName()))
+					agent = a;
+		}
 
 		if (agent == null)
 			this.status = Status.AGENT_NOT_FOUND;
