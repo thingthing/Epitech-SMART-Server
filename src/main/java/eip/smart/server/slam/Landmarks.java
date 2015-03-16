@@ -4,6 +4,8 @@
 package eip.smart.server.slam;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import eip.smart.model.geometry.Point;
 
@@ -40,6 +42,8 @@ public class Landmarks {
 		}
 	}
 
+	private final static Logger	LOGGER			= Logger.getLogger(Landmarks.class.getName());
+
 	// If a landmarks is within this distance of another landmarks, its the same
 	// landmarks (in cm i think)
 	public final static double	MAXERROR		= 0.5;
@@ -49,6 +53,7 @@ public class Landmarks {
 	// Use to reset life counter (counter use to determine whether to discard a
 	// landmark or not)
 	public final static int		LIFE			= 40;
+
 	private ArrayList<Landmark>	landmarkDB		= new ArrayList<Landmark>();
 
 	private int					idCounter		= 0;
@@ -68,7 +73,7 @@ public class Landmarks {
 		try {
 			this.landmarkDB.add(new_elem);
 		} catch (Exception e) {
-			// @TODO: Show exception somewhere
+			Landmarks.LOGGER.log(Level.SEVERE, "Can't add landmarks to db: " + e.getMessage());
 			return (-1);
 		}
 
@@ -89,6 +94,7 @@ public class Landmarks {
 			if (id != -1)
 				return (id);
 		}
+		Landmarks.LOGGER.log(Level.INFO, "Landmark not found in DB");
 		return (-1);
 	}
 
@@ -112,6 +118,7 @@ public class Landmarks {
 			toCompare.agentPosition = lm.agentPosition;
 			return (toCompare.id);
 		}
+		Landmarks.LOGGER.log(Level.INFO, "Landmark not found in DB");
 		return (-1);
 	}
 
@@ -167,4 +174,5 @@ public class Landmarks {
 		this.getClosestAssociation(lm);
 		return (lm);
 	}
+
 }
