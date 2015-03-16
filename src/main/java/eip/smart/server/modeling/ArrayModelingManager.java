@@ -6,7 +6,7 @@ import java.util.Iterator;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
 
-public class ArrayModelingManager extends ModelingManager {
+public class ArrayModelingManager implements ModelingManager {
 
 	private ArrayList<Modeling>	modelings	= new ArrayList<>();
 

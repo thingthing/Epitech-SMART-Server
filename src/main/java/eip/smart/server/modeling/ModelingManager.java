@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
 
-public abstract class ModelingManager {
+public interface ModelingManager {
 
-	public abstract boolean delete(String name);
+	public boolean delete(String name);
 
-	public abstract boolean exists(String name);
+	public boolean exists(String name);
 
-	public abstract ArrayList<SimpleModelingProxy> list();
+	public ArrayList<SimpleModelingProxy> list();
 
-	public abstract Modeling load(String name);
+	public Modeling load(String name);
 
-	public abstract void save(Modeling modeling);
+	public void save(Modeling modeling);
 }
