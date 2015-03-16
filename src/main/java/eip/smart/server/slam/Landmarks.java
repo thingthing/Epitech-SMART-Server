@@ -126,15 +126,17 @@ public class Landmarks {
 	 * @return id of associated Landmark in DB or -1
 	 */
 	public int getAssociation(Landmark lm, int idCompare) {
-		Landmark toCompare = this.landmarkDB.get(idCompare);
+		if (idCompare >= 0) {
+			Landmark toCompare = this.get(idCompare);
 
-		if (lm.position.getDistance(toCompare.position) < Landmarks.MAXERROR && toCompare.id != -1) {
-			toCompare.life = Landmarks.LIFE;
-			++toCompare.totalTimeObserved;
-			toCompare.bearing = lm.bearing;
-			toCompare.range = lm.range;
-			toCompare.agentPosition = lm.agentPosition;
-			return (toCompare.id);
+			if (lm.position.getDistance(toCompare.position) < Landmarks.MAXERROR && toCompare.id != -1) {
+				toCompare.life = Landmarks.LIFE;
+				++toCompare.totalTimeObserved;
+				toCompare.bearing = lm.bearing;
+				toCompare.range = lm.range;
+				toCompare.agentPosition = lm.agentPosition;
+				return (toCompare.id);
+			}
 		}
 		Landmarks.LOGGER.log(Level.INFO, "Landmark not found in DB");
 		return (-1);
