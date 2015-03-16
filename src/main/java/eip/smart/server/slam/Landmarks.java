@@ -84,6 +84,22 @@ public class Landmarks {
 	}
 
 	/**
+	 * Get Landmark from db with good id
+	 * 
+	 * @param id
+	 *            Id of the landmark searched
+	 *
+	 * @return Landmark found or null
+	 */
+	public Landmark get(int id) {
+		for (Landmark lm : this.landmarkDB)
+			if (lm.id == id)
+				return (lm);
+		Landmarks.LOGGER.log(Level.SEVERE, "Can't get landmark with id: " + id);
+		return (null);
+	}
+
+	/**
 	 * Search and find which landmark in DB can be associated with param
 	 *
 	 * @param lm
