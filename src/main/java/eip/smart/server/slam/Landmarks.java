@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import eip.smart.model.Area;
+import eip.smart.model.Modeling;
 import eip.smart.model.geometry.Point;
 
 /**
@@ -175,4 +177,26 @@ public class Landmarks {
 		return (lm);
 	}
 
+	/**
+	 * Remove landmark that were not seen for too long
+	 *
+	 * @param modeling
+	 *            Current modeling in which we want to check the landmarks
+	 */
+	public void removeBadLandmarks(Modeling model) {
+		for (Area toTest : model.getAreas())
+			this.removeBadLandmarksFromArea(toTest);
+	}
+
+	public void removeBadLandmarksFromArea(Area toTest) {
+		ArrayList<Landmark> toDelete = new ArrayList<Landmark>();
+
+		for (Landmark current : this.landmarkDB)
+			// Landmark found in area so decrease life and delete if no more life
+			if (toTest.contains(current.position) == true)
+				if (--current.life <= 0)
+					toDelete.add(current);
+		// @TODO: Maybe reset iDCounter and change id of all DB
+		this.landmarkDB.removeAll(toDelete);
+	}
 }
