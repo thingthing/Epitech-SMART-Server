@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import eip.smart.model.Area;
 import eip.smart.model.Modeling;
 import eip.smart.model.geometry.Point;
+import eip.smart.util.Pair;
 
 /**
  * @author Thing-leoh Nicolas
@@ -44,21 +45,22 @@ public class Landmarks {
 		}
 	}
 
-	private final static Logger	LOGGER			= Logger.getLogger(Landmarks.class.getName());
-
+	private final static Logger					LOGGER			= Logger.getLogger(Landmarks.class.getName());
 	// If a landmarks is within this distance of another landmarks, its the same
 	// landmarks (in cm i think)
-	public final static double	MAXERROR		= 0.5;
+	public final static double					MAXERROR		= 0.5;
+
 	// Number of times a landmark must be observed to be recognized as a
 	// landmark
-	public final static int		MINOBSERVATION	= 15;
+	public final static int						MINOBSERVATION	= 15;
 	// Use to reset life counter (counter use to determine whether to discard a
 	// landmark or not)
-	public final static int		LIFE			= 40;
+	public final static int						LIFE			= 40;
+	public ArrayList<Pair<Integer, Integer>>	IDtoID			= new ArrayList<Pair<Integer, Integer>>();
 
-	private ArrayList<Landmark>	landmarkDB		= new ArrayList<Landmark>();
+	private ArrayList<Landmark>					landmarkDB		= new ArrayList<Landmark>();
 
-	private int					idCounter		= 0;
+	private int									idCounter		= 0;
 
 	public Landmarks() {}
 
@@ -85,7 +87,7 @@ public class Landmarks {
 
 	/**
 	 * Get Landmark from db with good id
-	 * 
+	 *
 	 * @param id
 	 *            Id of the landmark searched
 	 *
@@ -185,6 +187,20 @@ public class Landmarks {
 	}
 
 	/**
+	 * Get id of landmark in matrices
+	 *
+	 * @param lmId
+	 *            Id of landmark we want to use
+	 * @return id of landmark in matrices
+	 */
+	public int getMatriceId(int lmId) {
+		for (Pair<Integer, Integer> p : this.IDtoID)
+			if (p.getFirst() == lmId)
+				return (p.getSecond());
+		return (-1);
+	}
+
+	/**
 	 * Function use for debug
 	 *
 	 * @return landmark closest to Agent origin
@@ -216,5 +232,17 @@ public class Landmarks {
 					toDelete.add(current);
 		// @TODO: Maybe reset iDCounter and change id of all DB
 		this.landmarkDB.removeAll(toDelete);
+	}
+
+	/**
+	 * Save link between landmark db id and matrices id
+	 * 
+	 * @param lmId
+	 *            Landmark db id
+	 * @param matriceId
+	 *            Matrices id
+	 */
+	public void setMatriceId(int lmId, int matriceId) {
+		this.IDtoID.add(new Pair<Integer, Integer>(lmId, matriceId));
 	}
 }
