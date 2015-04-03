@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
+import eip.smart.model.geometry.Point;
 
 /**
  * @author Thing-leoh Nicolas
@@ -15,6 +16,7 @@ import eip.smart.model.Modeling;
 public class Slam {
 
 	public Landmarks						landmarkDB			= new Landmarks();
+	public SystemStateMatrice				state				= new SystemStateMatrice();
 	// To be set with the new currentModeling
 	public Modeling							currentModeling		= null;
 	// To be set with the recieveLandmarks
@@ -26,6 +28,7 @@ public class Slam {
 	public Slam(Modeling currentModeling, ArrayList<Landmarks.Landmark> recievedLandmarks) {
 		this.currentModeling = currentModeling;
 		this.recieveLandmarks = recievedLandmarks;
+		this.state = new SystemStateMatrice(this.currentModeling.getAgents());
 	}
 
 	/**
@@ -37,12 +40,13 @@ public class Slam {
 	public void addLandmarks(ArrayList<Landmarks.Landmark> newLandmarks) {
 		if (newLandmarks == null)
 			newLandmarks = this.newLandmakrs;
-		for (Landmarks.Landmark lm : newLandmarks)
-			this.landmarkDB.addToDB(lm);
-		// @TODO: Add landmark to state matrice and get slamID
-		// @TODO: Save SlamId with lmID
-		// @TODO: Add landmark to covariance matrice
-		// @TODO: Calculate covariance
+		for (Landmarks.Landmark lm : newLandmarks) {
+			int lmId = this.landmarkDB.addToDB(lm);
+			int matricesId = this.state.addLandmarkPosition(lm.position);
+			this.landmarkDB.setMatriceId(lmId, matricesId);
+			// @TODO: Add landmark to covariance matrice
+			// @TODO: Calculate covariance
+		}
 	}
 
 	/**
@@ -55,21 +59,24 @@ public class Slam {
 	public void updateAgentState(Modeling currentModeling) {
 		if (currentModeling == null)
 			currentModeling = this.currentModeling;
-		for (Agent agent : currentModeling.getAgents()) {
-			// @TODO: update state matrice
-			// @TODO: Update jacobian matrice
-			// @TODO: update noise matrice
-			// @TODO: Set and update covariance matrice
-		}
+		for (Agent agent : currentModeling.getAgents())
+			this.state.setAgentState(agent);
+		// @TODO: Update jacobian matrice
+		// @TODO: update noise matrice
+		// @TODO: Set and update covariance matrice
 		// @TODO: Set recieveLandmarks beforehand or pass it in the param
+
 		this.validationGate(null);
 		this.addLandmarks(null);
-		for (Agent agent : currentModeling.getAgents())
-			for (Landmarks.Landmark lm : this.reobservedLandmakrs) {
+
+		for (Agent agent : currentModeling.getAgents()) {
+			for (Landmarks.Landmark lm : this.reobservedLandmakrs)
 				// @TODO: calculate Kalman gain
-				// @TODO: Update state using Kalman gain
-			}
-		// @TODO: Set agent position: agent.setCurrentPosition(position);
+				// @TODO: Change to Update state using Kalman gain
+				this.state.updateAgentState(agent, 0.0, new Point(0.0, 0.0, 0.0));
+			agent.setCurrentPosition(this.state.getAgentPos(agent));
+		}
+
 		this.landmarkDB.removeBadLandmarks(currentModeling);
 	}
 
