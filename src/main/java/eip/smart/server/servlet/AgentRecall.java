@@ -37,9 +37,7 @@ public class AgentRecall extends JsonServlet {
 			this.status = Status.AGENT_NOT_FOUND;
 		else if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
-		else {
-			this.status = Status.TODO;
+		else
 			agent.recall();
-		}
 	}
 }
