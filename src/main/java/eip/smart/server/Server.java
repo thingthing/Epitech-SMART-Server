@@ -19,19 +19,20 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.DatagramSessionConfig;
+import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.apache.mina.util.AvailablePortFinder;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.server.modeling.DefaultFileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
+import eip.smart.server.net.BroadcastUDPHandler;
 import eip.smart.server.net.IoAgentContainer;
 import eip.smart.server.servlet.ModelingInfo;
-
-import eip.smart.server.modeling.DefaultFileModelingManager;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -40,24 +41,28 @@ import eip.smart.server.modeling.DefaultFileModelingManager;
 @WebListener
 public class Server implements ServletContextListener {
 
+	private final static Logger	LOGGER	= Logger.getLogger(ModelingInfo.class.getName());
+
+	private static Server		server;
+
 	public static Server getServer() {
 		return (Server.server);
 	}
 
-	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
-	private static Server		server;
-
-	//private ModelingManager		manager				= new FileModelingManager();
-	private ModelingManager		manager				= new DefaultFileModelingManager();
-	
-	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
-	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
+	private IoAcceptor			acceptorTCP			= new NioSocketAcceptor();
+	private IoAcceptor			acceptorUDP			= new NioDatagramAcceptor();
 
 	private Modeling			currentModeling		= null;
 	private ModelingTask		currentTask			= null;
+
+	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
+	private ModelingManager		manager				= new DefaultFileModelingManager();
+
+	private int					portTCP				= 4200;
+	private int					portUDP				= 4300;
+
 	private boolean				running				= false;
-	private IoAcceptor			acceptor			= new NioSocketAcceptor();
-	private int					port				= AvailablePortFinder.getNextAvailable(4200);
+	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
 
 	public Server() {}
 
@@ -83,15 +88,26 @@ public class Server implements ServletContextListener {
 		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
 
-		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+		this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
+		this.acceptorTCP.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
 
 		AgentServerHandler agentHandler = new AgentServerHandler();
 		agentHandler.setIoAgentContainer(this.ioAgentContainer);
-		this.acceptor.setHandler(agentHandler);
+		this.acceptorTCP.setHandler(agentHandler);
 
-		this.acceptor.getSessionConfig().setReadBufferSize(2048);
-		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+		this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
+		this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+
+		this.acceptorUDP.getFilterChain().addLast("logger", new LoggingFilter());
+		this.acceptorUDP.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+		((DatagramSessionConfig) this.acceptorUDP.getSessionConfig()).setReuseAddress(true);
+		this.acceptorUDP.setHandler(new BroadcastUDPHandler());
+		try {
+			this.acceptorUDP.bind(new InetSocketAddress(this.portUDP));
+			Server.LOGGER.info(String.format("UDP Port is %d", this.portUDP));
+		} catch (IOException e) {
+			Server.LOGGER.severe(String.format("Failed to bind UDP port:\n\t%s", e));
+		}
 	}
 
 	public ArrayList<Agent> getAgentsAvailable() {
@@ -107,7 +123,7 @@ public class Server implements ServletContextListener {
 	}
 
 	public int getPort() {
-		return (this.port);
+		return (this.portTCP);
 	}
 
 	public ArrayList<IoSession> getSessions() {
@@ -115,7 +131,7 @@ public class Server implements ServletContextListener {
 	}
 
 	public boolean isAcceptorActive() {
-		return (this.acceptor.isActive());
+		return (this.acceptorTCP.isActive());
 	}
 
 	public boolean isPaused() {
@@ -183,18 +199,18 @@ public class Server implements ServletContextListener {
 	}
 
 	public void setPort(int port) {
-		this.port = port;
+		this.portTCP = port;
 	}
 
 	public void socketListen() throws IOException, IllegalArgumentException {
-		this.acceptor.bind(new InetSocketAddress(this.port));
+		this.acceptorTCP.bind(new InetSocketAddress(this.portTCP));
 	}
 
 	public void socketListenStop() {
-		this.acceptor.setCloseOnDeactivation(true);
-		for (IoSession session : this.acceptor.getManagedSessions().values())
+		this.acceptorTCP.setCloseOnDeactivation(true);
+		for (IoSession session : this.acceptorTCP.getManagedSessions().values())
 			session.close(true);
-		this.acceptor.unbind();
-		this.acceptor.dispose(false);
+		this.acceptorTCP.unbind();
+		this.acceptorTCP.dispose(false);
 	}
 }
