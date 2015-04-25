@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingStop
- */
+ * <b>The servlet ModelingStop stop and save the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/modeling_stop")
 public class ModelingStop extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

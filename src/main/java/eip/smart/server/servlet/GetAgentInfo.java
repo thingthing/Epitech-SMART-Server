@@ -16,8 +16,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet GetAgentInfo take an agent's name as parameter and return informations about the corresponding Agent.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/get_agent_info" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class GetAgentInfo extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

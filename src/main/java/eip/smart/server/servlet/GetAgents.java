@@ -18,8 +18,10 @@ import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgents
- */
+ * <b>The servlet GetAgents return the list of the agents attributed to the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/get_agents" })
 public class GetAgents extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

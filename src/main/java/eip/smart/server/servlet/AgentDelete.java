@@ -16,8 +16,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet AgentDelete take an agent's name as parameter and delete the corresponding Agent from the available agents' list of the server.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/agent_delete" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class AgentDelete extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

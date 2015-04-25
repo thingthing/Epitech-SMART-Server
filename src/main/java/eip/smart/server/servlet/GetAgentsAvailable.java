@@ -16,8 +16,10 @@ import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentsAvailable
- */
+ * <b>The servlet GetAgentsAvailable return the list of the agents connected to the server and not already attributed to a modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/get_agents_available")
 public class GetAgentsAvailable extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

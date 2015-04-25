@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingStart
- */
+ * <b>The servlet ModelingStart launch the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/modeling_start")
 public class ModelingStart extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

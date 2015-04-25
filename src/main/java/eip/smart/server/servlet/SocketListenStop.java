@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class SocketListen
- */
+ * <b>The servlet SocketListenStop close the port and stop "listening" at it.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/socket_listen_stop" })
 public class SocketListenStop extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

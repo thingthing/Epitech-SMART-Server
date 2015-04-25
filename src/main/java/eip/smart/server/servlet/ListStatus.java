@@ -14,8 +14,10 @@ import eip.smart.model.Status;
 import eip.smart.model.proxy.StatusProxy;
 
 /**
- * Servlet implementation class ListStatus
- */
+ * <b>The servlet ListStatus return the list of the status that can be returned.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/list_status")
 public class ListStatus extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

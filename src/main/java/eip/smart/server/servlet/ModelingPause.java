@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingPause
- */
+ * <b>The servlet ModelingPause freeze the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/modeling_pause")
 public class ModelingPause extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

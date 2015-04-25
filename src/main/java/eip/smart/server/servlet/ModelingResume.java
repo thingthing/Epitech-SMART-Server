@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingResume
- */
+ * <b>The servlet ModelingResume takes back the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/modeling_resume")
 public class ModelingResume extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

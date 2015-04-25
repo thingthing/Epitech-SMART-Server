@@ -16,8 +16,10 @@ import eip.smart.server.Server;
 import eip.smart.util.PointCloudGenerator;
 
 /**
- * Servlet implementation class GetPoints
- */
+ * <b>The servlet GetPoints return the list of the new points of the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet("/get_points")
 public class GetPoints extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

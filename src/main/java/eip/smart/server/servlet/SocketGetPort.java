@@ -12,8 +12,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class SocketListen
- */
+ * <b>The servlet SocketGetPort return the port of the Socket.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/socket_get_port" })
 public class SocketGetPort extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
