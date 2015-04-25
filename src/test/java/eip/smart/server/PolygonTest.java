@@ -137,24 +137,48 @@ public class PolygonTest {
 	
 	@Test
 	public void testPerimeterPentagone() {
-		int size = 5;
-		Polygon square = new Polygon();
+		Polygon pentagone = new Polygon();
 		
-		Point p1 = new Point(0, size, 0);
-		Point p2 = new Point(size, size, 0);
-		Point p3 = new Point(size, 0, 0);
-		Point p4 = new Point(0, 0, 0);
-		
-		square.add(p1);
-		square.add(p2);
-		square.add(p3);
-		square.add(p4);
-		
-		if (square.getPerimeter() != size * 4)
-			Assert.fail("square Perimeter error, result found is" + square.getPerimeter());
+		Point p1 = new Point(0, 5, 0);
+		Point p2 = new Point(5, 5, 0);
+		Point p3 = new Point(5, 2.5, 0);
+		Point p4 = new Point(5, 0, 0);
+		Point p5 = new Point(0, 0, 0);
+
+		pentagone.add(p1);
+		pentagone.add(p2);
+		pentagone.add(p3);
+		pentagone.add(p4);
+		pentagone.add(p5);
+
+		if (pentagone.getPerimeter() != 20)
+			Assert.fail("Pentagone Perimeter error, result found is" + pentagone.getPerimeter());
 		
 		Assert.assertTrue(true);
 	}
+	
+	@Test
+	public void testAreaPentagone() {
+		Polygon pentagone = new Polygon();
+		
+		Point p1 = new Point(0, 5, 0);
+		Point p2 = new Point(5, 5, 0);
+		Point p3 = new Point(5, 2.5, 0);
+		Point p4 = new Point(5, 0, 0);
+		Point p5 = new Point(0, 0, 0);
+
+		pentagone.add(p1);
+		pentagone.add(p2);
+		pentagone.add(p3);
+		pentagone.add(p4);
+		pentagone.add(p5);
+
+		if (pentagone.getArea() != 25)
+			Assert.fail("Pentagone Area error, result found is" + pentagone.getArea());
+		
+		Assert.assertTrue(true);
+	}
+
 	
 	@Test
 	public void testAreaTriangle() {
