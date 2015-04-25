@@ -14,8 +14,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Created by vincent buresi on 10/2/14.
- */
+ * <b>The servlet ModelingInfo return the main data about the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(name = "ModelingInfo", urlPatterns = "/modeling_info")
 public class ModelingInfo extends JsonServlet {
 

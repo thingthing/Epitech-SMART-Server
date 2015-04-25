@@ -18,8 +18,10 @@ import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet ManualOrder take an agent's name and a Point as parameter set this Point as the new current goal of the corresponding Agent.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ManualOrder extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

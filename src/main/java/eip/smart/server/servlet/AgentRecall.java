@@ -16,8 +16,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet AgentRecall take an agent's name as parameter and give the recall order to the corresponding Agent.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/agent_recall" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class AgentRecall extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

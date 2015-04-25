@@ -13,8 +13,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class SocketListen
- */
+ * <b>The servlet SocketListen open the port and start "listening" at it.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/socket_listen" })
 public class SocketListen extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

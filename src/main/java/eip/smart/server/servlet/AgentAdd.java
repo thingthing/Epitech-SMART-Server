@@ -16,8 +16,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet AgentAdd take an agent's name as parameter and add the corresponding Agent from the current Modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/agent_add" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class AgentAdd extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

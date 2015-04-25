@@ -14,8 +14,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingLoad
- */
+ * <b>The servlet ModelingSave save the current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/modeling_save" })
 public class ModelingSave extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

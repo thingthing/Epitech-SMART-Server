@@ -15,8 +15,10 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingLoad
- */
+ * <b>The servlet ModelingList return the list of the modelings saved in the server.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/modeling_list" })
 public class ModelingList extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

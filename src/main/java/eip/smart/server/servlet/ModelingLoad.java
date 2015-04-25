@@ -15,8 +15,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingLoad
- */
+ * <b>The servlet ModelingLoad take a name as parameter and set the corresponding modeling as current modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/modeling_load" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingLoad extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
