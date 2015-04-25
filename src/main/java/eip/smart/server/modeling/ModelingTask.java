@@ -15,18 +15,31 @@ public class ModelingTask implements Runnable {
 	private Modeling			currentModeling	= null;
 	private boolean				running			= true;
 
+    /**
+     * Creates a new ModelingTask using given argument as current Modeling
+     * @param currentModeling
+     */
 	public ModelingTask(Modeling currentModeling) {
 		this.currentModeling = currentModeling;
 	}
 
+    /**
+     * @return true if the Modeling is paused
+     */
 	public boolean isPaused() {
 		return this.paused;
 	}
 
+    /**
+     * Pauses the modeling
+     */
 	public void pause() {
 		this.paused = true;
 	}
 
+    /**
+     * Resumes the Modeling
+     */
 	public void resume() {
 		this.paused = false;
 		synchronized (this.o) {
