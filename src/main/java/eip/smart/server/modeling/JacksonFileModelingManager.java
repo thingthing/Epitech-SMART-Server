@@ -14,6 +14,9 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
+/**
+ * This class implements storage of a Modeling through JSON serialization, using Jackson implementation of JSON.
+ */
 public class JacksonFileModelingManager extends FileModelingManager {
 
     @Override

@@ -16,6 +16,10 @@ import eip.smart.model.Modeling;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
+/**
+ * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.
+ * Uses Java serialization.
+ */
 public class DefaultZippedFileModelingManager extends FileModelingManager {
 
     protected int compressionLevel = -1;

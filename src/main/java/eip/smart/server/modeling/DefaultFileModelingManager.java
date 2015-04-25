@@ -14,6 +14,9 @@ import eip.smart.model.Modeling;
 
 import eip.smart.model.proxy.FileModelingProxy;
 
+/**
+ * This class implements the standard way of storing a Modeling to a file, through Java serialization.
+ */
 public class DefaultFileModelingManager extends FileModelingManager {
 
 	@Override
