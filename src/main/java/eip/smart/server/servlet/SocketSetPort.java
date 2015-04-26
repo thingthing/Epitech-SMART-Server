@@ -16,8 +16,9 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class SocketSetPort
- */
+ * <b>The servlet SocketSetPort take as parameter a number and set it as the new socket's port.</b>
+ * @author Pierre Demessence
+*/
 @WebServlet(urlPatterns = { "/socket_set_port" }, initParams = { @WebInitParam(name = "port", value = "") })
 public class SocketSetPort extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

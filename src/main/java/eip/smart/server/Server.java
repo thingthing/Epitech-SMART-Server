@@ -20,18 +20,16 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.apache.mina.util.AvailablePortFinder;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.server.modeling.DefaultFileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
 import eip.smart.server.servlet.ModelingInfo;
-
-import eip.smart.server.modeling.DefaultFileModelingManager;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -40,28 +38,64 @@ import eip.smart.server.modeling.DefaultFileModelingManager;
 @WebListener
 public class Server implements ServletContextListener {
 
+	/**
+	 * The logger to log things.
+	 */
+	private final static Logger	LOGGER	= Logger.getLogger(ModelingInfo.class.getName());
+
+	/**
+	 * The static instance of the server.
+	 */
+	private static Server		server;
+
+	/**
+	 * @return The static server.
+	 */
 	public static Server getServer() {
 		return (Server.server);
 	}
 
-	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
-	private static Server		server;
-
-	//private ModelingManager		manager				= new FileModelingManager();
-	private ModelingManager		manager				= new DefaultFileModelingManager();
-	
-	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
-	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
-
-	private Modeling			currentModeling		= null;
-	private ModelingTask		currentTask			= null;
-	private boolean				running				= false;
 	private IoAcceptor			acceptor			= new NioSocketAcceptor();
-	private int					port				= AvailablePortFinder.getNextAvailable(4200);
-
-	public Server() {}
 
 	/**
+	 * The current selected modeling.
+	 */
+	private Modeling			currentModeling		= null;
+
+	/**
+	 * The current thread task the threadPool is running.
+	 */
+	private ModelingTask		currentTask			= null;
+
+	/**
+	 * The ioAgentContainer to store Agents and bound TCP sessions.
+	 */
+	private IoAgentContainer	ioAgentContainer	= new IoAgentContainer();
+
+	/**
+	 * The Manager to manage Modelings and store it.
+	 * Different implementations allow to different ways of storage.
+	 */
+	private ModelingManager		manager				= new DefaultFileModelingManager();
+
+	/**
+	 * The port for the TCP connection.
+	 */
+	private int					port				= 4200;
+
+	/**
+	 * Is the current modeling running.
+	 */
+	private boolean				running				= false;
+
+	/**
+	 * The threadPool allowing to run a Modeling.
+	 */
+	private ExecutorService		threadPool			= Executors.newSingleThreadExecutor();
+
+	/**
+	 * Called when the Server is destroyed (shutdown).
+	 *
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
 	@Override
@@ -76,6 +110,8 @@ public class Server implements ServletContextListener {
 	}
 
 	/**
+	 * Called when the Server is created.
+	 *
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
 	@Override
@@ -94,38 +130,83 @@ public class Server implements ServletContextListener {
 		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 	}
 
+	/**
+	 * Get all the connected agents.
+	 *
+	 * @return
+	 */
 	public ArrayList<Agent> getAgentsAvailable() {
 		return (this.ioAgentContainer.getAgents());
 	}
 
+	/**
+	 * Get the current modeling.
+	 *
+	 * @return
+	 */
 	public Modeling getCurrentModeling() {
 		return (this.currentModeling);
 	}
 
+	/**
+	 * Get the IoAgentContainer which store the Agents and TCP sessions.
+	 *
+	 * @return
+	 */
 	public IoAgentContainer getIoAgentContainer() {
 		return (this.ioAgentContainer);
 	}
 
+	/**
+	 * Get the port.
+	 */
 	public int getPort() {
 		return (this.port);
 	}
 
+	/**
+	 * Get all the connected TCP sessions.
+	 *
+	 * @return
+	 */
 	public ArrayList<IoSession> getSessions() {
 		return (this.ioAgentContainer.getSessions());
 	}
 
+	/**
+	 * Return whereas the TCP Acceptor is active and can handle TCP connections;
+	 *
+	 * @return
+	 */
 	public boolean isAcceptorActive() {
 		return (this.acceptor.isActive());
 	}
 
+	/**
+	 * Return true if the current modeling is paused.
+	 *
+	 * @return
+	 */
 	public boolean isPaused() {
 		return (this.running && this.currentTask.isPaused());
 	}
 
+	/**
+	 * Return true if the current modeling is running.
+	 *
+	 * @return
+	 */
 	public boolean isRunning() {
 		return (this.running);
 	}
 
+	/**
+	 * Crate a new modeling with a given name.
+	 *
+	 * @param name
+	 *            the name of the modeling to create.
+	 * @return true if successful, false otherwise (modeling already exist).
+	 */
 	public boolean modelingCreate(String name) {
 		if (this.manager.exists(name))
 			return (false);
@@ -134,14 +215,33 @@ public class Server implements ServletContextListener {
 		return (true);
 	}
 
+	/**
+	 * Delete the modeling with a given name.
+	 *
+	 * @param name
+	 *            the name of the modeling to delete.
+	 * @return always true.
+	 */
 	public boolean modelingDelete(String name) {
 		return (this.manager.delete(name));
 	}
 
+	/**
+	 * Get the list of all the existing modelings.
+	 *
+	 * @return
+	 */
 	public ArrayList<SimpleModelingProxy> modelingList() {
 		return (this.manager.list());
 	}
 
+	/**
+	 * Load a given modeling and make it current.
+	 *
+	 * @param name
+	 *            the name of the modeling to load.
+	 * @return true if successful, false otherwise (another modeling is already the current modeling).
+	 */
 	public boolean modelingLoad(String name) {
 		Modeling modeling = this.manager.load(name);
 		if (modeling == null)
@@ -150,20 +250,32 @@ public class Server implements ServletContextListener {
 		return (true);
 	}
 
+	/**
+	 * Pause the current modeling.
+	 */
 	public void modelingPause() {
 		this.currentTask.pause();
 		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") paused.");
 	}
 
+	/**
+	 * Resume the current modeling.
+	 */
 	public void modelingResume() {
 		this.currentTask.resume();
 		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") resumed.");
 	}
 
+	/**
+	 * Save the current modeling.
+	 */
 	public void modelingSave() {
 		this.manager.save(this.currentModeling);
 	}
 
+	/**
+	 * Start the current modeling.
+	 */
 	public void modelingStart() {
 		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") started.");
 		this.running = true;
@@ -171,6 +283,10 @@ public class Server implements ServletContextListener {
 		this.threadPool.execute(this.currentTask);
 	}
 
+	/**
+	 * Stop and save the current modeling.
+	 * The modeling is then no longer the current modeling.
+	 */
 	public void modelingStop() {
 		if (this.running) {
 			this.currentTask.stop();
@@ -186,10 +302,19 @@ public class Server implements ServletContextListener {
 		this.port = port;
 	}
 
+	/**
+	 * Open the TCP acceptor so it will handle new TCP connections.
+	 * 
+	 * @throws IOException
+	 * @throws IllegalArgumentException
+	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
 		this.acceptor.bind(new InetSocketAddress(this.port));
 	}
 
+	/**
+	 * Stop the TCP acceptor so it will not longer handle TCP connections.
+	 */
 	public void socketListenStop() {
 		this.acceptor.setCloseOnDeactivation(true);
 		for (IoSession session : this.acceptor.getManagedSessions().values())

@@ -7,8 +7,17 @@ import java.util.logging.Logger;
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
 
+/**
+ * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
+ * leaving its subclass implements the save and load management.
+ */
 public abstract class FileModelingManager implements ModelingManager {
 
+    /**
+     * Adds a .modeling extension to a file name if not yet present.
+     * @param name
+     * @return New name with .modeling extension
+     */
 	protected static String addExtension(String name) {
 		String res = name;
 		if (!res.matches(".*\\.modeling$"))
@@ -16,6 +25,10 @@ public abstract class FileModelingManager implements ModelingManager {
 		return (res);
 	}
 
+    /**
+     * Gets a File pointer on the base directory used to save modelings.
+     * @return
+     */
 	private static File getBaseDirectory() {
 		try {
 			return new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");

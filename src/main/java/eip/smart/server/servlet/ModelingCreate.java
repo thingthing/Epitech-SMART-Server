@@ -14,8 +14,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingCreate
- */
+ * <b>The servlet ModelingCreate take a name as parameter and create a modeling with this name.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/modeling_create" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingCreate extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

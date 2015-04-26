@@ -15,8 +15,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class ModelingLoad
- */
+ * <b>The servlet ModelingDelete take a name as parameter and delete the modeling with this name.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/modeling_delete" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingDelete extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

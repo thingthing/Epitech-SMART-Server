@@ -15,8 +15,10 @@ import eip.smart.model.Status;
 import eip.smart.server.Server;
 
 /**
- * Servlet implementation class GetAgentInfo
- */
+ * <b>The servlet AddArea take an Area as parameter and add it to the current Modeling.</b>
+ * @author Pierre Demessence
+*/
+
 @WebServlet(urlPatterns = { "/add_area" })
 public class AddArea extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;

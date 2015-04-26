@@ -16,6 +16,10 @@ import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.
+ * Uses JSON serialization with Jackson implementation.
+ */
 public class JacksonZippedFileModelingManager extends FileModelingManager {
 
     protected int compressionLevel = -1;

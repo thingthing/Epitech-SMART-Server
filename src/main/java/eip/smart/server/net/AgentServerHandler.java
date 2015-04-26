@@ -4,6 +4,12 @@ import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 
+/**
+ * Implementation of IoHandler to handle Agents.
+ *
+ * @author Pierre Demessence
+ *
+ */
 public class AgentServerHandler implements IoHandler {
 
 	private IoAgentContainer	ioAgentContainer	= null;
@@ -18,6 +24,9 @@ public class AgentServerHandler implements IoHandler {
 		this.removeSession(session);
 	}
 
+	/**
+	 * Handle a new TCP message. Will allow to exit, connect and disconnect from an Agent.
+	 */
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		String msg = (String) message;
@@ -54,6 +63,11 @@ public class AgentServerHandler implements IoHandler {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * Delete the session and remote it from the bound IoAgent.
+	 * 
+	 * @param session
+	 */
 	private void removeSession(IoSession session) {
 		IoAgent ioAgent = this.ioAgentContainer.getBySession(session);
 		if (ioAgent.getAgent() == null)
@@ -82,6 +96,11 @@ public class AgentServerHandler implements IoHandler {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * Set the IoAgentContainer to store the connected agents.
+	 * 
+	 * @param ioAgentContainer
+	 */
 	public void setIoAgentContainer(IoAgentContainer ioAgentContainer) {
 		this.ioAgentContainer = ioAgentContainer;
 	}
