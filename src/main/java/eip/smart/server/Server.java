@@ -128,6 +128,11 @@ public class Server implements ServletContextListener {
 
 		this.acceptor.getSessionConfig().setReadBufferSize(2048);
 		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+		try {
+			this.socketListen();
+		} catch (IllegalArgumentException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -298,24 +303,20 @@ public class Server implements ServletContextListener {
 		this.currentModeling = null;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
 	/**
 	 * Open the TCP acceptor so it will handle new TCP connections.
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
-	public void socketListen() throws IOException, IllegalArgumentException {
+	private void socketListen() throws IOException, IllegalArgumentException {
 		this.acceptor.bind(new InetSocketAddress(this.port));
 	}
 
 	/**
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 */
-	public void socketListenStop() {
+	private void socketListenStop() {
 		this.acceptor.setCloseOnDeactivation(true);
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
