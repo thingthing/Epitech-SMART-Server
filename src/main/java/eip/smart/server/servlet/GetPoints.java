@@ -36,7 +36,7 @@ public class GetPoints extends JsonServlet {
 		{
 			json.writeFieldName("points");
 			this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
-			this.status = Status.SIMULATION;
+			this.status = Status.ERR_SIMULATION;
 		}
 	}
 
