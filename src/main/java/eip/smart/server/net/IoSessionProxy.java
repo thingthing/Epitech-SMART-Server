@@ -7,15 +7,41 @@ import org.apache.mina.core.session.IoSession;
 
 import eip.smart.model.proxy.Proxy;
 
+/**
+ * Proxy class for sending data in JSON.
+ *
+ * @author Pierre Demessence
+ *
+ */
 public class IoSessionProxy extends Proxy<IoSession> {
 
-	SocketAddress	remoteAddress;
-	SocketAddress	localAddress;
-	Date			creationTime;
+	/**
+	 * The name of the connected Agent if any.
+	 */
 	String			connectedAgent;
+
+	/**
+	 * Date of connection if the TCP session.
+	 */
+	Date			creationTime;
+
+	/**
+	 * The local IP of the TCP session.
+	 */
+	SocketAddress	localAddress;
+
+	/**
+	 * The remote IP of the TCP session.
+	 */
+	SocketAddress	remoteAddress;
 
 	public IoSessionProxy() {}
 
+	/**
+	 * Create a proxy from a IoSession object.
+	 * 
+	 * @param object
+	 */
 	public IoSessionProxy(IoSession object) {
 		super(object);
 		this.setRemoteAddress(object.getRemoteAddress());
