@@ -119,6 +119,15 @@ public class Configuration {
 	}
 
 	/**
+	 * @param key
+	 * @return
+	 * @see java.util.Properties#getProperty(java.lang.String)
+	 */
+	public int getPropertyInteger(String key) {
+		return (Integer.parseInt(this.properties.getProperty(key)));
+	}
+
+	/**
 	 * Print the current configuration to standard output.
 	 */
 	public void printDebug() {
