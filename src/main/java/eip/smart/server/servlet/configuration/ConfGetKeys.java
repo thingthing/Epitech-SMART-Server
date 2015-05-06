@@ -24,13 +24,11 @@ public class ConfGetKeys extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
 		String name = req.getParameter("name");
-		System.out.println(name);
 		if (name == null || name.isEmpty())
 			this.status = Status.MISSING_PARAMETER.addObjects("name");
-		else if (!Configuration.exists(name)) {
-			System.out.println(name);
+		else if (!Configuration.exists(name))
 			this.status = Status.NOT_FOUND.addObjects("configuration", "name", name);
-		} else {
+		else {
 			json.writeFieldName("keys");
 			this.mapper.writeValue(json, new Configuration(name).getKeys());
 		}
