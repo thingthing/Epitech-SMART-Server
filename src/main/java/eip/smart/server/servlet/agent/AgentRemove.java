@@ -18,8 +18,9 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet AgentRemove take an agent's name as parameter and delete the corresponding Agent from the agent's list attributed to the current modeling.</b>
+ * 
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet(urlPatterns = { "/agent_remove" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class AgentRemove extends JsonServlet {
@@ -37,7 +38,7 @@ public class AgentRemove extends JsonServlet {
 		}
 
 		if (agent == null)
-			this.status = Status.AGENT_NOT_FOUND;
+			this.status = Status.NOT_FOUND.addObject("agent").addObject("name").addObject(name);
 		else if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else if (!Server.getServer().getCurrentModeling().getAgents().contains(agent))

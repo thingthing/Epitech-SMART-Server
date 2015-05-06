@@ -17,8 +17,9 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet AddArea take an Area as parameter and add it to the current Modeling.</b>
+ * 
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet(urlPatterns = { "/add_area" })
 public class AddArea extends JsonServlet {
@@ -33,7 +34,7 @@ public class AddArea extends JsonServlet {
 			} catch (Exception e) {}
 
 		if (area == null)
-			this.status = Status.AREA_NO_GIVEN;
+			this.status = Status.MISSING_PARAMETER.addObject("area");
 		else if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else

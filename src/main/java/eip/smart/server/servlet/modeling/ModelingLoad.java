@@ -17,8 +17,9 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingLoad take a name as parameter and set the corresponding modeling as current modeling.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet(urlPatterns = { "/modeling_load" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingLoad extends JsonServlet {
@@ -32,8 +33,8 @@ public class ModelingLoad extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() != null)
 			this.status = Status.MODELING_ALREADY_CURRENT;
 		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
-			this.status = Status.MODELING_NO_NAME;
+			this.status = Status.MISSING_PARAMETER.addObject("name");
 		else if (!Server.getServer().modelingLoad(request.getParameter("name")))
-			this.status = Status.MODELING_NOT_FOUND;
+			this.status = Status.NOT_FOUND.addObject("modeling").addObject("name").addObject(request.getParameter("name"));
 	}
 }
