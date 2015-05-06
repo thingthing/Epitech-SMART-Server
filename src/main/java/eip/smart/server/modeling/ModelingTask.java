@@ -4,42 +4,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import eip.smart.model.Modeling;
-import eip.smart.server.servlet.ModelingInfo;
 
 public class ModelingTask implements Runnable {
 
-	private final static Logger	LOGGER			= Logger.getLogger(ModelingInfo.class.getName());
+	private final static Logger	LOGGER			= Logger.getLogger(ModelingTask.class.getName());
 
+	private Modeling			currentModeling	= null;
 	private Object				o				= new Object();
 	private volatile boolean	paused			= false;
-	private Modeling			currentModeling	= null;
 	private boolean				running			= true;
 
-    /**
-     * Creates a new ModelingTask using given argument as current Modeling
-     * @param currentModeling
-     */
+	/**
+	 * Creates a new ModelingTask using given argument as current Modeling
+	 * 
+	 * @param currentModeling
+	 */
 	public ModelingTask(Modeling currentModeling) {
 		this.currentModeling = currentModeling;
 	}
 
-    /**
-     * @return true if the Modeling is paused
-     */
+	/**
+	 * @return true if the Modeling is paused
+	 */
 	public boolean isPaused() {
 		return this.paused;
 	}
 
-    /**
-     * Pauses the modeling
-     */
+	/**
+	 * Pauses the modeling
+	 */
 	public void pause() {
 		this.paused = true;
 	}
 
-    /**
-     * Resumes the Modeling
-     */
+	/**
+	 * Resumes the Modeling
+	 */
 	public void resume() {
 		this.paused = false;
 		synchronized (this.o) {
