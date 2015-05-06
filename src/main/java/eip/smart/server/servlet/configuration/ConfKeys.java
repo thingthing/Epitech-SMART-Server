@@ -18,8 +18,8 @@ import eip.smart.server.util.Configuration;
  *
  * @author Pierre Demessence
  */
-@WebServlet("/conf_get_keys")
-public class ConfGetKeys extends JsonServlet {
+@WebServlet("/conf_keys")
+public class ConfKeys extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
