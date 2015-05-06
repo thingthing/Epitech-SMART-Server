@@ -33,8 +33,8 @@ public class ModelingLoad extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() != null)
 			this.status = Status.MODELING_ALREADY_CURRENT;
 		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
-			this.status = Status.MISSING_PARAMETER.addObject("name");
+			this.status = Status.MISSING_PARAMETER.addObjects("name");
 		else if (!Server.getServer().modelingLoad(request.getParameter("name")))
-			this.status = Status.NOT_FOUND.addObject("modeling").addObject("name").addObject(request.getParameter("name"));
+			this.status = Status.NOT_FOUND.addObjects("modeling", "name", request.getParameter("name"));
 	}
 }

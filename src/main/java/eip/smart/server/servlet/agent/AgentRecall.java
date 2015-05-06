@@ -18,7 +18,7 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet AgentRecall take an agent's name as parameter and give the recall order to the corresponding Agent.</b>
- * 
+ *
  * @author Pierre Demessence
  */
 
@@ -38,7 +38,7 @@ public class AgentRecall extends JsonServlet {
 		}
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObject("agent").addObject("name").addObject(name);
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
 		else if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else

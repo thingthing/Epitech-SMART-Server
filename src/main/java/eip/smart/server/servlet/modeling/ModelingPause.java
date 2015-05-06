@@ -28,9 +28,9 @@ public class ModelingPause extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else if (!Server.getServer().isRunning())
-			this.status = Status.MODELING_STATE_ERROR.addObject("modeling not running");
+			this.status = Status.MODELING_STATE_ERROR.addObjects("modeling not running");
 		else if (Server.getServer().isPaused())
-			this.status = Status.MODELING_STATE_ERROR.addObject("modeling already paused");
+			this.status = Status.MODELING_STATE_ERROR.addObjects("modeling already paused");
 		else
 			Server.getServer().modelingPause();
 	}

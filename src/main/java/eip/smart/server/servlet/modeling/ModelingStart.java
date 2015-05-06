@@ -28,7 +28,7 @@ public class ModelingStart extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else if (Server.getServer().isRunning())
-			this.status = Status.MODELING_STATE_ERROR.addObject("modeling already running");
+			this.status = Status.MODELING_STATE_ERROR.addObjects("modeling already running");
 		else
 			Server.getServer().modelingStart();
 	}

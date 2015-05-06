@@ -18,7 +18,7 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet AgentDelete take an agent's name as parameter and delete the corresponding Agent from the available agents' list of the server.</b>
- * 
+ *
  * @author Pierre Demessence
  */
 
@@ -38,7 +38,7 @@ public class AgentDelete extends JsonServlet {
 		}
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObject("agent").addObject("name").addObject(name);
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
 		else
 			Server.getServer().getIoAgentContainer().getByAgent(agent).removeAgent();
 	}

@@ -46,9 +46,9 @@ public class ManualOrder extends JsonServlet {
 			} catch (IOException e) {}
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObject("agent").addObject("name").addObject(name);
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
 		else if (order == null)
-			this.status = Status.MISSING_PARAMETER.addObject("order");
+			this.status = Status.MISSING_PARAMETER.addObjects("order");
 		else
 			agent.pushOrder(order);
 	}

@@ -18,7 +18,7 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet GetAgentInfo take an agent's name as parameter and return informations about the corresponding Agent.</b>
- * 
+ *
  * @author Pierre Demessence
  */
 
@@ -39,7 +39,7 @@ public class GetAgentInfo extends JsonServlet {
 		System.out.println(name);
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObject("agent").addObject("name").addObject(name);
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
 		else {
 			json.writeFieldName("agent");
 			// @ TODO Create a Proxy here ?
