@@ -39,7 +39,7 @@ public class Configuration {
 	 * @return true if the configuration file exists.
 	 */
 	public static boolean exists(String name) {
-		return (new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).exists());
+		return (Configuration.defaultProperties.containsKey(name) || new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).exists());
 	}
 
 	/**
