@@ -19,12 +19,28 @@ public class Configuration {
 	/**
 	 * Folder where config files will be stored.
 	 */
-	public static String						CONFIG_DIR			= "config";
+	public static final String					CONFIG_DIR			= "config";
+
+	/**
+	 * Extension for config files.
+	 */
+	private static final String					CONFIG_EXTENSION	= ".xml";
 
 	/**
 	 * Default properties. One for each name.
 	 */
 	private static HashMap<String, Properties>	defaultProperties	= new HashMap<>();
+
+	/**
+	 * Checks if a configuration exists.
+	 *
+	 * @param name
+	 *            The name of the configuration to check.
+	 * @return true if the configuration file exists.
+	 */
+	public static boolean exists(String name) {
+		return (new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).exists());
+	}
 
 	/**
 	 * Set a default property value for a specific configuration.
@@ -40,6 +56,7 @@ public class Configuration {
 	}
 
 	private File		configFile;
+
 	private String		name;
 
 	private Properties	properties;
@@ -54,7 +71,7 @@ public class Configuration {
 	public Configuration(String name) {
 		this.name = name;
 		this.properties = new Properties(Configuration.defaultProperties.get(name));
-		this.configFile = new File(Configuration.CONFIG_DIR, name + ".xml");
+		this.configFile = new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION);
 		new File(Configuration.CONFIG_DIR).mkdirs();
 		if (this.configFile.exists()) {
 			FileInputStream in = null;
@@ -85,20 +102,20 @@ public class Configuration {
 	}
 
 	/**
+	 * @return
+	 * @see java.util.Properties#stringPropertyNames()
+	 */
+	public Set<String> getKeys() {
+		return this.properties.stringPropertyNames();
+	}
+
+	/**
 	 * @param key
 	 * @return
 	 * @see java.util.Properties#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
 		return (this.properties.getProperty(key));
-	}
-
-	/**
-	 * @return
-	 * @see java.util.Properties#stringPropertyNames()
-	 */
-	public Set<String> getKeys() {
-		return this.properties.stringPropertyNames();
 	}
 
 	/**
