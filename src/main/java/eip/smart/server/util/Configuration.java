@@ -70,6 +70,8 @@ public class Configuration {
 	 */
 	public Configuration(String name) {
 		this.name = name;
+		if (Configuration.defaultProperties.get(name) == null)
+			Configuration.defaultProperties.put(name, new Properties());
 		this.properties = new Properties(Configuration.defaultProperties.get(name));
 		this.configFile = new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION);
 		new File(Configuration.CONFIG_DIR).mkdirs();
