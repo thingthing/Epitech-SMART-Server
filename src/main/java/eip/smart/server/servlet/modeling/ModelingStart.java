@@ -15,8 +15,9 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingStart launch the current modeling.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet("/modeling_start")
 public class ModelingStart extends JsonServlet {
@@ -27,7 +28,7 @@ public class ModelingStart extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else if (Server.getServer().isRunning())
-			this.status = Status.MODELING_ALREADY_RUNNING;
+			this.status = Status.MODELING_STATE_ERROR.addObject("modeling already running");
 		else
 			Server.getServer().modelingStart();
 	}

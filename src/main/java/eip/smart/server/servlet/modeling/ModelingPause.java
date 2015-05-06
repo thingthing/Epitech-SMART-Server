@@ -15,8 +15,9 @@ import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingPause freeze the current modeling.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet("/modeling_pause")
 public class ModelingPause extends JsonServlet {
@@ -27,9 +28,9 @@ public class ModelingPause extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
 		else if (!Server.getServer().isRunning())
-			this.status = Status.MODELING_NOT_RUNNING;
+			this.status = Status.MODELING_STATE_ERROR.addObject("modeling not running");
 		else if (Server.getServer().isPaused())
-			this.status = Status.MODELING_ALREADY_PAUSED;
+			this.status = Status.MODELING_STATE_ERROR.addObject("modeling already paused");
 		else
 			Server.getServer().modelingPause();
 	}

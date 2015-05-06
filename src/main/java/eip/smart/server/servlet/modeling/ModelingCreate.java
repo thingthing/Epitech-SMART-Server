@@ -31,7 +31,7 @@ public class ModelingCreate extends JsonServlet {
 		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
 			this.status = Status.MISSING_PARAMETER.addObject("name");
 		else if (!Server.getServer().modelingCreate(request.getParameter("name")))
-			this.status = Status.MODELING_DUPLICATE_NAME;
+			this.status = Status.DUPLICATE.addObject("modeling").addObject("name").addObject(request.getParameter("name"));
 	}
 
 }
