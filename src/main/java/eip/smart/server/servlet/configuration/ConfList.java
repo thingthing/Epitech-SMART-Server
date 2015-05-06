@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
 import eip.smart.server.servlet.JsonServlet;
 import eip.smart.server.util.Configuration;
 
@@ -18,20 +17,13 @@ import eip.smart.server.util.Configuration;
  *
  * @author Pierre Demessence
  */
-@WebServlet("/conf_keys")
-public class ConfKeys extends JsonServlet {
+@WebServlet("/conf_list")
+public class ConfList extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		String name = req.getParameter("name");
-		if (name == null || name.isEmpty())
-			this.status = Status.MISSING_PARAMETER.addObjects("name");
-		else if (!Configuration.confExists(name))
-			this.status = Status.NOT_FOUND.addObjects("configuration", "name", name);
-		else {
-			json.writeFieldName("keys");
-			this.mapper.writeValue(json, new Configuration(name).getKeys());
-		}
+		json.writeFieldName("configurations");
+		this.mapper.writeValue(json, Configuration.getConfigurations());
 	}
 
 }

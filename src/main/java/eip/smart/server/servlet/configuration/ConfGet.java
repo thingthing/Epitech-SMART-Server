@@ -18,19 +18,27 @@ import eip.smart.server.util.Configuration;
  *
  * @author Pierre Demessence
  */
-@WebServlet("/conf_keys")
-public class ConfKeys extends JsonServlet {
+@WebServlet("/conf_get")
+public class ConfGet extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
 		String name = req.getParameter("name");
+		String key = req.getParameter("key");
 		if (name == null || name.isEmpty())
 			this.status = Status.MISSING_PARAMETER.addObjects("name");
+		else if (key == null || key.isEmpty())
+			this.status = Status.MISSING_PARAMETER.addObjects("key");
 		else if (!Configuration.confExists(name))
 			this.status = Status.NOT_FOUND.addObjects("configuration", "name", name);
 		else {
-			json.writeFieldName("keys");
-			this.mapper.writeValue(json, new Configuration(name).getKeys());
+			Configuration conf = new Configuration(name);
+			if (!conf.keyExists(key))
+				this.status = Status.NOT_FOUND.addObjects("property", "key", key);
+			else {
+				json.writeFieldName("value");
+				this.mapper.writeValue(json, conf.getProperty(key));
+			}
 		}
 	}
 
