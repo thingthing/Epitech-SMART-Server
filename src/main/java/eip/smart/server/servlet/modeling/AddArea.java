@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eip.smart.model.Area;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet AddArea take an Area as parameter and add it to the current Modeling.</b>

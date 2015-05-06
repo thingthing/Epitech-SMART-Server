@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingPause freeze the current modeling.</b>

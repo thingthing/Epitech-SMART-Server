@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingList return the list of the modelings saved in the server.</b>

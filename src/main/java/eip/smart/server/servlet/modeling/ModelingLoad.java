@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -13,14 +13,15 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet ModelingDelete take a name as parameter and delete the modeling with this name.</b>
+ * <b>The servlet ModelingLoad take a name as parameter and set the corresponding modeling as current modeling.</b>
  * @author Pierre Demessence
 */
 
-@WebServlet(urlPatterns = { "/modeling_delete" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class ModelingDelete extends JsonServlet {
+@WebServlet(urlPatterns = { "/modeling_load" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class ModelingLoad extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
@@ -28,9 +29,11 @@ public class ModelingDelete extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		if (request.getParameter("name") == null || request.getParameter("name").equals(""))
+		if (Server.getServer().getCurrentModeling() != null)
+			this.status = Status.MODELING_ALREADY_CURRENT;
+		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
 			this.status = Status.MODELING_NO_NAME;
-		else if (!Server.getServer().modelingDelete(request.getParameter("name")))
+		else if (!Server.getServer().modelingLoad(request.getParameter("name")))
 			this.status = Status.MODELING_NOT_FOUND;
 	}
 }

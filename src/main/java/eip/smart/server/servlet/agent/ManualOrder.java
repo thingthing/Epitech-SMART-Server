@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,18 +10,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
+import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet AgentAdd take an agent's name as parameter and add the corresponding Agent from the current Modeling.</b>
+ * <b>The servlet ManualOrder take an agent's name and a Point as parameter set this Point as the new current goal of the corresponding Agent.</b>
  * @author Pierre Demessence
 */
 
-@WebServlet(urlPatterns = { "/agent_add" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class AgentAdd extends JsonServlet {
+@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class ManualOrder extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -35,13 +38,17 @@ public class AgentAdd extends JsonServlet {
 					agent = a;
 		}
 
+		Point order = null;
+		if (req.getParameter("order") != null)
+			try {
+				order = new ObjectMapper().readValue(req.getParameter("order"), Point.class);
+			} catch (IOException e) {}
+
 		if (agent == null)
 			this.status = Status.AGENT_NOT_FOUND;
-		else if (Server.getServer().getCurrentModeling() == null)
-			this.status = Status.MODELING_NO_CURRENT;
-		else if (Server.getServer().getCurrentModeling().getAgents().contains(agent))
-			this.status = Status.AGENT_ALREADY_ADDED;
+		else if (order == null)
+			this.status = Status.ORDER_NO_GIVEN;
 		else
-			Server.getServer().getCurrentModeling().addAgent(agent);
+			agent.pushOrder(order);
 	}
 }

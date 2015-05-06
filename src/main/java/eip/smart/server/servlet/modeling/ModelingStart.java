@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -10,26 +10,26 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
+import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet SocketListenStop close the port and stop "listening" at it.</b>
- * 
+ * <b>The servlet ModelingStart launch the current modeling.</b>
  * @author Pierre Demessence
- */
+*/
 
-@WebServlet(urlPatterns = { "/socket_listen_stop" })
-public class SocketListenStop extends JsonServlet {
+@WebServlet("/modeling_start")
+public class ModelingStart extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-
-		this.status = Status.ERR_REMOVED;
-		/*
-		if (!Server.getServer().isAcceptorActive())
-			this.status = Status.SOCKET_NOT_RUNNING;
+		if (Server.getServer().getCurrentModeling() == null)
+			this.status = Status.MODELING_NO_CURRENT;
+		else if (Server.getServer().isRunning())
+			this.status = Status.MODELING_ALREADY_RUNNING;
 		else
-			Server.getServer().socketListenStop();
-		*/
+			Server.getServer().modelingStart();
 	}
+
 }

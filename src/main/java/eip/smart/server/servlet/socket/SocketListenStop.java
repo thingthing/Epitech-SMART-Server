@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.socket;
 
 import java.io.IOException;
 
@@ -10,15 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet SocketListen open the port and start "listening" at it.</b>
- *
+ * <b>The servlet SocketListenStop close the port and stop "listening" at it.</b>
+ * 
  * @author Pierre Demessence
  */
 
-@WebServlet(urlPatterns = { "/socket_listen" })
-public class SocketListen extends JsonServlet {
+@WebServlet(urlPatterns = { "/socket_listen_stop" })
+public class SocketListenStop extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -26,16 +27,10 @@ public class SocketListen extends JsonServlet {
 
 		this.status = Status.ERR_REMOVED;
 		/*
-		if (Server.getServer().isAcceptorActive())
-			this.status = Status.SOCKET_ALREADY_RUNNING;
+		if (!Server.getServer().isAcceptorActive())
+			this.status = Status.SOCKET_NOT_RUNNING;
 		else
-			try {
-				Server.getServer().socketListen();
-			} catch (IOException e) {
-				this.status = Status.ERR_UNKNOWN;
-			} catch (IllegalArgumentException e) {
-				this.status = Status.PORT_BAD;
-			}
+			Server.getServer().socketListenStop();
 		*/
 	}
 }

@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.socket;
 
 import java.io.IOException;
 
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet SocketGetPort return the port of the Socket.</b>
