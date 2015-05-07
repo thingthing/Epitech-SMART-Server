@@ -90,23 +90,22 @@ public class Configuration {
 		this.properties = new Properties(Configuration.getDefaultProperties(name));
 		this.configFile = new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION);
 		new File(Configuration.CONFIG_DIR).mkdirs();
-		if (this.configFile.exists()) {
-			FileInputStream in = null;
-			try {
-				in = new FileInputStream(this.configFile);
-				this.properties.loadFromXML(in);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if (in != null)
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-
+		this.load();
 		this.save();
+	}
+
+	/**
+	 * Print the current configuration to standard output.
+	 */
+	public void dump() {
+		System.out.println("#ConfigurationDebugBegin#");
+		if (Configuration.defaultProperties.get(this.name) != null)
+			for (Entry<Object, Object> entry : Configuration.defaultProperties.get(this.name).entrySet())
+				if (!this.keyExists(entry.getKey()))
+					System.out.format("[%s] : %s (default value)\n", entry.getKey(), entry.getValue());
+		for (Entry<Object, Object> entry : this.properties.entrySet())
+			System.out.format("[%s] : %s\n", entry.getKey(), entry.getValue());
+		System.out.println("#ConfigurationDebugEnd#");
 	}
 
 	/**
@@ -123,6 +122,7 @@ public class Configuration {
 	 * @see java.util.Properties#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
+		this.load();
 		return (this.properties.getProperty(key));
 	}
 
@@ -132,7 +132,7 @@ public class Configuration {
 	 * @see java.util.Properties#getProperty(java.lang.String)
 	 */
 	public int getPropertyInteger(String key) {
-		return (Integer.parseInt(this.properties.getProperty(key)));
+		return (Integer.parseInt(this.getProperty(key)));
 	}
 
 	/**
@@ -144,18 +144,22 @@ public class Configuration {
 		return (Configuration.getDefaultProperties(this.name).containsKey(key) || this.properties.containsKey(key));
 	}
 
-	/**
-	 * Print the current configuration to standard output.
-	 */
-	public void printDebug() {
-		System.out.println("#ConfigurationDebugBegin#");
-		if (Configuration.defaultProperties.get(this.name) != null)
-			for (Entry<Object, Object> entry : Configuration.defaultProperties.get(this.name).entrySet())
-				if (!this.keyExists(entry.getKey()))
-					System.out.format("[%s] : %s (default value)\n", entry.getKey(), entry.getValue());
-		for (Entry<Object, Object> entry : this.properties.entrySet())
-			System.out.format("[%s] : %s\n", entry.getKey(), entry.getValue());
-		System.out.println("#ConfigurationDebugEnd#");
+	private void load() {
+		if (this.configFile.exists()) {
+			FileInputStream in = null;
+			try {
+				in = new FileInputStream(this.configFile);
+				this.properties.loadFromXML(in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
 	}
 
 	private void save() {
