@@ -16,11 +16,17 @@ import eip.smart.server.exception.StatusException;
 
 public abstract class JsonServlet extends HttpServlet {
 
-	protected Status		status	= Status.OK;
+	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
+		String param = req.getParameter(name);
+		if (param == null || param.isEmpty())
+			throw new StatusException(Status.NOT_FOUND.addObjects(name));
+		return (param);
+	}
 
 	protected ObjectMapper	mapper	= new ObjectMapper();
 
-	@SuppressWarnings("resource")
+	protected Status		status	= Status.OK;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
