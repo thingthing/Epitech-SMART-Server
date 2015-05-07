@@ -10,27 +10,29 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
+import eip.smart.server.Server;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet SocketListenStop close the port and stop "listening" at it.</b>
- * 
+ * <b>The servlet SocketListen open the port and start "listening" at it.</b>
+ *
  * @author Pierre Demessence
  */
 
-@WebServlet(urlPatterns = { "/socket_listen_stop" })
-public class SocketListenStop extends JsonServlet {
+@WebServlet(urlPatterns = { "/socket_restart" })
+public class SocketRestart extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-
-		this.status = Status.ERR_REMOVED;
-		/*
-		if (!Server.getServer().isAcceptorActive())
-			this.status = Status.SOCKET_NOT_RUNNING;
-		else
+		try {
 			Server.getServer().socketListenStop();
-		*/
+			Server.getServer().socketListen();
+		} catch (IOException e) {
+			this.status = Status.ERR_UNKNOWN.addObjects(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			this.status = Status.SOCKET_ERROR.addObjects("port out of range or unavaiable.");
+		}
+
 	}
 }
