@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 import eip.smart.server.util.Configuration;
 
@@ -22,24 +23,15 @@ import eip.smart.server.util.Configuration;
 public class ConfGet extends JsonServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		String name = req.getParameter("name");
-		String key = req.getParameter("key");
-		if (name == null || name.isEmpty())
-			this.status = Status.MISSING_PARAMETER.addObjects("name");
-		else if (key == null || key.isEmpty())
-			this.status = Status.MISSING_PARAMETER.addObjects("key");
-		else if (!Configuration.confExists(name))
-			this.status = Status.NOT_FOUND.addObjects("configuration", "name", name);
-		else {
-			Configuration conf = new Configuration(name);
-			if (!conf.keyExists(key))
-				this.status = Status.NOT_FOUND.addObjects("property", "key", key);
-			else {
-				json.writeFieldName("value");
-				this.mapper.writeValue(json, conf.getProperty(key));
-			}
-		}
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
+		String name = JsonServlet.getParameter(req, "name");
+		String key = JsonServlet.getParameter(req, "key");
+		if (!Configuration.confExists(name))
+			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
+		Configuration conf = new Configuration(name);
+		if (!conf.keyExists(key))
+			throw new StatusException(Status.NOT_FOUND.addObjects("property", "key", key));
+		json.writeFieldName("value");
+		this.mapper.writeValue(json, conf.getProperty(key));
 	}
-
 }
