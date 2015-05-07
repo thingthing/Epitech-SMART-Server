@@ -1,4 +1,4 @@
-package eip.smart.server.servlet.modeling;
+package eip.smart.server.servlet.configuration;
 
 import java.io.IOException;
 
@@ -9,28 +9,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Modeling;
 import eip.smart.model.Status;
-import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
+import eip.smart.server.util.Configuration;
 
 /**
- * <b>The servlet ModelingInfo return the main data about the current modeling.</b>
+ * <b>The servlet ListStatus return the list of the status that can be returned.</b>
  *
  * @author Pierre Demessence
  */
-
-@WebServlet(name = "ModelingInfo", urlPatterns = "/modeling_info")
-public class ModelingInfo extends JsonServlet {
+@WebServlet("/conf_create")
+public class ConfCreate extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		Modeling modeling = Server.getServer().getCurrentModeling();
-		if (modeling == null)
-			throw new StatusException(Status.MODELING_NO_CURRENT);
-		json.writeFieldName("modeling");
-		this.mapper.writeValue(json, modeling);
+		String name = JsonServlet.getParameter(req, "name");
+		if (Configuration.confExists(name))
+			throw new StatusException(Status.DUPLICATE.addObjects("configuration", "name", name));
+		new Configuration(name);
 	}
-
 }

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -26,13 +27,14 @@ public class ModelingDelete extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
+	 * @throws StatusException
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (request.getParameter("name") == null || request.getParameter("name").equals(""))
-			this.status = Status.MISSING_PARAMETER.addObjects("name");
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects("name"));
 		else if (!Server.getServer().modelingDelete(request.getParameter("name")))
-			this.status = Status.NOT_FOUND.addObjects("modeling", "name", request.getParameter("name"));
+			throw new StatusException(Status.NOT_FOUND.addObjects("modeling", "name", request.getParameter("name")));
 	}
 }

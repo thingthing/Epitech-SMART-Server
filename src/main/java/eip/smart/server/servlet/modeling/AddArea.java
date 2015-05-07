@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eip.smart.model.Area;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -26,7 +27,7 @@ public class AddArea extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		Area area = null;
 		if (req.getParameter("area") != null)
 			try {
@@ -34,9 +35,9 @@ public class AddArea extends JsonServlet {
 			} catch (Exception e) {}
 
 		if (area == null)
-			this.status = Status.MISSING_PARAMETER.addObjects("area");
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects("area"));
 		else if (Server.getServer().getCurrentModeling() == null)
-			this.status = Status.MODELING_NO_CURRENT;
+			throw new StatusException(Status.MODELING_NO_CURRENT);
 		else
 			Server.getServer().getCurrentModeling().addArea(area);
 	}

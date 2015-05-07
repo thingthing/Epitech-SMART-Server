@@ -16,6 +16,7 @@ import eip.smart.model.Agent;
 import eip.smart.model.Status;
 import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -29,7 +30,7 @@ public class ManualOrder extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = req.getParameter("name");
 		Agent agent = null;
 		if (name != null) {
@@ -46,10 +47,10 @@ public class ManualOrder extends JsonServlet {
 			} catch (IOException e) {}
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
-		else if (order == null)
-			this.status = Status.MISSING_PARAMETER.addObjects("order");
-		else
-			agent.pushOrder(order);
+			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
+		if (order == null)
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects("order"));
+
+		agent.pushOrder(order);
 	}
 }
