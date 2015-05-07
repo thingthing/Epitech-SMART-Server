@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -24,14 +25,14 @@ public class SocketRestart extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		try {
 			Server.getServer().socketListenStop();
 			Server.getServer().socketListen();
 		} catch (IOException e) {
-			this.status = Status.ERR_UNKNOWN.addObjects(e.getMessage());
+			throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
 		} catch (IllegalArgumentException e) {
-			this.status = Status.SOCKET_ERROR.addObjects("port out of range or unavaiable.");
+			throw new StatusException(Status.SOCKET_ERROR.addObjects("port out of range or unavaiable."));
 		}
 
 	}

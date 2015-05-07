@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -27,7 +28,7 @@ public class GetAgentInfo extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = req.getParameter("name");
 		Agent agent = null;
 		if (name != null) {
@@ -39,11 +40,9 @@ public class GetAgentInfo extends JsonServlet {
 		System.out.println(name);
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
-		else {
-			json.writeFieldName("agent");
-			// @ TODO Create a Proxy here ?
-			this.mapper.writeValue(json, agent);
-		}
+			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
+		json.writeFieldName("agent");
+		// @ TODO Create a Proxy here ?
+		this.mapper.writeValue(json, agent);
 	}
 }

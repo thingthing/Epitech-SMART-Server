@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -27,7 +28,7 @@ public class AgentDelete extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = req.getParameter("name");
 		Agent agent = null;
 		if (name != null) {
@@ -38,8 +39,7 @@ public class AgentDelete extends JsonServlet {
 		}
 
 		if (agent == null)
-			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
-		else
-			Server.getServer().getIoAgentContainer().getByAgent(agent).removeAgent();
+			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
+		Server.getServer().getIoAgentContainer().getByAgent(agent).removeAgent();
 	}
 }
