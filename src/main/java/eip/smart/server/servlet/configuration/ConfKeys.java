@@ -24,7 +24,7 @@ public class ConfKeys extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		String name = req.getParameter("name");
+		String name = JsonServlet.getParameter(req, "name");
 		if (!Configuration.confExists(name))
 			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
 		json.writeFieldName("keys");

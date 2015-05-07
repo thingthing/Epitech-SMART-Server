@@ -19,7 +19,7 @@ public abstract class JsonServlet extends HttpServlet {
 	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
 		String param = req.getParameter(name);
 		if (param == null || param.isEmpty())
-			throw new StatusException(Status.NOT_FOUND.addObjects(name));
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects(name));
 		return (param);
 	}
 
