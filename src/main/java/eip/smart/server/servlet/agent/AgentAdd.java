@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,14 +14,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet AgentRecall take an agent's name as parameter and give the recall order to the corresponding Agent.</b>
+ * <b>The servlet AgentAdd take an agent's name as parameter and add the corresponding Agent from the current Modeling.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
-@WebServlet(urlPatterns = { "/agent_recall" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class AgentRecall extends JsonServlet {
+@WebServlet(urlPatterns = { "/agent_add" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class AgentAdd extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -36,10 +38,12 @@ public class AgentRecall extends JsonServlet {
 		}
 
 		if (agent == null)
-			this.status = Status.AGENT_NOT_FOUND;
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
 		else if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
+		else if (Server.getServer().getCurrentModeling().getAgents().contains(agent))
+			this.status = Status.AGENT_ALREADY_ADDED;
 		else
-			agent.recall();
+			Server.getServer().getCurrentModeling().addAgent(agent);
 	}
 }

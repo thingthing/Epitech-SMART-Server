@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.socket;
 
 import java.io.IOException;
 
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet SocketListen open the port and start "listening" at it.</b>

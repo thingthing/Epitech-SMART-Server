@@ -29,7 +29,8 @@ import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
-import eip.smart.server.servlet.ModelingInfo;
+import eip.smart.server.servlet.modeling.ModelingInfo;
+import eip.smart.server.util.Configuration;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -57,6 +58,8 @@ public class Server implements ServletContextListener {
 
 	private IoAcceptor			acceptor			= new NioSocketAcceptor();
 
+	private Configuration		conf				= new Configuration("server");
+
 	/**
 	 * The current selected modeling.
 	 */
@@ -77,11 +80,6 @@ public class Server implements ServletContextListener {
 	 * Different implementations allow to different ways of storage.
 	 */
 	private ModelingManager		manager				= new DefaultFileModelingManager();
-
-	/**
-	 * The port for the TCP connection.
-	 */
-	private int					port				= 4200;
 
 	/**
 	 * Is the current modeling running.
@@ -116,6 +114,8 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
+		Configuration.setDefaultProperty("server", "TCP_PORT", "4200");
+
 		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
 
@@ -144,6 +144,10 @@ public class Server implements ServletContextListener {
 		return (this.ioAgentContainer.getAgents());
 	}
 
+	public Configuration getConfiguration() {
+		return (this.conf);
+	}
+
 	/**
 	 * Get the current modeling.
 	 *
@@ -166,7 +170,7 @@ public class Server implements ServletContextListener {
 	 * Get the port.
 	 */
 	public int getPort() {
-		return (this.port);
+		return (this.conf.getPropertyInteger("TCP_PORT"));
 	}
 
 	/**
@@ -310,7 +314,7 @@ public class Server implements ServletContextListener {
 	 * @throws IllegalArgumentException
 	 */
 	private void socketListen() throws IOException, IllegalArgumentException {
-		this.acceptor.bind(new InetSocketAddress(this.port));
+		this.acceptor.bind(new InetSocketAddress(this.conf.getPropertyInteger("TCP_PORT")));
 	}
 
 	/**

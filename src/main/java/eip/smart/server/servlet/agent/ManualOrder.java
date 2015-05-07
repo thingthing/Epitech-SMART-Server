@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,18 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
+import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet GetAgentInfo take an agent's name as parameter and return informations about the corresponding Agent.</b>
+ * <b>The servlet ManualOrder take an agent's name and a Point as parameter set this Point as the new current goal of the corresponding Agent.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
-@WebServlet(urlPatterns = { "/get_agent_info" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class GetAgentInfo extends JsonServlet {
+@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class ManualOrder extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -34,14 +38,18 @@ public class GetAgentInfo extends JsonServlet {
 				if (name.equals(a.getName()))
 					agent = a;
 		}
-		System.out.println(name);
+
+		Point order = null;
+		if (req.getParameter("order") != null)
+			try {
+				order = new ObjectMapper().readValue(req.getParameter("order"), Point.class);
+			} catch (IOException e) {}
 
 		if (agent == null)
-			this.status = Status.AGENT_NOT_FOUND;
-		else {
-			json.writeFieldName("agent");
-			// @ TODO Create a Proxy here ?
-			this.mapper.writeValue(json, agent);
-		}
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
+		else if (order == null)
+			this.status = Status.MISSING_PARAMETER.addObjects("order");
+		else
+			agent.pushOrder(order);
 	}
 }

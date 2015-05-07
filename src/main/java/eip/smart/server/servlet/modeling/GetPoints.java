@@ -1,7 +1,6 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,16 +10,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.model.Modeling;
+import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
+import eip.smart.util.PointCloudGenerator;
 
 /**
- * <b>The servlet ModelingList return the list of the modelings saved in the server.</b>
+ * <b>The servlet GetPoints return the list of the new points of the current modeling.</b>
  * @author Pierre Demessence
 */
 
-@WebServlet(urlPatterns = { "/modeling_list" })
-public class ModelingList extends JsonServlet {
+@WebServlet("/get_points")
+public class GetPoints extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
@@ -28,8 +30,15 @@ public class ModelingList extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		ArrayList<SimpleModelingProxy> modelings = Server.getServer().modelingList();
-		json.writeFieldName("modelings");
-		this.mapper.writeValue(json, modelings);
+		Modeling modeling = Server.getServer().getCurrentModeling();
+		if (modeling == null)
+			this.status = Status.MODELING_NO_CURRENT;
+		else
+		{
+			json.writeFieldName("points");
+			this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
+			this.status = Status.ERR_SIMULATION;
+		}
 	}
+
 }

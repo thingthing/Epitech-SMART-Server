@@ -1,6 +1,7 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,18 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Modeling;
-import eip.smart.model.Status;
+import eip.smart.model.Agent;
+import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
-import eip.smart.util.PointCloudGenerator;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet GetPoints return the list of the new points of the current modeling.</b>
+ * <b>The servlet GetAgentsAvailable return the list of the agents connected to the server and not already attributed to a modeling.</b>
  * @author Pierre Demessence
 */
 
-@WebServlet("/get_points")
-public class GetPoints extends JsonServlet {
+@WebServlet("/get_agents_available")
+public class GetAgentsAvailable extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
@@ -29,15 +30,11 @@ public class GetPoints extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		Modeling modeling = Server.getServer().getCurrentModeling();
-		if (modeling == null)
-			this.status = Status.MODELING_NO_CURRENT;
-		else
-		{
-			json.writeFieldName("points");
-			this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
-			this.status = Status.ERR_SIMULATION;
-		}
-	}
+		ArrayList<SimpleAgentProxy> agents = new ArrayList<>();
+		for (Agent agent : Server.getServer().getAgentsAvailable())
+			agents.add(agent.getProxy());
 
+		json.writeFieldName("agents");
+		this.mapper.writeValue(json, agents);
+	}
 }

@@ -1,7 +1,6 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,19 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Agent;
-import eip.smart.model.Modeling;
 import eip.smart.model.Status;
-import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet GetAgents return the list of the agents attributed to the current modeling.</b>
+ * <b>The servlet ModelingSave save the current modeling.</b>
  * @author Pierre Demessence
 */
 
-@WebServlet(urlPatterns = { "/get_agents" })
-public class GetAgents extends JsonServlet {
+@WebServlet(urlPatterns = { "/modeling_save" })
+public class ModelingSave extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	/**
@@ -31,14 +28,9 @@ public class GetAgents extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
-		ArrayList<SimpleAgentProxy> agents = new ArrayList<>();
-		Modeling currentModeling = Server.getServer().getCurrentModeling();
-		if (currentModeling != null) {
-			for (Agent agent : currentModeling.getAgents())
-				agents.add(agent.getProxy());
-			json.writeFieldName("agents");
-			this.mapper.writeValue(json, agents);
-		} else
+		if (Server.getServer().getCurrentModeling() == null)
 			this.status = Status.MODELING_NO_CURRENT;
+		else
+			Server.getServer().modelingSave();
 	}
 }

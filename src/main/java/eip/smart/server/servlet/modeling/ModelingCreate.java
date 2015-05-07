@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -12,11 +12,13 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingCreate take a name as parameter and create a modeling with this name.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet(urlPatterns = { "/modeling_create" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingCreate extends JsonServlet {
@@ -27,9 +29,9 @@ public class ModelingCreate extends JsonServlet {
 		if (Server.getServer().getCurrentModeling() != null)
 			this.status = Status.MODELING_ALREADY_CURRENT;
 		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
-			this.status = Status.MODELING_NO_NAME;
+			this.status = Status.MISSING_PARAMETER.addObjects("name");
 		else if (!Server.getServer().modelingCreate(request.getParameter("name")))
-			this.status = Status.MODELING_DUPLICATE_NAME;
+			this.status = Status.DUPLICATE.addObjects("modeling", "name", request.getParameter("name"));
 	}
 
 }

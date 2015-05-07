@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,14 +14,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.Agent;
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet AgentRemove take an agent's name as parameter and delete the corresponding Agent from the agent's list attributed to the current modeling.</b>
+ * <b>The servlet GetAgentInfo take an agent's name as parameter and return informations about the corresponding Agent.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
-@WebServlet(urlPatterns = { "/agent_remove" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class AgentRemove extends JsonServlet {
+@WebServlet(urlPatterns = { "/get_agent_info" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class GetAgentInfo extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -34,14 +36,14 @@ public class AgentRemove extends JsonServlet {
 				if (name.equals(a.getName()))
 					agent = a;
 		}
+		System.out.println(name);
 
 		if (agent == null)
-			this.status = Status.AGENT_NOT_FOUND;
-		else if (Server.getServer().getCurrentModeling() == null)
-			this.status = Status.MODELING_NO_CURRENT;
-		else if (!Server.getServer().getCurrentModeling().getAgents().contains(agent))
-			this.status = Status.AGENT_NOT_ADDED;
-		else
-			Server.getServer().getCurrentModeling().removeAgent(agent);
+			this.status = Status.NOT_FOUND.addObjects("agent", "name", name);
+		else {
+			json.writeFieldName("agent");
+			// @ TODO Create a Proxy here ?
+			this.mapper.writeValue(json, agent);
+		}
 	}
 }
