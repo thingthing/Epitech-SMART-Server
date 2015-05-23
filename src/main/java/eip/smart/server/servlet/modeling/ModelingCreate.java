@@ -29,10 +29,10 @@ public class ModelingCreate extends JsonServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (Server.getServer().getCurrentModeling() != null)
 			throw new StatusException(Status.MODELING_ALREADY_CURRENT);
-		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
+		else if (JsonServlet.getParameter(request, "name") == null || JsonServlet.getParameter(request, "name").equals(""))
 			throw new StatusException(Status.MISSING_PARAMETER.addObjects("name"));
-		else if (!Server.getServer().modelingCreate(request.getParameter("name")))
-			throw new StatusException(Status.DUPLICATE.addObjects("modeling", "name", request.getParameter("name")));
+		else if (!Server.getServer().modelingCreate(JsonServlet.getParameter(request, "name")))
+			throw new StatusException(Status.DUPLICATE.addObjects("modeling", "name", JsonServlet.getParameter(request, "name")));
 	}
 
 }

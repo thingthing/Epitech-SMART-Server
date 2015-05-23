@@ -29,7 +29,7 @@ public class AgentAdd extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		String name = req.getParameter("name");
+		String name = JsonServlet.getParameter(req, "name");
 		Agent agent = null;
 		if (name != null) {
 			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();

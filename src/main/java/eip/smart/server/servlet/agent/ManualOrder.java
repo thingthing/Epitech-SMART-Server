@@ -31,7 +31,7 @@ public class ManualOrder extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		String name = req.getParameter("name");
+		String name = JsonServlet.getParameter(req, "name");
 		Agent agent = null;
 		if (name != null) {
 			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
@@ -41,9 +41,9 @@ public class ManualOrder extends JsonServlet {
 		}
 
 		Point order = null;
-		if (req.getParameter("order") != null)
+		if (JsonServlet.getParameter(req, "order") != null)
 			try {
-				order = new ObjectMapper().readValue(req.getParameter("order"), Point.class);
+				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point.class);
 			} catch (IOException e) {}
 
 		if (agent == null)
