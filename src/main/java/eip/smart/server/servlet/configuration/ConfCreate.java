@@ -27,6 +27,6 @@ public class ConfCreate extends JsonServlet {
 		String name = JsonServlet.getParameter(req, "name");
 		if (Configuration.confExists(name))
 			throw new StatusException(Status.DUPLICATE.addObjects("configuration", "name", name));
-		new Configuration(name);
+
 	}
 }

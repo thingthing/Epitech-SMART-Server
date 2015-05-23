@@ -43,6 +43,18 @@ public class Configuration {
 		return (Configuration.defaultProperties.containsKey(name) || new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).exists());
 	}
 
+    /**
+     * Try to remove a configuration file.
+     * NB: This method can (but should never) throw SecurityException, if this happens check the SecurityManager configuration.
+     *
+     * @param name
+     *            The name of the configuration file to remove
+     * @return true if the configuration file have been successfully removed
+     */
+    public static boolean confDelete(String name) {
+        return (new File(CONFIG_DIR, name + CONFIG_EXTENSION).delete());
+    }
+
 	/**
 	 * Get a list of all the configuration names.
 	 *
@@ -184,4 +196,16 @@ public class Configuration {
 		this.properties.setProperty(key, value);
 		this.save();
 	}
+
+    /**
+     * Deletes a property and save to file.
+     *
+     * @param key
+     * @return
+     * @see java.util.Properties#remove(java.lang.Object)
+     */
+    public void removeKey(String key) {
+        this.properties.remove(key);
+        this.save();
+    }
 }

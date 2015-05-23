@@ -24,13 +24,27 @@ public class ConfSet extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
+        boolean remove = false;
 		String name = JsonServlet.getParameter(req, "name");
 		String key = JsonServlet.getParameter(req, "key");
-		String value = JsonServlet.getParameter(req, "value");
+        String value = null;
+        try {
+            value = JsonServlet.getParameter(req, "value");
+        } catch (StatusException e) {
+            if (e.getStatus() == Status.MISSING_PARAMETER) {
+                remove = true;
+            } else {
+                throw e;
+            }
+        }
 		if (!Configuration.confExists(name))
 			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
 		Configuration conf = new Configuration(name);
-		conf.setProperty(key, value);
+		if (remove) {
+            conf.removeKey(key);
+        } else {
+            conf.setProperty(key, value);
+        }
 	}
 
 }
