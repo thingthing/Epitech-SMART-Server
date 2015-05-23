@@ -87,7 +87,7 @@ public class SystemStateMatrice {
 	public void updateAgentState(Agent agent, Double bearingAdjustment, Point posAdjustment) {
 		Agent tmp = this.getAgent(agent.getName(), this.agents);
 		if (tmp != null) {
-			tmp.setCurrentPosition(Point.add(tmp.getCurrentPosition(), posAdjustment));
+			tmp.setCurrentPosition(tmp.getCurrentPosition().add(posAdjustment));
 			tmp.setCurrentBearing(tmp.getCurrentBearing() + bearingAdjustment);
 		}
 	}
