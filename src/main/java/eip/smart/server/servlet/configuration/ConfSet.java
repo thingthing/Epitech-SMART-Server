@@ -26,11 +26,11 @@ public class ConfSet extends JsonServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
 		String key = JsonServlet.getParameter(req, "key");
-		String value = JsonServlet.getParameter(req, "value");
-		if (!Configuration.confExists(name))
+        String value = JsonServlet.getParameter(req, "value");
+        if (!Configuration.confExists(name))
 			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
 		Configuration conf = new Configuration(name);
-		conf.setProperty(key, value);
+        conf.setProperty(key, value);
 	}
 
 }
