@@ -1,5 +1,4 @@
-#Deployement Script
-set -e
+#Server Deployement Script
 mvn clean install
 /usr/share/apache-tomcat-7.0.57/bin/catalina.sh stop
 rm -rf /usr/share/apache-tomcat-7.0.57/webapps/smartserver/
