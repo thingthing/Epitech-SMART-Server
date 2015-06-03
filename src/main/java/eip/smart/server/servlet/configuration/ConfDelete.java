@@ -15,22 +15,16 @@ import eip.smart.server.servlet.JsonServlet;
 import eip.smart.server.util.Configuration;
 
 /**
- * <b>The servlet ListStatus return the list of the status that can be returned.</b>
- *
- * @author Pierre Demessence
+ * @author Vincent Buresi
  */
-@WebServlet("/conf_set")
-public class ConfSet extends JsonServlet {
+@WebServlet("/conf_delete")
+public class ConfDelete extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		String key = JsonServlet.getParameter(req, "key");
-        String value = JsonServlet.getParameter(req, "value");
-        if (!Configuration.confExists(name))
+		if (!Configuration.confExists(name))
 			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
-		Configuration conf = new Configuration(name);
-        conf.setProperty(key, value);
+		Configuration.confDelete(name);
 	}
-
 }
