@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.Agent;
 import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet GetAgentsAvailable return the list of the agents connected to the server and not already attributed to a modeling.</b>

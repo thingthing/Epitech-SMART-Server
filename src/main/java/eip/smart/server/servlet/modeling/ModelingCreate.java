@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.modeling;
 
 import java.io.IOException;
 
@@ -12,24 +12,27 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.model.Status;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ModelingCreate take a name as parameter and create a modeling with this name.</b>
+ *
  * @author Pierre Demessence
-*/
+ */
 
 @WebServlet(urlPatterns = { "/modeling_create" }, initParams = { @WebInitParam(name = "name", value = "") })
 public class ModelingCreate extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (Server.getServer().getCurrentModeling() != null)
-			this.status = Status.MODELING_ALREADY_CURRENT;
-		else if (request.getParameter("name") == null || request.getParameter("name").equals(""))
-			this.status = Status.MODELING_NO_NAME;
-		else if (!Server.getServer().modelingCreate(request.getParameter("name")))
-			this.status = Status.MODELING_DUPLICATE_NAME;
+			throw new StatusException(Status.MODELING_ALREADY_CURRENT);
+		else if (JsonServlet.getParameter(request, "name") == null || JsonServlet.getParameter(request, "name").equals(""))
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects("name"));
+		else if (!Server.getServer().modelingCreate(JsonServlet.getParameter(request, "name")))
+			throw new StatusException(Status.DUPLICATE.addObjects("modeling", "name", JsonServlet.getParameter(request, "name")));
 	}
 
 }

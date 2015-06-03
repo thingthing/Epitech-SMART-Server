@@ -12,14 +12,21 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.Status;
+import eip.smart.server.exception.StatusException;
 
 public abstract class JsonServlet extends HttpServlet {
 
-	protected Status		status	= Status.OK;
+	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
+		String param = req.getParameter(name);
+		if (param == null || param.isEmpty())
+			throw new StatusException(Status.MISSING_PARAMETER.addObjects(name));
+		return (param);
+	}
 
 	protected ObjectMapper	mapper	= new ObjectMapper();
 
-	@SuppressWarnings("resource")
+	protected Status		status	= Status.OK;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
@@ -29,7 +36,11 @@ public abstract class JsonServlet extends HttpServlet {
 			json.writeFieldName("data");
 			json.writeStartObject();
 			this.status = Status.OK;
-			this.doGet(req, resp, json);
+			try {
+				this.doGet(req, resp, json);
+			} catch (StatusException e) {
+				this.status = e.getStatus();
+			}
 			json.writeEndObject();
 
 			json.writeFieldName("status");
@@ -45,5 +56,5 @@ public abstract class JsonServlet extends HttpServlet {
 		}
 	}
 
-	protected abstract void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException;
+	protected abstract void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException;
 }

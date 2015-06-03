@@ -20,6 +20,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.apache.mina.util.AvailablePortFinder;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
@@ -29,7 +30,8 @@ import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
-import eip.smart.server.servlet.ModelingInfo;
+import eip.smart.server.servlet.modeling.ModelingInfo;
+import eip.smart.server.util.Configuration;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -57,6 +59,8 @@ public class Server implements ServletContextListener {
 
 	private IoAcceptor			acceptor			= new NioSocketAcceptor();
 
+	private Configuration		conf				= new Configuration("server");
+
 	/**
 	 * The current selected modeling.
 	 */
@@ -77,11 +81,6 @@ public class Server implements ServletContextListener {
 	 * Different implementations allow to different ways of storage.
 	 */
 	private ModelingManager		manager				= new DefaultFileModelingManager();
-
-	/**
-	 * The port for the TCP connection.
-	 */
-	private int					port				= 4200;
 
 	/**
 	 * Is the current modeling running.
@@ -116,6 +115,8 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
+		Configuration.setDefaultProperty("server", "TCP_PORT", "4200");
+
 		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
 
@@ -144,6 +145,10 @@ public class Server implements ServletContextListener {
 		return (this.ioAgentContainer.getAgents());
 	}
 
+	public Configuration getConfiguration() {
+		return (this.conf);
+	}
+
 	/**
 	 * Get the current modeling.
 	 *
@@ -166,7 +171,7 @@ public class Server implements ServletContextListener {
 	 * Get the port.
 	 */
 	public int getPort() {
-		return (this.port);
+		return (this.conf.getPropertyInteger("TCP_PORT"));
 	}
 
 	/**
@@ -309,18 +314,19 @@ public class Server implements ServletContextListener {
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
-	private void socketListen() throws IOException, IllegalArgumentException {
-		this.acceptor.bind(new InetSocketAddress(this.port));
+	public void socketListen() throws IOException, IllegalArgumentException {
+		if (!AvailablePortFinder.available(this.getPort()))
+			throw new IllegalArgumentException();
+		this.acceptor.bind(new InetSocketAddress(this.getPort()));
 	}
 
 	/**
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 */
-	private void socketListenStop() {
+	public void socketListenStop() {
 		this.acceptor.setCloseOnDeactivation(true);
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
-		this.acceptor.dispose(false);
 	}
 }
