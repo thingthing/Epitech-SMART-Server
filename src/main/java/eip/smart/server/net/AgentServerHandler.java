@@ -16,7 +16,7 @@ public class AgentServerHandler implements IoHandler {
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		// TODO Auto-generated method stub
+		cause.printStackTrace();
 	}
 
 	@Override
@@ -29,7 +29,8 @@ public class AgentServerHandler implements IoHandler {
 	 */
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
-		String msg = (String) message;
+		Packet packet = (Packet) message;
+		String msg = new String(packet.getData());
 		if (msg.equals("exit"))
 			session.close(true);
 		else if (this.ioAgentContainer.getBySession(session).getAgent() == null) {
@@ -65,15 +66,16 @@ public class AgentServerHandler implements IoHandler {
 
 	/**
 	 * Delete the session and remote it from the bound IoAgent.
-	 * 
+	 *
 	 * @param session
 	 */
 	private void removeSession(IoSession session) {
 		IoAgent ioAgent = this.ioAgentContainer.getBySession(session);
-		if (ioAgent.getAgent() == null)
-			this.ioAgentContainer.remove(ioAgent);
-		else
-			ioAgent.sessionDestroyed();
+		if (ioAgent != null)
+			if (ioAgent.getAgent() == null)
+				this.ioAgentContainer.remove(ioAgent);
+			else
+				ioAgent.sessionDestroyed();
 	}
 
 	@Override
@@ -98,7 +100,7 @@ public class AgentServerHandler implements IoHandler {
 
 	/**
 	 * Set the IoAgentContainer to store the connected agents.
-	 * 
+	 *
 	 * @param ioAgentContainer
 	 */
 	public void setIoAgentContainer(IoAgentContainer ioAgentContainer) {
