@@ -16,6 +16,8 @@ public class PacketDecoder extends CumulativeProtocolDecoder {
 			short packetSize = in.getShort();
 			byte protocolVersion = in.get();
 			byte headerSize = in.get();
+			if (headerSize > Packet.HEADER_SIZE)
+				in.skip(headerSize - Packet.HEADER_SIZE);
 			byte[] data = new byte[packetSize - headerSize];
 			in.get(data);
 			Packet packet = new Packet(packetSize, protocolVersion, headerSize, data);
