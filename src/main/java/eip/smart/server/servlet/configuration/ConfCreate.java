@@ -22,6 +22,7 @@ import eip.smart.server.util.Configuration;
 @WebServlet("/conf_create")
 public class ConfCreate extends JsonServlet {
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
