@@ -1,5 +1,7 @@
 package eip.smart.server.net;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class Packet {
 	public static final byte	MAGIC				= 0x42;
 	public static final byte	PROTOCOL_VERSION	= 1;
@@ -10,25 +12,26 @@ public class Packet {
 	private short				packetSize			= 5;
 	private byte				protocolVersion		= Packet.PROTOCOL_VERSION;
 	private byte				headerSize			= Packet.HEADER_SIZE;
-	private byte[]				data;
+	private byte[]				payload;
+	private JsonNode			jsonPayload;
 
-	public Packet(byte[] data) {
-		this.data = data;
-		this.packetSize = (short) (this.headerSize + this.data.length);
-	}
-
-	public Packet(short packetSize, byte protocolVersion, byte headerSize, byte[] data) {
-		this.packetSize = packetSize;
-		this.protocolVersion = protocolVersion;
-		this.headerSize = headerSize;
-		this.data = data;
+	/**
+	 * When encoding a packet.
+	 */
+	public Packet(byte[] payload) {
+		this.payload = payload;
+		this.packetSize = (short) (this.headerSize + this.payload.length);
 	}
 
 	/**
-	 * @return the data
+	 * When decoding a packet
 	 */
-	public byte[] getData() {
-		return this.data;
+	public Packet(short packetSize, byte protocolVersion, byte headerSize, byte[] payload, JsonNode jsonPayload) {
+		this.packetSize = packetSize;
+		this.protocolVersion = protocolVersion;
+		this.headerSize = headerSize;
+		this.payload = payload;
+		this.jsonPayload = jsonPayload;
 	}
 
 	/**
@@ -39,10 +42,40 @@ public class Packet {
 	}
 
 	/**
+	 * @return
+	 *         the json data
+	 */
+	public JsonNode getJsonData() {
+		return (this.jsonPayload.get("data"));
+	}
+
+	/**
+	 * @return the jsonPayload
+	 */
+	public JsonNode getJsonPayload() {
+		return this.jsonPayload;
+	}
+
+	/**
+	 * @return
+	 *         the json status
+	 */
+	public JsonNode getJsonStatus() {
+		return (this.jsonPayload.get("status"));
+	}
+
+	/**
 	 * @return the packetSize
 	 */
 	public short getPacketSize() {
 		return this.packetSize;
+	}
+
+	/**
+	 * @return the payload
+	 */
+	public byte[] getPayload() {
+		return this.payload;
 	}
 
 	/**

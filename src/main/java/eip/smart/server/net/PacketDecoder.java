@@ -5,6 +5,9 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class PacketDecoder extends CumulativeProtocolDecoder {
 
 	@Override
@@ -18,9 +21,10 @@ public class PacketDecoder extends CumulativeProtocolDecoder {
 			byte headerSize = in.get();
 			if (headerSize > Packet.HEADER_SIZE)
 				in.skip(headerSize - Packet.HEADER_SIZE);
-			byte[] data = new byte[packetSize - headerSize];
-			in.get(data);
-			Packet packet = new Packet(packetSize, protocolVersion, headerSize, data);
+			byte[] payload = new byte[packetSize - headerSize];
+			in.get(payload);
+			JsonNode jsonPayload = new ObjectMapper().readTree(payload);
+			Packet packet = new Packet(packetSize, protocolVersion, headerSize, payload, jsonPayload);
 			out.write(packet);
 			return (true);
 		}

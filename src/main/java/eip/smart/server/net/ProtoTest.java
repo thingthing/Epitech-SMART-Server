@@ -12,11 +12,16 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
+import eip.smart.model.MessagePacket;
+
 public class ProtoTest extends IoHandlerAdapter {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		new ProtoTest();
 	}
+
+	private boolean			read	= true;
 
 	private SocketConnector	connector;
 
@@ -33,17 +38,20 @@ public class ProtoTest extends IoHandlerAdapter {
 
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 		String msg;
-		while (true)
+		while (this.read)
 			try {
+				session.write(new MessagePacket().addObject("name", "titi").addObject("state", 0).addObject("noz", 0));
 				msg = bufferedReader.readLine();
-				if (msg.equals("exit"))
-					return;
-				session.write(msg);
+				if (!msg.contains(":"))
+					continue;
+				session.write(new MessagePacket().addObject(msg.substring(0, msg.indexOf(":")), msg.substring(msg.indexOf(":") + 1)));
+				if (msg.substring(0, msg.indexOf(":")).equals("exit"))
+					this.read = false;
 			} catch (IOException e) {
 				e.printStackTrace();
 				return;
 			}
-
+		this.connector.dispose();
 	}
 
 	@Override
@@ -54,7 +62,22 @@ public class ProtoTest extends IoHandlerAdapter {
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		Packet packet = (Packet) message;
-		System.out.println(new String(packet.getData()));
+		System.out.println("##Received packet:");
+		System.out.println("--magic: " + Packet.MAGIC);
+		System.out.println("--packetSize: " + packet.getPacketSize());
+		System.out.println("--protocolVersion: " + packet.getProtocolVersion());
+		System.out.println("--headerSize: " + packet.getHeaderSize());
+		System.out.println("--payload: " + new String(packet.getPayload()));
+		System.out.println("##END");
+		System.out.println("##PAYLOAD:");
+		System.out.println("--data: " + packet.getJsonData());
+		System.out.println("--status:" + packet.getJsonStatus());
+		System.out.println("##END");
+	}
 
+	@Override
+	public void sessionClosed(IoSession session) throws Exception {
+		super.sessionClosed(session);
+		this.read = false;
 	}
 }
