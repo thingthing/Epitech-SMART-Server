@@ -84,4 +84,12 @@ public class Packet {
 	public byte getProtocolVersion() {
 		return this.protocolVersion;
 	}
+
+	public int getStatusCode() {
+		return (this.jsonPayload.get("status").get("code").asInt());
+	}
+
+	public String getStatusMessage() {
+		return (this.jsonPayload.get("status").get("message").asText());
+	}
 }

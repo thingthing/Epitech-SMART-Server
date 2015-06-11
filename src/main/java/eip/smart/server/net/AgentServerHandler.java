@@ -1,5 +1,8 @@
 package eip.smart.server.net;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -7,6 +10,7 @@ import org.apache.mina.core.session.IoSession;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import eip.smart.model.MessagePacket;
+import eip.smart.server.servlet.modeling.ModelingInfo;
 
 /**
  * Implementation of IoHandler to handle Agents.
@@ -15,6 +19,8 @@ import eip.smart.model.MessagePacket;
  *
  */
 public class AgentServerHandler implements IoHandler {
+
+	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
 
 	private IoAgentContainer	ioAgentContainer	= null;
 
@@ -34,6 +40,10 @@ public class AgentServerHandler implements IoHandler {
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		Packet packet = (Packet) message;
+		if (packet.getStatusCode() != 0) {
+			AgentServerHandler.LOGGER.log(Level.SEVERE, packet.getStatusMessage());
+			return;
+		}
 		JsonNode jsonData = packet.getJsonData();
 		if (jsonData.has("exit"))
 			session.close(true);
