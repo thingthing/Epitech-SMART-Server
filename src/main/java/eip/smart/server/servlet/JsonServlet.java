@@ -51,7 +51,6 @@ public abstract class JsonServlet extends HttpServlet {
 
 			json.writeEndObject();
 			json.close();
-			System.out.println(resp.getWriter().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
