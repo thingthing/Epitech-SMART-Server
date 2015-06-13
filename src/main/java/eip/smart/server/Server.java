@@ -122,7 +122,6 @@ public class Server implements ServletContextListener {
 
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptor.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new PacketCodecFactory()));
-		// this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
 
 		AgentServerHandler agentHandler = new AgentServerHandler();
 		agentHandler.setIoAgentContainer(this.ioAgentContainer);
@@ -316,10 +315,6 @@ public class Server implements ServletContextListener {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
-		/*
-		if (!AvailablePortFinder.available(this.getPort()))
-			throw new IllegalArgumentException();
-		*/
 		this.acceptor.bind(new InetSocketAddress(this.getPort()));
 		Server.LOGGER.log(Level.INFO, "TCP Server open on port " + this.getPort());
 	}
@@ -331,6 +326,5 @@ public class Server implements ServletContextListener {
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
-		// this.acceptor.dispose();
 	}
 }
