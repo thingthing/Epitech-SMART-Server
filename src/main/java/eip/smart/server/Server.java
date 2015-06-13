@@ -328,5 +328,6 @@ public class Server implements ServletContextListener {
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
+		this.acceptor.dispose();
 	}
 }
