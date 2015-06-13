@@ -13,7 +13,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -56,7 +55,7 @@ public class Server implements ServletContextListener {
 		return (Server.server);
 	}
 
-	private IoAcceptor			acceptor			= new NioSocketAcceptor();
+	private NioSocketAcceptor	acceptor			= new NioSocketAcceptor();
 
 	private Configuration		conf				= new Configuration("server");
 
@@ -118,6 +117,9 @@ public class Server implements ServletContextListener {
 
 		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
+
+		this.acceptor.setCloseOnDeactivation(true);
+		this.acceptor.setReuseAddress(true);
 
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
@@ -325,7 +327,6 @@ public class Server implements ServletContextListener {
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 */
 	public void socketListenStop() {
-		this.acceptor.setCloseOnDeactivation(true);
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
