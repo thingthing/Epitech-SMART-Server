@@ -12,13 +12,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.apache.mina.util.AvailablePortFinder;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
@@ -56,7 +54,7 @@ public class Server implements ServletContextListener {
 		return (Server.server);
 	}
 
-	private IoAcceptor			acceptor			= new NioSocketAcceptor();
+	private NioSocketAcceptor	acceptor			= new NioSocketAcceptor();
 
 	private Configuration		conf				= new Configuration("server");
 
@@ -118,6 +116,9 @@ public class Server implements ServletContextListener {
 
 		Server.LOGGER.log(Level.INFO, "Server starting");
 		Server.server = this;
+
+		this.acceptor.setCloseOnDeactivation(true);
+		this.acceptor.setReuseAddress(true);
 
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptor.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new PacketCodecFactory()));
@@ -315,8 +316,10 @@ public class Server implements ServletContextListener {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
+		/*
 		if (!AvailablePortFinder.available(this.getPort()))
 			throw new IllegalArgumentException();
+		*/
 		this.acceptor.bind(new InetSocketAddress(this.getPort()));
 		Server.LOGGER.log(Level.INFO, "TCP Server open on port " + this.getPort());
 	}
@@ -325,9 +328,9 @@ public class Server implements ServletContextListener {
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 */
 	public void socketListenStop() {
-		this.acceptor.setCloseOnDeactivation(true);
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
+		// this.acceptor.dispose();
 	}
 }
