@@ -20,7 +20,6 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.apache.mina.util.AvailablePortFinder;
 
 import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
@@ -315,8 +314,10 @@ public class Server implements ServletContextListener {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
+		/*
 		if (!AvailablePortFinder.available(this.getPort()))
 			throw new IllegalArgumentException();
+		*/
 		this.acceptor.bind(new InetSocketAddress(this.getPort()));
 	}
 
