@@ -1,13 +1,5 @@
 package eip.smart.server.modeling;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eip.smart.model.Modeling;
-import eip.smart.model.proxy.FileModelingProxy;
-import eip.smart.model.proxy.SimpleModelingProxy;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +7,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eip.smart.model.Modeling;
+import eip.smart.model.proxy.FileModelingProxy;
+import eip.smart.model.proxy.SimpleModelingProxy;
 
 /**
  * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.

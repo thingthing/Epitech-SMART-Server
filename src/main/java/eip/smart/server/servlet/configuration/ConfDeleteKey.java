@@ -1,16 +1,18 @@
 package eip.smart.server.servlet.configuration;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import eip.smart.model.Status;
-import eip.smart.server.exception.StatusException;
-import eip.smart.server.servlet.JsonServlet;
-import eip.smart.server.util.Configuration;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import eip.smart.model.Status;
+import eip.smart.server.exception.StatusException;
+import eip.smart.server.servlet.JsonServlet;
+import eip.smart.server.util.Configuration;
 
 /**
  * @author Vincent Buresi
