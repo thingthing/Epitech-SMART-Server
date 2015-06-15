@@ -18,8 +18,8 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
-import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.modeling.DefaultFileModelingManager;
 import eip.smart.server.modeling.ModelingManager;

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Agent;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.proxy.SimpleAgentProxy;
 import eip.smart.server.Server;
 import eip.smart.server.servlet.JsonServlet;

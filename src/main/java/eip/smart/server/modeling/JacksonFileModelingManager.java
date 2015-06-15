@@ -8,11 +8,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eip.smart.model.Modeling;
-import eip.smart.model.proxy.SimpleModelingProxy;
-
-
 import eip.smart.model.proxy.FileModelingProxy;
+import eip.smart.model.proxy.SimpleModelingProxy;
 
 /**
  * This class implements storage of a Modeling through JSON serialization, using Jackson implementation of JSON.

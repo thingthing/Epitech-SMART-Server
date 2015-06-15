@@ -12,8 +12,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import eip.smart.model.Modeling;
-
-
 import eip.smart.model.proxy.FileModelingProxy;
 
 /**

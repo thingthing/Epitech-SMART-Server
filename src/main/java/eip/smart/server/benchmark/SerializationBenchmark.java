@@ -1,12 +1,16 @@
 package eip.smart.server.benchmark;
 
-import eip.smart.model.Area;
-import eip.smart.model.Modeling;
-import eip.smart.server.modeling.*;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+
+import eip.smart.model.Area;
+import eip.smart.model.Modeling;
+import eip.smart.server.modeling.DefaultFileModelingManager;
+import eip.smart.server.modeling.DefaultZippedFileModelingManager;
+import eip.smart.server.modeling.FileModelingManager;
+import eip.smart.server.modeling.JacksonFileModelingManager;
+import eip.smart.server.modeling.JacksonZippedFileModelingManager;
 
 /**
  * Created by vincent on 2/28/15.
