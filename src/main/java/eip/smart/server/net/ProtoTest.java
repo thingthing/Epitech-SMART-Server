@@ -40,7 +40,7 @@ public class ProtoTest extends IoHandlerAdapter {
 		String msg;
 		while (this.read)
 			try {
-				session.write(new MessagePacket().addObject("name", "titi").addObject("state", 0).addObject("noz", 0));
+				// session.write(new MessagePacket().addObject("name", "titi").addObject("state", 0).addObject("noz", 0));
 				msg = bufferedReader.readLine();
 				if (!msg.contains(":"))
 					continue;
