@@ -13,11 +13,18 @@ import eip.smart.model.proxy.SimpleModelingProxy;
  */
 public abstract class FileModelingManager implements ModelingManager {
 
-    /**
-     * Adds a .modeling extension to a file name if not yet present.
-     * @param name
-     * @return New name with .modeling extension
-     */
+	protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
+
+	public static final File		DEFAULT_DIR	= FileModelingManager.getBaseDirectory();
+
+	public static final String		EXTENSION	= ".modeling";
+
+	/**
+	 * Adds a .modeling extension to a file name if not yet present.
+	 *
+	 * @param name
+	 * @return New name with .modeling extension
+	 */
 	protected static String addExtension(String name) {
 		String res = name;
 		if (!res.matches(".*\\.modeling$"))
@@ -25,23 +32,18 @@ public abstract class FileModelingManager implements ModelingManager {
 		return (res);
 	}
 
-    /**
-     * Gets a File pointer on the base directory used to save modelings.
-     * @return
-     */
+	/**
+	 * Gets a File pointer on the base directory used to save modelings.
+	 *
+	 * @return
+	 */
 	private static File getBaseDirectory() {
 		try {
-			return new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
+			return new File("modelings");
 		} catch (NullPointerException e) { // We are not in Tomcat context, default save folder is current folder
 			return new File(".");
 		}
 	}
-
-	protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-
-	public static final File		DEFAULT_DIR	= FileModelingManager.getBaseDirectory();
-
-	public static final String		EXTENSION	= ".modeling";
 
 	public FileModelingManager() {
 		FileModelingManager.DEFAULT_DIR.mkdirs();
