@@ -6,14 +6,14 @@ import ch.qos.logback.core.FileAppender
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.classic.PatternLayout
 import eip.smart.server.util.SlackAppender
-import eip.smart.server.util.SlackFilter;
+import eip.smart.server.util.ConfigFilter;
 import static ch.qos.logback.classic.Level.DEBUG
 import static ch.qos.logback.classic.Level.TRACE
 
 scan()
 
 appender("STDOUT", ConsoleAppender) {
-	encoder(PatternLayoutEncoder) { pattern = "%date - %highlight(%-5level) %cyan([%class{20}:%method:%line]) - %msg%n" }
+	encoder(PatternLayoutEncoder) { pattern = "%date - %highlight(%-5level) %cyan([%class{0}.%method:%line]) - %msg%n" }
 }
 
 appender("FILE", FileAppender) {
@@ -26,10 +26,13 @@ appender("FILE", FileAppender) {
 appender("SLACK", SlackAppender) {
 
 	token = "xoxp-2904194704-2904194706-3291941732-31bd84"
-	channel = "#logtest"
+	channel = "@pierredemessence"
+	username = "ServerLog"
 	filter(ThresholdFilter) { level = ERROR }
-	filter(SlackFilter)
-	layout(PatternLayout) { pattern = "%-4relative [%thread] %-5level %class - %msg%n" }
+	filter(ConfigFilter) {
+		key = "LOGGING_SLACK"
+		value = "TRUE"
+	}
 }
 
 root(ALL, ["STDOUT", "FILE", "SLACK"])

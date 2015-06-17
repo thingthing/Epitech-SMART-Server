@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -19,6 +19,9 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import eip.smart.model.Modeling;
 import eip.smart.model.agent.Agent;
@@ -28,7 +31,6 @@ import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
-import eip.smart.server.servlet.modeling.ModelingInfo;
 import eip.smart.server.util.Configuration;
 
 /**
@@ -41,7 +43,7 @@ public class Server implements ServletContextListener {
 	/**
 	 * The logger to log things.
 	 */
-	private final static Logger	LOGGER	= Logger.getLogger(ModelingInfo.class.getName());
+	private final static Logger	LOGGER	= LoggerFactory.getLogger(Server.class);
 
 	/**
 	 * The static instance of the server.
@@ -97,7 +99,7 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		Server.LOGGER.log(Level.INFO, "Server stopping");
+		Server.LOGGER.info("Server stopping");
 		if (this.currentModeling != null)
 			Server.getServer().modelingStop();
 		this.threadPool.shutdown();
@@ -111,23 +113,34 @@ public class Server implements ServletContextListener {
 	 *
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
+		Configuration.setDefaultProperty("server", "LOGGING_SLACK", "FALSE");
+		Configuration.setDefaultProperty("test", "LOGGING_SLACK", "FALSE");
+		Server.LOGGER.trace("Server starting");
+		Server.LOGGER.debug("Server starting");
+		Server.LOGGER.info("Server starting");
+		Server.LOGGER.warn("Server starting");
+		Server.LOGGER.error("Server starting");
+
 		Configuration.setDefaultProperty("server", "TCP_PORT", "4200");
 
-		Server.LOGGER.log(Level.INFO, "Server starting");
+		if (false) { // Convert Tomcat JUL log to SLF4J
+			LogManager.getLogManager().reset();
+			SLF4JBridgeHandler.install();
+			java.util.logging.Logger.getLogger("global").setLevel(Level.FINEST);
+		}
+
 		Server.server = this;
 
 		this.acceptor.setCloseOnDeactivation(true);
 		this.acceptor.setReuseAddress(true);
-
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
-
 		AgentServerHandler agentHandler = new AgentServerHandler();
 		agentHandler.setIoAgentContainer(this.ioAgentContainer);
 		this.acceptor.setHandler(agentHandler);
-
 		this.acceptor.getSessionConfig().setReadBufferSize(2048);
 		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 		try {
@@ -222,7 +235,6 @@ public class Server implements ServletContextListener {
 		if (this.manager.exists(name))
 			return (false);
 		this.currentModeling = new Modeling(name);
-		Server.LOGGER.log(Level.INFO, "New modeling (" + this.currentModeling.getName() + ") created.");
 		return (true);
 	}
 
@@ -266,7 +278,6 @@ public class Server implements ServletContextListener {
 	 */
 	public void modelingPause() {
 		this.currentTask.pause();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") paused.");
 	}
 
 	/**
@@ -274,7 +285,6 @@ public class Server implements ServletContextListener {
 	 */
 	public void modelingResume() {
 		this.currentTask.resume();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") resumed.");
 	}
 
 	/**
@@ -288,7 +298,6 @@ public class Server implements ServletContextListener {
 	 * Start the current modeling.
 	 */
 	public void modelingStart() {
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") started.");
 		this.running = true;
 		this.currentTask = new ModelingTask(this.currentModeling);
 		this.threadPool.execute(this.currentTask);
@@ -305,7 +314,6 @@ public class Server implements ServletContextListener {
 			this.currentTask = null;
 		}
 		this.modelingSave();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") stopped.");
 		this.currentModeling = null;
 	}
 
@@ -316,10 +324,6 @@ public class Server implements ServletContextListener {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
-		/*
-		if (!AvailablePortFinder.available(this.getPort()))
-			throw new IllegalArgumentException();
-		*/
 		this.acceptor.bind(new InetSocketAddress(this.getPort()));
 	}
 
@@ -330,6 +334,5 @@ public class Server implements ServletContextListener {
 		for (IoSession session : this.acceptor.getManagedSessions().values())
 			session.close(true);
 		this.acceptor.unbind();
-		// this.acceptor.dispose();
 	}
 }
