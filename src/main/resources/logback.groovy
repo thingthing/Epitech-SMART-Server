@@ -12,6 +12,9 @@ import static ch.qos.logback.classic.Level.TRACE
 
 scan()
 
+def CATALINA_BASE = System.getProperty("catalina.base")
+def LOG_FOLDER = "${CATALINA_BASE}/log"
+
 appender("STDOUT", ConsoleAppender) {
 	encoder(PatternLayoutEncoder) { pattern = "%date - %highlight(%-5level) %cyan([%class{0}.%method:%line]) - %msg%n" }
 }
@@ -20,7 +23,7 @@ appender("FILE", FileAppender) {
 	encoder(LayoutWrappingEncoder) {
 		layout(HTMLLayout) { pattern = "%date%level%class{0}%method%line%msg" }
 	}
-	file = "log/test.html"
+	file = "${LOG_FOLDER}/test.html"
 }
 
 appender("SLACK", SlackAppender) {
