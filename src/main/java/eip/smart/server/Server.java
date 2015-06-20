@@ -2,7 +2,6 @@ package eip.smart.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +15,6 @@ import javax.servlet.annotation.WebListener;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
@@ -31,6 +29,7 @@ import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.AgentServerHandler;
 import eip.smart.server.net.IoAgentContainer;
+import eip.smart.server.net.PacketCodecFactory;
 import eip.smart.server.util.Configuration;
 
 /**
@@ -137,7 +136,7 @@ public class Server implements ServletContextListener {
 		this.acceptor.setCloseOnDeactivation(true);
 		this.acceptor.setReuseAddress(true);
 		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+		this.acceptor.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new PacketCodecFactory()));
 		AgentServerHandler agentHandler = new AgentServerHandler();
 		agentHandler.setIoAgentContainer(this.ioAgentContainer);
 		this.acceptor.setHandler(agentHandler);
@@ -325,6 +324,7 @@ public class Server implements ServletContextListener {
 	 */
 	public void socketListen() throws IOException, IllegalArgumentException {
 		this.acceptor.bind(new InetSocketAddress(this.getPort()));
+		Server.LOGGER.info("TCP Server open on port " + this.getPort());
 	}
 
 	/**
