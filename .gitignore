@@ -7,4 +7,5 @@
 .project
 config/
 doc/
+log/
 modelings/
