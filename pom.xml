@@ -31,6 +31,7 @@
 					<additionalClasspathDirs>
 						<additionalClasspathDir></additionalClasspathDir>
 					</additionalClasspathDirs>
+					<contextReloadable>true</contextReloadable>
 				</configuration>
 			</plugin>
 			<plugin>
