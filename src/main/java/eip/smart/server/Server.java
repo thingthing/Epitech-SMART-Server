@@ -39,6 +39,10 @@ import eip.smart.server.util.Configuration;
 @WebListener
 public class Server implements ServletContextListener {
 
+	static {
+		Configuration.initDefaultValues();
+	}
+
 	/**
 	 * The logger to log things.
 	 */
@@ -112,40 +116,46 @@ public class Server implements ServletContextListener {
 	 *
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Configuration.setDefaultProperty("server", "LOGGING_SLACK", "FALSE");
-		Configuration.setDefaultProperty("test", "LOGGING_SLACK", "FALSE");
-		Server.LOGGER.trace("Server starting");
-		Server.LOGGER.debug("Server starting");
-		Server.LOGGER.info("Server starting");
-		Server.LOGGER.warn("Server starting");
-		Server.LOGGER.error("Server starting");
-
-		Configuration.setDefaultProperty("server", "TCP_PORT", "4200");
-
-		if (false) { // Convert Tomcat JUL log to SLF4J
-			LogManager.getLogManager().reset();
-			SLF4JBridgeHandler.install();
-			java.util.logging.Logger.getLogger("global").setLevel(Level.FINEST);
-		}
-
-		Server.server = this;
-
-		this.acceptor.setCloseOnDeactivation(true);
-		this.acceptor.setReuseAddress(true);
-		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-		this.acceptor.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new PacketCodecFactory()));
-		AgentServerHandler agentHandler = new AgentServerHandler();
-		agentHandler.setIoAgentContainer(this.ioAgentContainer);
-		this.acceptor.setHandler(agentHandler);
-		this.acceptor.getSessionConfig().setReadBufferSize(2048);
-		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 		try {
-			this.socketListen();
-		} catch (IllegalArgumentException | IOException e) {
-			e.printStackTrace();
+			Server.server = this;
+			// Server.LOGGER.trace("Server starting");
+			// Server.LOGGER.debug("Server starting");
+			Server.LOGGER.info("Server starting");
+			// Server.LOGGER.warn("Server starting");
+			// Server.LOGGER.error("Server starting");
+
+			/*
+			for (String name : Configuration.getConfigurations()) {
+				Configuration c = new Configuration(name);
+				for (String key : c.getKeys())
+					Server.LOGGER.info("[{}] {} = {}", name, key, c.getProperty(key));
+			}
+			*/
+
+			if (new Configuration("loggin").getProperty("LOGGING_BRIDGE").equals("TRUE")) { // Convert Tomcat JUL log to SLF4J
+				LogManager.getLogManager().reset();
+				SLF4JBridgeHandler.install();
+				java.util.logging.Logger.getLogger("global").setLevel(Level.FINEST);
+			}
+
+			this.acceptor.setCloseOnDeactivation(true);
+			this.acceptor.setReuseAddress(true);
+			this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
+			this.acceptor.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new PacketCodecFactory()));
+			AgentServerHandler agentHandler = new AgentServerHandler();
+			agentHandler.setIoAgentContainer(this.ioAgentContainer);
+			this.acceptor.setHandler(agentHandler);
+			this.acceptor.getSessionConfig().setReadBufferSize(2048);
+			this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+			try {
+				this.socketListen();
+			} catch (IllegalArgumentException | IOException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			Server.LOGGER.error("Uncatched exception", e);
 		}
 	}
 

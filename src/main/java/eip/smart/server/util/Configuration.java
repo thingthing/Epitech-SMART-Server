@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import eip.smart.server.LocationManager;
 import eip.smart.util.Pair;
 
 /**
@@ -22,7 +23,7 @@ public class Configuration {
 	/**
 	 * Folder where config files will be stored.
 	 */
-	public static final String					CONFIG_DIR			= "config";
+	public static final String					CONFIG_DIR			= LocationManager.LOCATION_CONFIG;
 
 	/**
 	 * Extension for config files.
@@ -74,6 +75,11 @@ public class Configuration {
 		if (Configuration.defaultProperties.get(name) == null)
 			Configuration.defaultProperties.put(name, new Properties());
 		return (Configuration.defaultProperties.get(name));
+	}
+
+	public static void initDefaultValues() {
+		for (DefaultConfiguration defaultConf : DefaultConfiguration.values())
+			Configuration.setDefaultProperty(defaultConf.getFile(), defaultConf.getKey(), defaultConf.getValue());
 	}
 
 	/**

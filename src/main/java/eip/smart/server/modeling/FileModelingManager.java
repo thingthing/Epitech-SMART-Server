@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.server.util.Configuration;
+import eip.smart.server.util.DefaultConfiguration;
 
 /**
  * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
@@ -15,7 +17,7 @@ public abstract class FileModelingManager implements ModelingManager {
 
 	protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
 
-	public static final File		DEFAULT_DIR	= FileModelingManager.getBaseDirectory();
+	public static File				DEFAULT_DIR	= null;
 
 	public static final String		EXTENSION	= ".modeling";
 
@@ -32,20 +34,9 @@ public abstract class FileModelingManager implements ModelingManager {
 		return (res);
 	}
 
-	/**
-	 * Gets a File pointer on the base directory used to save modelings.
-	 *
-	 * @return
-	 */
-	private static File getBaseDirectory() {
-		try {
-			return new File("modelings");
-		} catch (NullPointerException e) { // We are not in Tomcat context, default save folder is current folder
-			return new File(".");
-		}
-	}
-
 	public FileModelingManager() {
+		if (FileModelingManager.DEFAULT_DIR == null)
+			FileModelingManager.DEFAULT_DIR = new File(new Configuration("location").getProperty(DefaultConfiguration.LOCATION_MODELING.name()));
 		FileModelingManager.DEFAULT_DIR.mkdirs();
 	}
 
