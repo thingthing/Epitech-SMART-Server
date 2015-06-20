@@ -152,7 +152,7 @@ public class Server implements ServletContextListener {
 			try {
 				this.socketListen();
 			} catch (IllegalArgumentException | IOException e) {
-				e.printStackTrace();
+				Server.LOGGER.error("Unable to open TCP socket", e);
 			}
 		} catch (Exception e) {
 			Server.LOGGER.error("Uncatched exception", e);
