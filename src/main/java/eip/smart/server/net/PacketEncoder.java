@@ -29,7 +29,7 @@ public class PacketEncoder implements ProtocolEncoder {
 		json.writeFieldName("data");
 		json.writeStartObject();
 		for (Pair<String, Object> p : messagePacket.getData())
-			json.writeObjectField(p.getFirst(), p.getSecond());
+			json.writeObjectField(p.getKey(), p.getValue());
 		json.writeEndObject();
 
 		json.writeFieldName("status");
