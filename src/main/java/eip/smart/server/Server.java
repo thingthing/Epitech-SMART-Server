@@ -134,7 +134,7 @@ public class Server implements ServletContextListener {
 			}
 			*/
 
-			if (new Configuration("loggin").getProperty("LOGGING_BRIDGE").equals("TRUE")) { // Convert Tomcat JUL log to SLF4J
+			if (new Configuration("logging").getProperty("LOGGING_BRIDGE").equals("TRUE")) { // Convert Tomcat JUL log to SLF4J
 				LogManager.getLogManager().reset();
 				SLF4JBridgeHandler.install();
 				java.util.logging.Logger.getLogger("global").setLevel(Level.FINEST);

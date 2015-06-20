@@ -4,7 +4,7 @@ import eip.smart.server.LocationManager;
 
 public enum DefaultConfiguration {
 	LOGGING_SLACK("FALSE", "logging"),
-	LOGGING_BRIDGE("FALSE", "loggin"),
+	LOGGING_BRIDGE("FALSE", "logging"),
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
 	TCP_PORT("4200", "server");
 
