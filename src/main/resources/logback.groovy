@@ -29,10 +29,11 @@ appender("FILE", FileAppender) {
 appender("SLACK", SlackAppender) {
 
 	token = "xoxp-2904194704-2904194706-3291941732-31bd84"
-	channel = "@pierredemessence"
+	channel = "#team-server"
 	username = "ServerLog"
 	filter(ThresholdFilter) { level = ERROR }
 	filter(ConfigFilter) {
+		file = "logging"
 		key = "LOGGING_SLACK"
 		value = "TRUE"
 	}

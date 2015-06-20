@@ -6,6 +6,7 @@ import ch.qos.logback.core.spi.FilterReply;
 
 public class ConfigFilter extends Filter<ILoggingEvent> {
 
+	private String	file;
 	private String	key;
 	private String	value;
 
@@ -13,11 +14,15 @@ public class ConfigFilter extends Filter<ILoggingEvent> {
 	public FilterReply decide(ILoggingEvent event) {
 		if (!this.isStarted())
 			return FilterReply.NEUTRAL;
-		if (this.key == null || this.value == null)
+		if (this.file == null || this.key == null || this.value == null)
 			return FilterReply.DENY;
-		if (new Configuration("server").getProperty(this.key).equals(this.value))
+		if (new Configuration(this.file).getProperty(this.key).equals(this.value))
 			return FilterReply.NEUTRAL;
 		return FilterReply.DENY;
+	}
+
+	public String getFile() {
+		return this.file;
 	}
 
 	public String getKey() {
@@ -26,6 +31,10 @@ public class ConfigFilter extends Filter<ILoggingEvent> {
 
 	public String getValue() {
 		return this.value;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
 	}
 
 	public void setKey(String key) {
