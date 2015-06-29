@@ -34,7 +34,7 @@ public class JacksonZippedFileModelingManager extends FileModelingManager {
         File file = new File(JacksonZippedFileModelingManager.DEFAULT_DIR, name);
         FileInputStream fis = null;
         ZipInputStream zis = null;
-        LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
+        LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -43,24 +43,24 @@ public class JacksonZippedFileModelingManager extends FileModelingManager {
             SimpleModelingProxy tmp = mapper.readValue(zis, SimpleModelingProxy.class);
             modeling = new Modeling();
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("file mapping error", e);
         } catch (JsonParseException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
         } catch (IOException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("unable to load the file", e);
         } finally {
             if (zis != null) {
                 try {
                     zis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
                 }
             }
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
                 }
             }
         }
@@ -85,28 +85,28 @@ public class JacksonZippedFileModelingManager extends FileModelingManager {
             mapper.writeValue(zos, modelingParsed);
             zos.finish();
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("file mapping error", e);
         } catch (JsonGenerationException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
         } catch (IOException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("unable to save the file", e);
         } finally {
             if (zos != null) {
                 try {
                     zos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
                 }
             }
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
                 }
             }
         }
-        LOGGER.log(Level.INFO, "Saved modelisation at " + file.getAbsolutePath());
+        LOGGER.info("Saved modelisation at " + file.getAbsolutePath());
     }
 
     public int getCompressionLevel() {

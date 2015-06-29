@@ -25,18 +25,18 @@ public class JacksonFileModelingManager extends FileModelingManager {
         if (!this.exists(name))
             return (null);
         File file = new File(JacksonFileModelingManager.DEFAULT_DIR, name);
-        LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
+        LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
 
         try {
             ObjectMapper mapper = new ObjectMapper();
             SimpleModelingProxy tmp = mapper.readValue(file, SimpleModelingProxy.class);
             modeling = new Modeling();
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("file mapping error", e);
         } catch (JsonParseException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
         } catch (IOException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("unable to load the file", e);
         }
         return (modeling);
 
@@ -51,15 +51,15 @@ public class JacksonFileModelingManager extends FileModelingManager {
             FileModelingProxy tmp = new FileModelingProxy(modeling);
             mapper.writeValue(file, tmp);
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("file mapping error", e);
             return ;
         } catch (JsonGenerationException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("error with the json generation", e);
             return ;
         } catch (IOException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("error saving the modeling", e);
             return ;
         }
-        LOGGER.log(Level.INFO, "Successfully saved modelisation at " + file.getAbsolutePath());
+        LOGGER.info("Successfully saved modelisation at " + file.getAbsolutePath());
     }
 }
