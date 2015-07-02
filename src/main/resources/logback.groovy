@@ -4,6 +4,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.FileAppender
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
+import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.classic.PatternLayout
 import eip.smart.server.util.SlackAppender
 import eip.smart.server.util.ConfigFilter;
@@ -19,11 +20,16 @@ appender("STDOUT", ConsoleAppender) {
 	encoder(PatternLayoutEncoder) { pattern = "%date - %highlight(%-5level) %cyan([%class{0}.%method:%line]) - %msg%n" }
 }
 
-appender("FILE", FileAppender) {
+appender("FILE", RollingFileAppender) {
+	file = "${LOG_FOLDER}/log.html"
+	rollingPolicy(TimeBasedRollingPolicy) {
+		fileNamePattern = "${LOG_FOLDER}/%d{yyyy-MM,aux}/%d.log.html"
+		maxHistory = 3
+		cleanHistoryOnStart = true
+	}
 	encoder(LayoutWrappingEncoder) {
 		layout(HTMLLayout) { pattern = "%date%level%class{0}%method%line%msg" }
 	}
-	file = "${LOG_FOLDER}/test.html"
 }
 
 appender("SLACK", SlackAppender) {
