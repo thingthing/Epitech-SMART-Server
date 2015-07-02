@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import eip.smart.server.LocationManager;
 import eip.smart.util.Pair;
 
 /**

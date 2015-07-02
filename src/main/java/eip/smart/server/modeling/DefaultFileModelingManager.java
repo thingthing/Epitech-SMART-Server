@@ -11,6 +11,7 @@ import java.util.logging.Level;
 
 import eip.smart.model.Modeling;
 import eip.smart.model.proxy.FileModelingProxy;
+import eip.smart.server.Server;
 
 /**
  * This class implements the standard way of storing a Modeling to a file, through Java serialization.
@@ -27,7 +28,7 @@ public class DefaultFileModelingManager extends FileModelingManager {
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		Modeling modeling = null;
-		FileModelingManager.LOGGER.log(Level.INFO, "Loading modelisation at " + file.getAbsolutePath());
+		FileModelingManager.LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
 
 		try {
 			fis = new FileInputStream(file);
@@ -41,22 +42,22 @@ public class DefaultFileModelingManager extends FileModelingManager {
 			ois.close();
 			fis.close();
 		} catch (InvalidClassException e) {
-			FileModelingManager.LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			FileModelingManager.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
 			return (null);
 		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
+			FileModelingManager.LOGGER.error("file not found", e);
 		} finally {
 			if (ois != null)
 				try {
 					ois.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close object stream", e);
 				}
 			if (fis != null)
 				try {
 					fis.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
 		return (modeling);
@@ -74,22 +75,22 @@ public class DefaultFileModelingManager extends FileModelingManager {
 			FileModelingProxy modelingParsed = new FileModelingProxy(modeling);
 			oos.writeObject(modelingParsed);
 		} catch (IOException e) {
-			e.printStackTrace();
+			FileModelingManager.LOGGER.error("Unable to save the file", e);
 			return;
 		} finally {
 			if (oos != null)
 				try {
 					oos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the object stream", e);
 				}
 			if (fos != null)
 				try {
 					fos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
-		FileModelingManager.LOGGER.log(Level.INFO, "Successfully saved modelisation at " + file.getAbsolutePath());
+		FileModelingManager.LOGGER.info("Successfully saved modelisation at " + file.getAbsolutePath());
 	}
 }

@@ -1,6 +1,5 @@
 package eip.smart.server.util;
 
-import eip.smart.server.LocationManager;
 
 public enum DefaultConfiguration {
 	LOGGING_SLACK("FALSE", "logging"),

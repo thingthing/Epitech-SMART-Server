@@ -1,4 +1,4 @@
-package eip.smart.server;
+package eip.smart.server.util;
 
 import java.io.File;
 
