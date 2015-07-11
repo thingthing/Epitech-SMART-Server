@@ -20,13 +20,13 @@ import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet ManualOrder takes an agent's name and a Point as parameter and set this Point as the new current goal of the corresponding Agent.</b>
+ * <b>The servlet AddWayPoint takes an agent's name and a Point parameter and add this Point to the goals of the corresponding Agent.</b>
  *
  * @author Pierre Demessence
  */
 
-@WebServlet(urlPatterns = { "/manual_order" }, initParams = { @WebInitParam(name = "name", value = "") })
-public class ManualOrder extends JsonServlet {
+@WebServlet(urlPatterns = { "/add_way_point" }, initParams = { @WebInitParam(name = "name", value = "") })
+public class AddWayPoint extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
@@ -51,6 +51,6 @@ public class ManualOrder extends JsonServlet {
 		if (order == null)
 			throw new StatusException(Status.MISSING_PARAMETER.addObjects("order"));
 
-		agent.NewOrder(order);
+		agent.pushOrder(order);
 	}
 }
