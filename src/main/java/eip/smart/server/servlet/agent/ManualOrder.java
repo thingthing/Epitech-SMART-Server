@@ -44,7 +44,9 @@ public class ManualOrder extends JsonServlet {
 		if (JsonServlet.getParameter(req, "order") != null)
 			try {
 				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point.class);
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
+			}
 
 		if (agent == null)
 			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
