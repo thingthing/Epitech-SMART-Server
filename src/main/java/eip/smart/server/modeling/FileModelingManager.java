@@ -1,11 +1,42 @@
 package eip.smart.server.modeling;
 
-import java.io.File;
+
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import eip.smart.model.Modeling;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.server.modeling.DefaultFileModelingManager;
+import eip.smart.server.modeling.ModelingManager;
+import eip.smart.server.modeling.ModelingTask;
+import eip.smart.server.net.AgentServerHandler;
+import eip.smart.server.net.IoAgentContainer;
+import eip.smart.server.net.PacketCodecFactory;
+import eip.smart.server.util.Configuration;
+
+import java.io.File;
+import eip.smart.server.Server;
+import eip.smart.server.util.DefaultConfiguration;
 
 /**
  * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
@@ -13,11 +44,20 @@ import eip.smart.model.proxy.SimpleModelingProxy;
  */
 public abstract class FileModelingManager implements ModelingManager {
 
-    /**
-     * Adds a .modeling extension to a file name if not yet present.
-     * @param name
-     * @return New name with .modeling extension
-     */
+	//protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
+	protected static Logger	LOGGER	= LoggerFactory.getLogger(FileModelingManager.class);
+
+
+	public static File				DEFAULT_DIR	= null;
+
+	public static final String		EXTENSION	= ".modeling";
+
+	/**
+	 * Adds a .modeling extension to a file name if not yet present.
+	 *
+	 * @param name
+	 * @return New name with .modeling extension
+	 */
 	protected static String addExtension(String name) {
 		String res = name;
 		if (!res.matches(".*\\.modeling$"))
@@ -25,25 +65,9 @@ public abstract class FileModelingManager implements ModelingManager {
 		return (res);
 	}
 
-    /**
-     * Gets a File pointer on the base directory used to save modelings.
-     * @return
-     */
-	private static File getBaseDirectory() {
-		try {
-			return new File(new File(System.getProperty("catalina.base")).getAbsolutePath(), "modelings");
-		} catch (NullPointerException e) { // We are not in Tomcat context, default save folder is current folder
-			return new File(".");
-		}
-	}
-
-	protected final static Logger	LOGGER		= Logger.getLogger(Modeling.class.getName());
-
-	public static final File		DEFAULT_DIR	= FileModelingManager.getBaseDirectory();
-
-	public static final String		EXTENSION	= ".modeling";
-
 	public FileModelingManager() {
+		if (FileModelingManager.DEFAULT_DIR == null)
+			FileModelingManager.DEFAULT_DIR = new File(new Configuration("location").getProperty(DefaultConfiguration.LOCATION_MODELING.name()));
 		FileModelingManager.DEFAULT_DIR.mkdirs();
 	}
 

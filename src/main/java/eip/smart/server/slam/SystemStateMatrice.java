@@ -6,7 +6,7 @@ package eip.smart.server.slam;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import eip.smart.model.Agent;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.geometry.Point;
 
 /**

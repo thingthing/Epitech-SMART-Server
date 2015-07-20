@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eip.smart.model.Agent;
 import eip.smart.model.Status;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.geometry.Point;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;

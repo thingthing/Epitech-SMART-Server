@@ -19,15 +19,16 @@ import eip.smart.server.util.Configuration;
  *
  * @author Pierre Demessence
  */
-@WebServlet("/conf_create")
-public class ConfCreate extends JsonServlet {
+@WebServlet("/conf_dump")
+public class ConfDump extends JsonServlet {
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		if (Configuration.confExists(name))
-			throw new StatusException(Status.DUPLICATE.addObjects("configuration", "name", name));
-		new Configuration(name);
+		if (!Configuration.confExists(name))
+			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
+		Configuration conf = new Configuration(name);
+		json.writeFieldName("conf");
+		this.mapper.writeValue(json, conf.getProperties());
 	}
 }

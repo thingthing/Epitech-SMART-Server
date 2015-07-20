@@ -6,9 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+
+import eip.smart.util.Pair;
 
 /**
  * Configuration class to store and load properties.
@@ -20,7 +22,7 @@ public class Configuration {
 	/**
 	 * Folder where config files will be stored.
 	 */
-	public static final String					CONFIG_DIR			= "config";
+	public static final String					CONFIG_DIR			= LocationManager.LOCATION_CONFIG;
 
 	/**
 	 * Extension for config files.
@@ -33,6 +35,18 @@ public class Configuration {
 	private static HashMap<String, Properties>	defaultProperties	= new HashMap<>();
 
 	/**
+	 * Try to remove a configuration file.
+	 * NB: This method can (but should never) throw SecurityException, if this happens check the SecurityManager configuration.
+	 *
+	 * @param name
+	 *            The name of the configuration file to remove
+	 * @return true if the configuration file have been successfully removed
+	 */
+	public static boolean confDelete(String name) {
+		return (new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).delete());
+	}
+
+	/**
 	 * Checks if a configuration exists.
 	 *
 	 * @param name
@@ -43,25 +57,14 @@ public class Configuration {
 		return (Configuration.defaultProperties.containsKey(name) || new File(Configuration.CONFIG_DIR, name + Configuration.CONFIG_EXTENSION).exists());
 	}
 
-    /**
-     * Try to remove a configuration file.
-     * NB: This method can (but should never) throw SecurityException, if this happens check the SecurityManager configuration.
-     *
-     * @param name
-     *            The name of the configuration file to remove
-     * @return true if the configuration file have been successfully removed
-     */
-    public static boolean confDelete(String name) {
-        return (new File(CONFIG_DIR, name + CONFIG_EXTENSION).delete());
-    }
-
 	/**
 	 * Get a list of all the configuration names.
 	 *
 	 * @return
 	 */
-	public static ArrayList<String> getConfigurations() {
-		ArrayList<String> names = new ArrayList<>();
+	public static HashSet<String> getConfigurations() {
+		HashSet<String> names = new HashSet<>();
+		names.addAll(Configuration.defaultProperties.keySet());
 		for (String name : new File(Configuration.CONFIG_DIR).list())
 			names.add(name.replaceAll(Configuration.CONFIG_EXTENSION, ""));
 		return (names);
@@ -71,6 +74,11 @@ public class Configuration {
 		if (Configuration.defaultProperties.get(name) == null)
 			Configuration.defaultProperties.put(name, new Properties());
 		return (Configuration.defaultProperties.get(name));
+	}
+
+	public static void initDefaultValues() {
+		for (DefaultConfiguration defaultConf : DefaultConfiguration.values())
+			Configuration.setDefaultProperty(defaultConf.getFile(), defaultConf.getKey(), defaultConf.getValue());
 	}
 
 	/**
@@ -107,25 +115,21 @@ public class Configuration {
 	}
 
 	/**
-	 * Print the current configuration to standard output.
-	 */
-	public void dump() {
-		System.out.println("#ConfigurationDebugBegin#");
-		if (Configuration.defaultProperties.get(this.name) != null)
-			for (Entry<Object, Object> entry : Configuration.defaultProperties.get(this.name).entrySet())
-				if (!this.keyExists(entry.getKey()))
-					System.out.format("[%s] : %s (default value)\n", entry.getKey(), entry.getValue());
-		for (Entry<Object, Object> entry : this.properties.entrySet())
-			System.out.format("[%s] : %s\n", entry.getKey(), entry.getValue());
-		System.out.println("#ConfigurationDebugEnd#");
-	}
-
-	/**
 	 * @return
 	 * @see java.util.Properties#stringPropertyNames()
 	 */
 	public Set<String> getKeys() {
 		return this.properties.stringPropertyNames();
+	}
+
+	/**
+	 * Print the current configuration to standard output.
+	 */
+	public ArrayList<Pair<String, String>> getProperties() {
+		ArrayList<Pair<String, String>> list = new ArrayList<>();
+		for (String key : this.getKeys())
+			list.add(new Pair<>(key, this.getProperty(key)));
+		return (list);
 	}
 
 	/**
@@ -174,6 +178,18 @@ public class Configuration {
 		}
 	}
 
+	/**
+	 * Deletes a property and save to file.
+	 *
+	 * @param key
+	 * @return
+	 * @see java.util.Properties#remove(java.lang.Object)
+	 */
+	public void removeKey(String key) {
+		this.properties.remove(key);
+		this.save();
+	}
+
 	private void save() {
 		try {
 			FileOutputStream out = new FileOutputStream(this.configFile, false);
@@ -196,16 +212,4 @@ public class Configuration {
 		this.properties.setProperty(key, value);
 		this.save();
 	}
-
-    /**
-     * Deletes a property and save to file.
-     *
-     * @param key
-     * @return
-     * @see java.util.Properties#remove(java.lang.Object)
-     */
-    public void removeKey(String key) {
-        this.properties.remove(key);
-        this.save();
-    }
 }
