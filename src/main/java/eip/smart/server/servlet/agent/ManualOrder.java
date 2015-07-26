@@ -53,6 +53,6 @@ public class ManualOrder extends JsonServlet {
 		if (order == null)
 			throw new StatusException(Status.MISSING_PARAMETER.addObjects("order"));
 
-		agent.NewOrder(order);
+		agent.newOrder(order);
 	}
 }
