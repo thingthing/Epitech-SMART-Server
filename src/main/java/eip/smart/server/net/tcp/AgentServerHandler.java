@@ -1,4 +1,4 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +39,7 @@ public class AgentServerHandler implements IoHandler {
 	 */
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
-		Packet packet = (Packet) message;
+		TCPPacket packet = (TCPPacket) message;
 		if (packet.getStatusCode() != 0) {
 			AgentServerHandler.LOGGER.log(Level.SEVERE, packet.getStatusMessage());
 			return;

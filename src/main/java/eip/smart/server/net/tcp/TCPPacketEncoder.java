@@ -1,4 +1,4 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import java.io.StringWriter;
 
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import eip.smart.model.MessagePacket;
 import eip.smart.util.Pair;
 
-public class PacketEncoder implements ProtocolEncoder {
+public class TCPPacketEncoder implements ProtocolEncoder {
 
 	@Override
 	public void dispose(IoSession session) throws Exception {}
@@ -41,9 +41,9 @@ public class PacketEncoder implements ProtocolEncoder {
 		json.writeEndObject();
 		json.close();
 
-		Packet packet = new Packet(writer.toString().getBytes());
+		TCPPacket packet = new TCPPacket(writer.toString().getBytes());
 		IoBuffer buffer = IoBuffer.allocate(packet.getPacketSize(), false);
-		buffer.put(Packet.MAGIC);
+		buffer.put(TCPPacket.MAGIC);
 		buffer.putShort(packet.getPacketSize());
 		buffer.put(packet.getProtocolVersion());
 		buffer.put(packet.getHeaderSize());

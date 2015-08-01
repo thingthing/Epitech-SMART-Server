@@ -1,24 +1,24 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Packet {
+public class TCPPacket {
 	public static final byte	MAGIC				= 0x42;
 	public static final byte	PROTOCOL_VERSION	= 1;
 	public static final byte	HEADER_SIZE			= 5;
 
-	public static final short	MAX_PACKET_SIZE		= Short.SIZE - Packet.HEADER_SIZE;
+	public static final short	MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
 
 	private short				packetSize			= 5;
-	private byte				protocolVersion		= Packet.PROTOCOL_VERSION;
-	private byte				headerSize			= Packet.HEADER_SIZE;
+	private byte				protocolVersion		= TCPPacket.PROTOCOL_VERSION;
+	private byte				headerSize			= TCPPacket.HEADER_SIZE;
 	private byte[]				payload;
 	private JsonNode			jsonPayload;
 
 	/**
 	 * When encoding a packet.
 	 */
-	public Packet(byte[] payload) {
+	public TCPPacket(byte[] payload) {
 		this.payload = payload;
 		this.packetSize = (short) (this.headerSize + this.payload.length);
 	}
@@ -26,7 +26,7 @@ public class Packet {
 	/**
 	 * When decoding a packet
 	 */
-	public Packet(short packetSize, byte protocolVersion, byte headerSize, byte[] payload, JsonNode jsonPayload) {
+	public TCPPacket(short packetSize, byte protocolVersion, byte headerSize, byte[] payload, JsonNode jsonPayload) {
 		this.packetSize = packetSize;
 		this.protocolVersion = protocolVersion;
 		this.headerSize = headerSize;

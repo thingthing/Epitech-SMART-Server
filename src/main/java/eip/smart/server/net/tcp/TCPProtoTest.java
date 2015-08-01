@@ -1,4 +1,4 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,20 +14,20 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import eip.smart.model.MessagePacket;
 
-public class ProtoTest extends IoHandlerAdapter {
+public class TCPProtoTest extends IoHandlerAdapter {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		new ProtoTest();
+		new TCPProtoTest();
 	}
 
 	private boolean			read	= true;
 
 	private SocketConnector	connector;
 
-	public ProtoTest() {
+	public TCPProtoTest() {
 		this.connector = new NioSocketConnector();
-		this.connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new PacketCodecFactory()));
+		this.connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
 		this.connector.setHandler(this);
 
 		IoSession session;
@@ -61,9 +61,9 @@ public class ProtoTest extends IoHandlerAdapter {
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
-		Packet packet = (Packet) message;
+		TCPPacket packet = (TCPPacket) message;
 		System.out.println("##Received packet:");
-		System.out.println("--magic: " + Packet.MAGIC);
+		System.out.println("--magic: " + TCPPacket.MAGIC);
 		System.out.println("--packetSize: " + packet.getPacketSize());
 		System.out.println("--protocolVersion: " + packet.getProtocolVersion());
 		System.out.println("--headerSize: " + packet.getHeaderSize());

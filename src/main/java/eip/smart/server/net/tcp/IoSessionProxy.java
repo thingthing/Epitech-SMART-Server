@@ -1,4 +1,4 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import java.net.SocketAddress;
 import java.util.Date;

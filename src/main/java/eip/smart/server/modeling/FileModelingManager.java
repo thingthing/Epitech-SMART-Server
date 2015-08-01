@@ -29,12 +29,13 @@ import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.modeling.DefaultFileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
-import eip.smart.server.net.AgentServerHandler;
-import eip.smart.server.net.IoAgentContainer;
-import eip.smart.server.net.PacketCodecFactory;
+import eip.smart.server.net.tcp.AgentServerHandler;
+import eip.smart.server.net.tcp.IoAgentContainer;
+import eip.smart.server.net.tcp.TCPPacketCodecFactory;
 import eip.smart.server.util.Configuration;
 
 import java.io.File;
+
 import eip.smart.server.Server;
 import eip.smart.server.util.DefaultConfiguration;
 
