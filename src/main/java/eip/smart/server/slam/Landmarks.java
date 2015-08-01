@@ -195,8 +195,8 @@ public class Landmarks {
 	 */
 	public int getMatriceId(int lmId) {
 		for (Pair<Integer, Integer> p : this.IDtoID)
-			if (p.getFirst() == lmId)
-				return (p.getSecond());
+			if (p.getKey() == lmId)
+				return (p.getValue());
 		return (-1);
 	}
 

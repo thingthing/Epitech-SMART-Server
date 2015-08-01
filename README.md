@@ -1,3 +1,4 @@
+[![Deployment status from dploy.io](https://smarteip.dploy.io/badge/45290641927501/17321.svg)](http://dploy.io)
 # README #
 
 ## Configuration et installation du projet ##

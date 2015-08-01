@@ -5,3 +5,7 @@
 .settings/
 .classpath
 .project
+config/
+doc/
+log/
+modelings/

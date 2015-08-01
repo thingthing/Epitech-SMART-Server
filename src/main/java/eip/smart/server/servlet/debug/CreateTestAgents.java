@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Agent;
+import eip.smart.model.agent.Agent;
 import eip.smart.server.Server;
+import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -26,8 +27,8 @@ public class CreateTestAgents extends JsonServlet {
 		int nb = 0;
 
 		try {
-			nb = Integer.parseInt(req.getParameter("nb"));
-		} catch (NumberFormatException e) {}
+			nb = Integer.parseInt(JsonServlet.getParameter(req, "nb"));
+		} catch (StatusException e) {}
 		nb = (nb < 0 ? 0 : nb);
 		nb = (nb > 10 ? 10 : nb);
 

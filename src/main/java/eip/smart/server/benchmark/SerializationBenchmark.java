@@ -1,21 +1,29 @@
 package eip.smart.server.benchmark;
 
-import eip.smart.model.Area;
-import eip.smart.model.Modeling;
-import eip.smart.server.modeling.*;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import eip.smart.model.Area;
+import eip.smart.model.Modeling;
+import eip.smart.server.modeling.DefaultFileModelingManager;
+import eip.smart.server.modeling.DefaultZippedFileModelingManager;
+import eip.smart.server.modeling.FileModelingManager;
+import eip.smart.server.modeling.JacksonFileModelingManager;
+import eip.smart.server.modeling.JacksonZippedFileModelingManager;
+
 /**
- * Created by ct on 2/28/15.
+ * Created by vincent on 2/28/15.
  */
 public class SerializationBenchmark {
     FileModelingManager benchmarkedManager;
     Modeling            modeling;
     Modeling            result;
 
+    /**
+     * Starts a new benchmark of the different serialization methods
+     * @param s Le flux sur lequel écrire les résultats.
+     */
     public void startBenchmark(PrintStream s) {
         long elapsed, elapsedDecimals, size;
         File file;
@@ -54,6 +62,11 @@ public class SerializationBenchmark {
             "o", "Ko", "Mo", "Go", "To"
     };
 
+    /**
+     * Print a string formatted size (eg : "12 Go")
+     * @param size byte count size
+     * @return formatted size
+     */
     public static String smartsize(long size) {
         int i;
         for (i = 0; i < 5; i++)
@@ -64,23 +77,33 @@ public class SerializationBenchmark {
         return size + " " + SIZE_UNITS[i];
     }
 
+    /**
+     * Deletes the current modeling from the benchmark manager
+     */
     public void clean() {
         result = null;
         benchmarkedManager.delete(modeling.getName());
     }
 
+    /**
+     * Starts the benchmarking of writing methods
+     */
     private void startWriteBenchmark() {
         benchmarkedManager.save(modeling);
     }
 
+    /**
+     * Starts the benchmarking of reading methods
+     */
     private void startReadBenchmark() {
         result = benchmarkedManager.load(modeling.getName());
     }
 
-    public static void startBenchmark() {
-
-    }
-
+    /**
+     * This is the entry point of the benchmark module,
+     * it starts a certain number of tests and print their result in the java log
+     * @param args unused
+     */
     public static void main(String [] args) {
         SerializationBenchmark benchmark = new SerializationBenchmark();
 
