@@ -2,25 +2,25 @@ package eip.smart.server.net.udp;
 
 public class UDPPacketPointCloud extends UDPPacket {
 
-	public static final byte	MAGIC		= 0x44;
+	public static final byte	MAGIC		= 'P';
 	public static final byte	HEADER_SIZE	= 53;	// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
 
 	private int					packetID;
 	private int					currentPart;
 	private int					totalPart;
-	private short				packetSize;
-	private byte[]				data;
+	private short				dataSize;
+	private float[]				data;
 	private UDPPacketPoint[]	dataPoints;
 
 	/**
 	 * When decoding a Packet
 	 */
-	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short packetSize, byte[] data, UDPPacketPoint[] dataPoints) {
+	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short dataSize, float[] data, UDPPacketPoint[] dataPoints) {
 		super(chunkID);
 		this.packetID = packetID;
 		this.currentPart = currentPart;
 		this.totalPart = totalPart;
-		this.packetSize = packetSize;
+		this.dataSize = dataSize;
 		this.data = data;
 		this.dataPoints = dataPoints;
 	}
@@ -35,7 +35,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 	/**
 	 * @return the data
 	 */
-	public byte[] getData() {
+	public float[] getData() {
 		return this.data;
 	}
 
@@ -47,17 +47,17 @@ public class UDPPacketPointCloud extends UDPPacket {
 	}
 
 	/**
+	 * @return the datatSize
+	 */
+	public short getDataSize() {
+		return this.dataSize;
+	}
+
+	/**
 	 * @return the packetID
 	 */
 	public int getPacketID() {
 		return this.packetID;
-	}
-
-	/**
-	 * @return the packetSize
-	 */
-	public short getPacketSize() {
-		return this.packetSize;
 	}
 
 	/**

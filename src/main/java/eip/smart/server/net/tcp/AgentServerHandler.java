@@ -1,16 +1,14 @@
 package eip.smart.server.net.tcp;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import eip.smart.model.MessagePacket;
-import eip.smart.server.servlet.modeling.ModelingInfo;
 
 /**
  * Implementation of IoHandler to handle Agents.
@@ -20,13 +18,13 @@ import eip.smart.server.servlet.modeling.ModelingInfo;
  */
 public class AgentServerHandler implements IoHandler {
 
-	private final static Logger	LOGGER				= Logger.getLogger(ModelingInfo.class.getName());
+	private final static Logger	LOGGER				= LoggerFactory.getLogger(AgentServerHandler.class);
 
 	private IoAgentContainer	ioAgentContainer	= null;
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		cause.printStackTrace();
+		AgentServerHandler.LOGGER.error("TCP Exception", cause);
 	}
 
 	@Override
@@ -41,7 +39,7 @@ public class AgentServerHandler implements IoHandler {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		TCPPacket packet = (TCPPacket) message;
 		if (packet.getStatusCode() != 0) {
-			AgentServerHandler.LOGGER.log(Level.SEVERE, packet.getStatusMessage());
+			AgentServerHandler.LOGGER.error(packet.getStatusMessage());
 			return;
 		}
 		JsonNode jsonData = packet.getJsonData();
@@ -75,9 +73,7 @@ public class AgentServerHandler implements IoHandler {
 	}
 
 	@Override
-	public void messageSent(IoSession session, Object message) throws Exception {
-		// TODO Auto-generated method stub
-	}
+	public void messageSent(IoSession session, Object message) throws Exception {}
 
 	/**
 	 * Delete the session and remote it from the bound IoAgent.
@@ -104,14 +100,10 @@ public class AgentServerHandler implements IoHandler {
 	}
 
 	@Override
-	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-		// TODO Auto-generated method stub
-	}
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {}
 
 	@Override
-	public void sessionOpened(IoSession session) throws Exception {
-		// TODO Auto-generated method stub
-	}
+	public void sessionOpened(IoSession session) throws Exception {}
 
 	/**
 	 * Set the IoAgentContainer to store the connected agents.

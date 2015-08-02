@@ -1,7 +1,7 @@
 package eip.smart.server.net.udp;
 
 public class UDPPacketLandmark extends UDPPacket {
-	public static final byte	MAGIC		= 0x43;
+	public static final byte	MAGIC		= 'L';
 	public static final byte	HEADER_SIZE	= 53;								// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
 	public static final byte	PACKET_SIZE	= UDPPacketLandmark.HEADER_SIZE;
 
