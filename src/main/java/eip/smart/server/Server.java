@@ -2,7 +2,6 @@ package eip.smart.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +16,6 @@ import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.DatagramSessionConfig;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
@@ -35,7 +33,8 @@ import eip.smart.server.modeling.ModelingTask;
 import eip.smart.server.net.tcp.AgentServerHandler;
 import eip.smart.server.net.tcp.IoAgentContainer;
 import eip.smart.server.net.tcp.TCPPacketCodecFactory;
-import eip.smart.server.net.udp.BroadcastUDPHandler;
+import eip.smart.server.net.udp.UDPHandler;
+import eip.smart.server.net.udp.UDPPacketCodecFactory;
 import eip.smart.server.util.Configuration;
 
 /**
@@ -129,14 +128,6 @@ public class Server implements ServletContextListener {
 			Server.server = this;
 			Server.LOGGER.info("Server starting");
 
-			/*
-			for (String name : Configuration.getConfigurations()) {
-				Configuration c = new Configuration(name);
-				for (String key : c.getKeys())
-					Server.LOGGER.info("[{}] {} = {}", name, key, c.getProperty(key));
-			}
-			*/
-
 			// Convert Tomcat JUL log to SLF4J
 			if (new Configuration("logging").getProperty("LOGGING_BRIDGE").equals("TRUE")) {
 				LogManager.getLogManager().reset();
@@ -161,10 +152,13 @@ public class Server implements ServletContextListener {
 			}
 
 			// Config of UDP Acceptor
-			this.acceptorUDP.getFilterChain().addLast("logger", new LoggingFilter());
-			this.acceptorUDP.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+			this.acceptorUDP.setCloseOnDeactivation(true);
 			((DatagramSessionConfig) this.acceptorUDP.getSessionConfig()).setReuseAddress(true);
-			this.acceptorUDP.setHandler(new BroadcastUDPHandler());
+			this.acceptorUDP.getFilterChain().addLast("logger", new LoggingFilter());
+			this.acceptorUDP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new UDPPacketCodecFactory()));
+			this.acceptorUDP.setHandler(new UDPHandler());
+			this.acceptorUDP.getSessionConfig().setReadBufferSize(2048);
+			this.acceptorUDP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 			try {
 				this.socketUDPListen();
 			} catch (IOException e) {
