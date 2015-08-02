@@ -13,8 +13,13 @@ public abstract class UDPPacket {
 		public float	z;
 	}
 
-	public static final short	MAX_PACKET_SIZE	= 25 * 100;
+	public static final short	MAX_PACKET_SIZE	= 512;
+
 	protected long				chunkID;
+
+	public UDPPacket(long chunkID) {
+		this.chunkID = chunkID;
+	}
 
 	public abstract Type getType();
 

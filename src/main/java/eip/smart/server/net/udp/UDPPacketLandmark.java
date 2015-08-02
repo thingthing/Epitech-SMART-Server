@@ -16,7 +16,8 @@ public class UDPPacketLandmark extends UDPPacket {
 	/**
 	 * When decoding a Packet
 	 */
-	public UDPPacketLandmark(UDPPacketPoint pos, UDPPacketPoint robotPos, int ID, int life, int totalTimeObserved, float bearing, float range) {
+	public UDPPacketLandmark(long chunkID, UDPPacketPoint pos, UDPPacketPoint robotPos, int ID, int life, int totalTimeObserved, float bearing, float range) {
+		super(chunkID);
 		this.pos = pos;
 		this.robotPos = robotPos;
 		this.ID = ID;

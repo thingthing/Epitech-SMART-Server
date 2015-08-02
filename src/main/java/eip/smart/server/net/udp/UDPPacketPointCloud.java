@@ -7,9 +7,23 @@ public class UDPPacketPointCloud extends UDPPacket {
 
 	private int					packetID;
 	private int					currentPart;
-	private int					TotalPart;
+	private int					totalPart;
 	private short				packetSize;
-	private UDPPacketPoint[]	data;
+	private byte[]				data;
+	private UDPPacketPoint[]	dataPoints;
+
+	/**
+	 * When decoding a Packet
+	 */
+	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short packetSize, byte[] data, UDPPacketPoint[] dataPoints) {
+		super(chunkID);
+		this.packetID = packetID;
+		this.currentPart = currentPart;
+		this.totalPart = totalPart;
+		this.packetSize = packetSize;
+		this.data = data;
+		this.dataPoints = dataPoints;
+	}
 
 	/**
 	 * @return the currentPart
@@ -21,8 +35,15 @@ public class UDPPacketPointCloud extends UDPPacket {
 	/**
 	 * @return the data
 	 */
-	public UDPPacketPoint[] getData() {
+	public byte[] getData() {
 		return this.data;
+	}
+
+	/**
+	 * @return the dataPoints
+	 */
+	public UDPPacketPoint[] getDataPoints() {
+		return this.dataPoints;
 	}
 
 	/**
@@ -43,7 +64,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 	 * @return the totalPart
 	 */
 	public int getTotalPart() {
-		return this.TotalPart;
+		return this.totalPart;
 	}
 
 	@Override
