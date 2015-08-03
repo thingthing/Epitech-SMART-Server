@@ -32,7 +32,7 @@ public class TCPProtoTest extends IoHandlerAdapter {
 
 		IoSession session;
 
-		ConnectFuture future = this.connector.connect(new InetSocketAddress("127.0.0.1", 4200));
+		ConnectFuture future = this.connector.connect(new InetSocketAddress("127.0.0.1", 4200)); // 54.148.17.11
 		future.awaitUninterruptibly();
 		session = future.getSession();
 
