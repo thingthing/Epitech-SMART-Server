@@ -29,6 +29,21 @@ public class UDPHandler implements IoHandler {
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
+		IoSession tcpSession = null;
+		for (IoSession s : Server.getServer().getSessions())
+			if (((InetSocketAddress) s.getRemoteAddress()).getAddress().getHostAddress().equals(((InetSocketAddress) session.getRemoteAddress()).getAddress().getHostAddress())) {
+				tcpSession = s;
+				break;
+			}
+		if (tcpSession == null) {
+			UDPHandler.LOGGER.warn("UDP Packet discarded : No TCP session found for {}", session.getRemoteAddress());
+			return;
+		}
+		if (Server.getServer().getIoAgentContainer().getBySession(tcpSession).getAgent() == null) {
+			UDPHandler.LOGGER.warn("UDP Packet discarded : No agent found found for {}", session.getRemoteAddress());
+			return;
+		}
+
 		UDPPacket packet = (UDPPacket) message;
 		if (packet.getType().equals(UDPPacket.Type.LANDMARK))
 			this.handleUDPPacketLandmark((UDPPacketLandmark) packet);
