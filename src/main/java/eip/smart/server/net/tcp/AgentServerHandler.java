@@ -22,6 +22,12 @@ public class AgentServerHandler implements IoHandler {
 
 	private IoAgentContainer	ioAgentContainer	= null;
 
+	private void authenticate(IoSession session, TCPPacket packet) {
+		AgentServerHandler.LOGGER.debug("Authentication succeeded", session.getRemoteAddress());
+		session.write(new MessagePacket().setStatus(0, "authenticated"));
+		this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
+	}
+
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		AgentServerHandler.LOGGER.error("TCP Exception", cause);
@@ -42,32 +48,38 @@ public class AgentServerHandler implements IoHandler {
 			AgentServerHandler.LOGGER.error(packet.getStatusMessage());
 			return;
 		}
+		AgentServerHandler.LOGGER.debug("Received TCP data from {}", session.getRemoteAddress());
 		JsonNode jsonData = packet.getJsonData();
-		if (jsonData.has("exit"))
+		if (jsonData.has("exit")) {
+			AgentServerHandler.LOGGER.debug("Session closed remotely by {}", session.getRemoteAddress());
 			session.close(true);
-		else if (this.ioAgentContainer.getBySession(session).getAgent() == null) {
+		} else if (this.ioAgentContainer.getBySession(session).getAgent() == null) {
 			if (jsonData.has("name")) {
 				String name = jsonData.get("name").asText().trim();
-				if (name.isEmpty())
+				AgentServerHandler.LOGGER.debug("{} trying to authenticate as \"{}\"", session.getRemoteAddress(), name);
+				if (name.isEmpty()) {
+					AgentServerHandler.LOGGER.warn("Authentication failed : invalid name");
 					session.write(new MessagePacket().setStatus(1, "invalid name"));
+					return;
+				}
 				IoAgent ioAgent = this.ioAgentContainer.getByAgentName(name);
 				if (ioAgent != null) {
-					if (ioAgent.getAgent().isConnected())
+					if (ioAgent.getAgent().isConnected()) {
+						AgentServerHandler.LOGGER.warn("Authentication failed : name already used");
 						session.write(new MessagePacket().setStatus(1, "name already used"));
-					else {
+					} else {
 						this.ioAgentContainer.remove(this.ioAgentContainer.getBySession(session));
 						ioAgent.sessionCreated(session);
-						session.write(new MessagePacket().setStatus(0, "authenticated"));
-						this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
-
+						this.authenticate(session, packet);
 					}
 				} else {
 					this.ioAgentContainer.getBySession(session).createAgent(name);
-					session.write(new MessagePacket().setStatus(0, "authenticated"));
-					this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
+					this.authenticate(session, packet);
 				}
-			} else
+			} else {
+				AgentServerHandler.LOGGER.warn("TCP data discarded : {} not authenticated", session.getRemoteAddress());
 				session.write(new MessagePacket().setStatus(1, "not authenticated"));
+			}
 		} else
 			this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
 	}

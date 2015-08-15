@@ -1,10 +1,14 @@
 package eip.smart.server.net.udp;
 
+import java.net.InetSocketAddress;
+
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eip.smart.server.Server;
 
 @SuppressWarnings("static-method")
 public class UDPHandler implements IoHandler {
@@ -50,7 +54,7 @@ public class UDPHandler implements IoHandler {
 		else if (packet.getType().equals(UDPPacket.Type.LANDMARK))
 			this.handleUDPPacketPointCloud((UDPPacketPointCloud) packet);
 		else
-			UDPHandler.LOGGER.error("UDP Error : Wrong packet");
+			UDPHandler.LOGGER.error("UDP Packet discarded : Impossible packet");
 	}
 
 	@Override
