@@ -1,5 +1,7 @@
 package eip.smart.server.net.udp;
 
+import java.util.Arrays;
+
 public class UDPPacketPointCloud extends UDPPacket {
 
 	public static final byte	MAGIC		= 'P';
@@ -70,6 +72,14 @@ public class UDPPacketPointCloud extends UDPPacket {
 	@Override
 	public Type getType() {
 		return Type.POINTCLOUD;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UDPPacketPointCloud [packetID=" + this.packetID + ", currentPart=" + this.currentPart + ", totalPart=" + this.totalPart + ", dataSize=" + this.dataSize + ", data=" + Arrays.toString(this.data) + ", dataPoints=" + Arrays.toString(this.dataPoints) + ", getType()=" + this.getType() + ", toString()=" + super.toString() + "]";
 	}
 
 }

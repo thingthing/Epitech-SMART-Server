@@ -30,6 +30,14 @@ public abstract class UDPPacket {
 			return this.z;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "UDPPacketPoint [x=" + this.x + ", y=" + this.y + ", z=" + this.z + "]";
+		}
+
 	}
 
 	public static final short	MAX_PACKET_SIZE	= 512;
@@ -41,5 +49,13 @@ public abstract class UDPPacket {
 	}
 
 	public abstract Type getType();
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UDPPacket [chunkID=" + this.chunkID + "]";
+	}
 
 }

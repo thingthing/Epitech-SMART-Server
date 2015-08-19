@@ -81,4 +81,12 @@ public class UDPPacketLandmark extends UDPPacket {
 		return Type.LANDMARK;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UDPPacketLandmark [pos=" + this.pos + ", robotPos=" + this.robotPos + ", ID=" + this.ID + ", life=" + this.life + ", totalTimeObserved=" + this.totalTimeObserved + ", bearing=" + this.bearing + ", range=" + this.range + ", getType()=" + this.getType() + ", toString()=" + super.toString() + "]";
+	}
+
 }
