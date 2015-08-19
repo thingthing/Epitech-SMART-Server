@@ -1,5 +1,7 @@
 package eip.smart.server.net.udp;
 
+import java.net.InetSocketAddress;
+
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderAdapter;
@@ -7,6 +9,7 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eip.smart.server.Server;
 import eip.smart.server.net.udp.UDPPacket.UDPPacketPoint;
 
 @SuppressWarnings({ "static-method", "unused" })
@@ -18,6 +21,22 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 	public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 		try {
 			UDPPacketDecoder.LOGGER.debug("Received UDP packet of size {} from {}", in.remaining(), session.getRemoteAddress());
+
+			IoSession tcpSession = null;
+			for (IoSession s : Server.getServer().getSessions())
+				if (((InetSocketAddress) s.getRemoteAddress()).getAddress().getHostAddress().equals(((InetSocketAddress) session.getRemoteAddress()).getAddress().getHostAddress())) {
+					tcpSession = s;
+					break;
+				}
+			if (tcpSession == null) {
+				UDPPacketDecoder.LOGGER.warn("UDP Packet discarded : No TCP session found for {}", session.getRemoteAddress());
+				return;
+			}
+			if (Server.getServer().getIoAgentContainer().getBySession(tcpSession).getAgent() == null) {
+				UDPPacketDecoder.LOGGER.warn("UDP Packet discarded : No agent found found for {}", session.getRemoteAddress());
+				return;
+			}
+
 			if (in.remaining() >= 9) {
 				byte magic = in.get();
 				long chunkID = in.getLong();

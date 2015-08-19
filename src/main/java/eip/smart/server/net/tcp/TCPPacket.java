@@ -3,15 +3,15 @@ package eip.smart.server.net.tcp;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class TCPPacket {
-	public static final byte	MAGIC				= 0x42;
-	public static final byte	PROTOCOL_VERSION	= 1;
-	public static final byte	HEADER_SIZE			= 5;
+	public static final short	MAGIC				= 0x42;
+	public static final int		PROTOCOL_VERSION	= 1;
+	public static final int		HEADER_SIZE			= 5;
 
-	public static final short	MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
+	public static final int		MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
 
-	private short				packetSize			= 5;
-	private byte				protocolVersion		= TCPPacket.PROTOCOL_VERSION;
-	private byte				headerSize			= TCPPacket.HEADER_SIZE;
+	private int					packetSize			= 5;
+	private int					protocolVersion		= TCPPacket.PROTOCOL_VERSION;
+	private int					headerSize			= TCPPacket.HEADER_SIZE;
 	private byte[]				payload;
 	private JsonNode			jsonPayload;
 
@@ -20,13 +20,13 @@ public class TCPPacket {
 	 */
 	public TCPPacket(byte[] payload) {
 		this.payload = payload;
-		this.packetSize = (short) (this.headerSize + this.payload.length);
+		this.packetSize = this.headerSize + this.payload.length;
 	}
 
 	/**
 	 * When decoding a packet
 	 */
-	public TCPPacket(short packetSize, byte protocolVersion, byte headerSize, byte[] payload, JsonNode jsonPayload) {
+	public TCPPacket(int packetSize, int protocolVersion, int headerSize, byte[] payload, JsonNode jsonPayload) {
 		this.packetSize = packetSize;
 		this.protocolVersion = protocolVersion;
 		this.headerSize = headerSize;
@@ -37,7 +37,7 @@ public class TCPPacket {
 	/**
 	 * @return the headerSize
 	 */
-	public byte getHeaderSize() {
+	public int getHeaderSize() {
 		return this.headerSize;
 	}
 
@@ -67,7 +67,7 @@ public class TCPPacket {
 	/**
 	 * @return the packetSize
 	 */
-	public short getPacketSize() {
+	public int getPacketSize() {
 		return this.packetSize;
 	}
 
@@ -81,7 +81,7 @@ public class TCPPacket {
 	/**
 	 * @return the protocolVersion
 	 */
-	public byte getProtocolVersion() {
+	public int getProtocolVersion() {
 		return this.protocolVersion;
 	}
 
