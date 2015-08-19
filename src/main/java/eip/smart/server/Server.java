@@ -144,7 +144,7 @@ public class Server implements ServletContextListener {
 			agentHandler.setIoAgentContainer(this.ioAgentContainer);
 			this.acceptorTCP.setHandler(agentHandler);
 			this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
-			this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+			this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 			try {
 				this.socketTCPListen();
 			} catch (IllegalArgumentException | IOException e) {
@@ -158,7 +158,7 @@ public class Server implements ServletContextListener {
 			this.acceptorUDP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new UDPPacketCodecFactory()));
 			this.acceptorUDP.setHandler(new UDPHandler());
 			this.acceptorUDP.getSessionConfig().setReadBufferSize(2048);
-			this.acceptorUDP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+			this.acceptorUDP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 			try {
 				this.socketUDPListen();
 			} catch (IOException e) {

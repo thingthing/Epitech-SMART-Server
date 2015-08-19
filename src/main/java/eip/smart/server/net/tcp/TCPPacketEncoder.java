@@ -43,10 +43,10 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 
 		TCPPacket packet = new TCPPacket(writer.toString().getBytes());
 		IoBuffer buffer = IoBuffer.allocate(packet.getPacketSize(), false);
-		buffer.put(TCPPacket.MAGIC);
-		buffer.putShort(packet.getPacketSize());
-		buffer.put(packet.getProtocolVersion());
-		buffer.put(packet.getHeaderSize());
+		buffer.putUnsigned(TCPPacket.MAGIC);
+		buffer.putUnsignedShort(packet.getPacketSize());
+		buffer.putUnsignedShort(packet.getProtocolVersion());
+		buffer.putUnsignedShort(packet.getHeaderSize());
 		buffer.put(packet.getPayload());
 		buffer.flip();
 		out.write(buffer);
