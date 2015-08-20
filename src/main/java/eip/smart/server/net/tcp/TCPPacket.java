@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class TCPPacket {
 	public static final short	MAGIC				= 0x42;
 	public static final int		PROTOCOL_VERSION	= 1;
-	public static final int		HEADER_SIZE			= 5;
+	public static final int		HEADER_SIZE			= 7;
 
 	public static final int		MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
 
-	private int					packetSize			= 5;
+	private int					packetSize;
 	private int					protocolVersion		= TCPPacket.PROTOCOL_VERSION;
 	private int					headerSize			= TCPPacket.HEADER_SIZE;
 	private byte[]				payload;
