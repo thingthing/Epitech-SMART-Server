@@ -20,32 +20,50 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 	@Override
 	public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 		try {
-			if (ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN))
-				TCPPacketDecoder.LOGGER.info("Big-endian");
-			else
-				TCPPacketDecoder.LOGGER.info("Little-endian");
+			TCPPacketDecoder.LOGGER.debug("Endianness : {}", ByteOrder.nativeOrder());
 			TCPPacketDecoder.LOGGER.debug("Received TCP packet of size {} from {}", in.remaining(), session.getRemoteAddress());
-			TCPPacketDecoder.LOGGER.info("HexDump : {}", in.getHexDump());
+			TCPPacketDecoder.LOGGER.debug("HexDump : {}", in.getHexDump());
 			if (in.remaining() >= TCPPacket.HEADER_SIZE) {
+				// Magic
 				short magic = in.getUnsigned();
 				if (magic != TCPPacket.MAGIC) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : Wrong magic");
 					return;
 				}
+
+				// Packet Size
 				int packetSize = in.getUnsignedShort();
+				TCPPacketDecoder.LOGGER.debug("TCP packet packetSize : {}", packetSize);
+				if (packetSize != in.limit()) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : buffer size of {} does not match received packet size of {}", in.limit(), packetSize);
+					return;
+				}
+
+				// Protocol Version
 				int protocolVersion = in.getUnsignedShort();
+				TCPPacketDecoder.LOGGER.debug("TCP packet protocolVersion : {}", protocolVersion);
+				if (protocolVersion > TCPPacket.PROTOCOL_VERSION)
+					TCPPacketDecoder.LOGGER.warn("Protocol Version mismatch : TCP packet received uses version {}, Server uses version {}", protocolVersion, TCPPacket.PROTOCOL_VERSION);
+
+				// Header Size
 				int headerSize = in.getUnsignedShort();
-				TCPPacketDecoder.LOGGER.info("TCP packet packetSize : {} -> {}", packetSize, Integer.toBinaryString(packetSize & 0xFF));
-				TCPPacketDecoder.LOGGER.info("TCP packet protocolVersion : {} -> {}", protocolVersion, Integer.toBinaryString(protocolVersion & 0xFF));
-				TCPPacketDecoder.LOGGER.info("TCP packet headersize : {} -> {}", headerSize, Integer.toBinaryString(headerSize & 0xFF));
+				TCPPacketDecoder.LOGGER.debug("TCP packet headersize : {}", headerSize);
+				if (headerSize < TCPPacket.HEADER_SIZE) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : required minimal header size of {} required, {} given", TCPPacket.HEADER_SIZE, headerSize);
+					return;
+				}
 				if (headerSize > TCPPacket.HEADER_SIZE)
 					in.skip(headerSize - TCPPacket.HEADER_SIZE);
+
+				// Payload
 				byte[] payload = new byte[packetSize - headerSize];
-				/*if (in.remaining() != payload.length) {
-					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : expected data size of {}, given data size of {}", payload.length, in.remaining());
+				if (in.remaining() != payload.length) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : expected data size of {}, {} given", payload.length, in.remaining());
 					return;
-				}*/
+				}
 				in.get(payload);
+
+				// JSON Deserialization
 				JsonNode jsonPayload = null;
 				try {
 					jsonPayload = new ObjectMapper().readTree(payload);
@@ -53,6 +71,8 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded :", e);
 					return;
 				}
+
+				// Good packet
 				TCPPacket packet = new TCPPacket(packetSize, protocolVersion, headerSize, payload, jsonPayload);
 				out.write(packet);
 			} else
