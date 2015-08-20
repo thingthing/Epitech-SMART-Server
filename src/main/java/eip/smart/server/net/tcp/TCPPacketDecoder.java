@@ -21,11 +21,11 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 	public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 		try {
 			if (ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN))
-				System.out.println("Big-endian");
+				TCPPacketDecoder.LOGGER.info("Big-endian");
 			else
-				System.out.println("Little-endian");
+				TCPPacketDecoder.LOGGER.info("Little-endian");
 			TCPPacketDecoder.LOGGER.debug("Received TCP packet of size {} from {}", in.remaining(), session.getRemoteAddress());
-			TCPPacketDecoder.LOGGER.info(in.getHexDump());
+			TCPPacketDecoder.LOGGER.info("HexDump : {}", in.getHexDump());
 			if (in.remaining() >= TCPPacket.HEADER_SIZE) {
 				short magic = in.getUnsigned();
 				if (magic != TCPPacket.MAGIC) {
