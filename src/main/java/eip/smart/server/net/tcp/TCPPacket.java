@@ -7,7 +7,8 @@ public class TCPPacket {
 	public static final int		PROTOCOL_VERSION	= 1;
 	public static final int		HEADER_SIZE			= 7;
 
-	public static final int		MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
+	public static final int		MAX_PACKET_SIZE		= Short.SIZE;
+	public static final int		MAX_PAYLOAD_SIZE	= TCPPacket.MAX_PACKET_SIZE - TCPPacket.HEADER_SIZE;
 
 	private int					packetSize;
 	private int					protocolVersion		= TCPPacket.PROTOCOL_VERSION;
