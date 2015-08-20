@@ -9,7 +9,7 @@ public class TCPPacket {
 
 	public static final int		MAX_PACKET_SIZE		= Short.SIZE - TCPPacket.HEADER_SIZE;
 
-	private int					packetSize			= 5;
+	private int					packetSize;
 	private int					protocolVersion		= TCPPacket.PROTOCOL_VERSION;
 	private int					headerSize			= TCPPacket.HEADER_SIZE;
 	private byte[]				payload;
