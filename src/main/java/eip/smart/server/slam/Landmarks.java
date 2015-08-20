@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import eip.smart.model.Area;
 import eip.smart.model.Modeling;
-import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.v2.Point3D;
 import eip.smart.util.Pair;
 
 /**
@@ -19,7 +19,7 @@ import eip.smart.util.Pair;
 public class Landmarks {
 
 	public class Landmark {
-		public Point	position			= new Point(0.0, 0.0, 0.0);
+		public Point3D	position			= new Point3D(0.0, 0.0, 0.0);
 		public int		id					= -1;
 		// a life counter to determine whether to discard a landmark or not
 		public int		life				= Landmarks.LIFE;
@@ -30,11 +30,11 @@ public class Landmarks {
 		// last observed bearing from agent to landmark
 		public double	bearing				= -1;
 		// last position of agent when landmark was observed
-		public Point	agentPosition		= new Point(0.0, 0.0, 0.0);
+		public Point3D	agentPosition		= new Point3D(0.0, 0.0, 0.0);
 
 		public Landmark() {};
 
-		public Landmark(Point position, int life, int totalTimeObserved, double range, double bearing, Point agentPosition) {
+		public Landmark(Point3D position, int life, int totalTimeObserved, double range, double bearing, Point3D agentPosition) {
 			this.position = position;
 			this.life = life;
 			this.totalTimeObserved = totalTimeObserved;
@@ -131,7 +131,7 @@ public class Landmarks {
 		if (idCompare >= 0) {
 			Landmark toCompare = this.get(idCompare);
 
-			if (lm.position.getDistance(toCompare.position) < Landmarks.MAXERROR && toCompare.id != -1) {
+			if (lm.position.distance(toCompare.position) < Landmarks.MAXERROR && toCompare.id != -1) {
 				toCompare.life = Landmarks.LIFE;
 				++toCompare.totalTimeObserved;
 				toCompare.bearing = lm.bearing;
@@ -162,7 +162,7 @@ public class Landmarks {
 
 		for (Landmark toCompare : this.landmarkDB)
 			if (toCompare.totalTimeObserved > Landmarks.MINOBSERVATION) {
-				double temp = lm.position.getDistance(toCompare.position);
+				double temp = lm.position.distance(toCompare.position);
 				if (leastDistance < 0 || temp < leastDistance) {
 					leastDistance = temp;
 					closestLandmark = toCompare;
@@ -236,7 +236,7 @@ public class Landmarks {
 
 	/**
 	 * Save link between landmark db id and matrices id
-	 * 
+	 *
 	 * @param lmId
 	 *            Landmark db id
 	 * @param matriceId
