@@ -38,6 +38,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : buffer size of {} does not match received packet size of {}", in.limit(), packetSize);
 					return;
 				}
+				if (packetSize > TCPPacket.MAX_PACKET_SIZE) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : packet size of {} is bigger than max packet size of {}", packetSize, TCPPacket.MAX_PACKET_SIZE);
+					return;
+				}
 
 				// Protocol Version
 				int protocolVersion = in.getUnsignedShort();
@@ -49,7 +53,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				int headerSize = in.getUnsignedShort();
 				TCPPacketDecoder.LOGGER.debug("TCP packet headersize : {}", headerSize);
 				if (headerSize < TCPPacket.HEADER_SIZE) {
-					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : required minimal header size of {} required, {} given", TCPPacket.HEADER_SIZE, headerSize);
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : required minimal header size of {}, {} given", TCPPacket.HEADER_SIZE, headerSize);
 					return;
 				}
 				if (headerSize > TCPPacket.HEADER_SIZE)
@@ -57,6 +61,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 
 				// Payload
 				byte[] payload = new byte[packetSize - headerSize];
+				if (payload.length == 0) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no data");
+					return;
+				}
 				if (in.remaining() != payload.length) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : expected data size of {}, {} given", payload.length, in.remaining());
 					return;
@@ -76,7 +84,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				TCPPacket packet = new TCPPacket(packetSize, protocolVersion, headerSize, payload, jsonPayload);
 				out.write(packet);
 			} else
-				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : header size too low");
+				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : size too low. Minimal size of {} for header", TCPPacket.HEADER_SIZE);
 		} catch (Exception e) {
 			throw e;
 		} finally {
