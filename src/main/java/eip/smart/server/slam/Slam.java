@@ -4,10 +4,11 @@
 package eip.smart.server.slam;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import eip.smart.model.Modeling;
-import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.v2.Point3D;
+import eip.smart.cscommons.model.geometry.v2.Point3D;
+import eip.smart.server.model.agent.AgentLogic;
+import eip.smart.server.model.modeling.ModelingLogic;
 
 /**
  * @author Thing-leoh Nicolas
@@ -15,17 +16,17 @@ import eip.smart.model.geometry.v2.Point3D;
  */
 public class Slam {
 
-	public Landmarks						landmarkDB			= new Landmarks();
-	public SystemStateMatrice				state				= new SystemStateMatrice();
+	public Landmarks					landmarkDB			= new Landmarks();
+	public SystemStateMatrice			state				= new SystemStateMatrice();
 	// To be set with the new currentModeling
-	public Modeling							currentModeling		= null;
+	public ModelingLogic				currentModeling		= null;
 	// To be set with the recieveLandmarks
-	public ArrayList<Landmarks.Landmark>	recieveLandmarks	= null;
+	public List<Landmarks.Landmark>		recieveLandmarks	= null;
 
-	private ArrayList<Landmarks.Landmark>	newLandmakrs		= null;
-	private ArrayList<Landmarks.Landmark>	reobservedLandmakrs	= null;
+	private List<Landmarks.Landmark>	newLandmakrs		= null;
+	private List<Landmarks.Landmark>	reobservedLandmakrs	= null;
 
-	public Slam(Modeling currentModeling, ArrayList<Landmarks.Landmark> recievedLandmarks) {
+	public Slam(ModelingLogic currentModeling, List<Landmarks.Landmark> recievedLandmarks) {
 		this.currentModeling = currentModeling;
 		this.recieveLandmarks = recievedLandmarks;
 		this.state = new SystemStateMatrice(this.currentModeling.getAgents());
@@ -37,7 +38,7 @@ public class Slam {
 	 * @param newLandmarks
 	 *            New landmarks to be add
 	 */
-	public void addLandmarks(ArrayList<Landmarks.Landmark> newLandmarks) {
+	public void addLandmarks(List<Landmarks.Landmark> newLandmarks) {
 		if (newLandmarks == null)
 			newLandmarks = this.newLandmakrs;
 		for (Landmarks.Landmark lm : newLandmarks) {
@@ -56,10 +57,11 @@ public class Slam {
 	 * @param currentModeling
 	 *            Current modeling or null if already set
 	 */
-	public void updateAgentState(Modeling currentModeling) {
+	@SuppressWarnings("unused")
+	public void updateAgentState(ModelingLogic currentModeling) {
 		if (currentModeling == null)
 			currentModeling = this.currentModeling;
-		for (Agent agent : currentModeling.getAgents())
+		for (AgentLogic agent : currentModeling.getAgents())
 			this.state.setAgentState(agent);
 		// @TODO: Update jacobian matrice
 		// @TODO: update noise matrice
@@ -69,7 +71,7 @@ public class Slam {
 		this.validationGate(null);
 		this.addLandmarks(null);
 
-		for (Agent agent : currentModeling.getAgents()) {
+		for (AgentLogic agent : currentModeling.getAgents()) {
 			for (Landmarks.Landmark lm : this.reobservedLandmakrs)
 				// @TODO: calculate Kalman gain
 				// @TODO: Change to Update state using Kalman gain
@@ -86,11 +88,11 @@ public class Slam {
 	 * @param recieveLandmarks
 	 *            Landmarks recieve from agents or null if recieveLandmarks already set
 	 */
-	public void validationGate(ArrayList<Landmarks.Landmark> recieveLandmarks) {
+	public void validationGate(List<Landmarks.Landmark> recieveLandmarks) {
 		if (recieveLandmarks == null)
 			recieveLandmarks = this.recieveLandmarks;
-		this.newLandmakrs = new ArrayList<Landmarks.Landmark>();
-		this.reobservedLandmakrs = new ArrayList<Landmarks.Landmark>();
+		this.newLandmakrs = new ArrayList<>();
+		this.reobservedLandmakrs = new ArrayList<>();
 
 		for (Landmarks.Landmark toAssociate : recieveLandmarks) {
 			this.landmarkDB.getClosestAssociation(toAssociate);

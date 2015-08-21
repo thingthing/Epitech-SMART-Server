@@ -2,7 +2,7 @@ package eip.smart.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -24,18 +24,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import eip.smart.model.Modeling;
-import eip.smart.model.agent.Agent;
-import eip.smart.model.proxy.SimpleModelingProxy;
-import eip.smart.server.modeling.DefaultFileModelingManager;
-import eip.smart.server.modeling.ModelingManager;
-import eip.smart.server.modeling.ModelingTask;
-import eip.smart.server.net.tcp.AgentServerHandler;
+import eip.smart.cscommons.configuration.Configuration;
+import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.configuration.LocationManager;
+import eip.smart.server.configuration.ServerDefaultConfiguration;
+import eip.smart.server.model.agent.AgentLogic;
+import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.model.modeling.ModelingTask;
+import eip.smart.server.model.modeling.file.DefaultFileModelingManager;
+import eip.smart.server.model.modeling.file.ModelingManager;
 import eip.smart.server.net.tcp.IoAgentContainer;
+import eip.smart.server.net.tcp.TCPHandler;
 import eip.smart.server.net.tcp.TCPPacketCodecFactory;
 import eip.smart.server.net.udp.UDPHandler;
 import eip.smart.server.net.udp.UDPPacketCodecFactory;
-import eip.smart.server.util.Configuration;
 
 /**
  * Application Lifecycle Listener implementation class Server
@@ -43,10 +45,6 @@ import eip.smart.server.util.Configuration;
  */
 @WebListener
 public class Server implements ServletContextListener {
-
-	static {
-		Configuration.initDefaultValues();
-	}
 
 	/**
 	 * The logger to log things.
@@ -58,6 +56,11 @@ public class Server implements ServletContextListener {
 	 */
 	private static Server		server;
 
+	static {
+		Configuration.CONFIG_DIR = LocationManager.LOCATION_CONFIG;
+		Configuration.initDefaultValues(ServerDefaultConfiguration.values());
+	}
+
 	/**
 	 * @return The static server.
 	 */
@@ -66,14 +69,13 @@ public class Server implements ServletContextListener {
 	}
 
 	private NioSocketAcceptor	acceptorTCP			= new NioSocketAcceptor();
+
 	private IoAcceptor			acceptorUDP			= new NioDatagramAcceptor();
-
 	private Configuration		conf				= new Configuration("server");
-
 	/**
 	 * The current selected modeling.
 	 */
-	private Modeling			currentModeling		= null;
+	private ModelingLogic		currentModeling		= null;
 
 	/**
 	 * The current thread task the threadPool is running.
@@ -140,7 +142,7 @@ public class Server implements ServletContextListener {
 			this.acceptorTCP.setReuseAddress(true);
 			this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
 			this.acceptorTCP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
-			AgentServerHandler agentHandler = new AgentServerHandler();
+			TCPHandler agentHandler = new TCPHandler();
 			agentHandler.setIoAgentContainer(this.ioAgentContainer);
 			this.acceptorTCP.setHandler(agentHandler);
 			this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
@@ -170,12 +172,20 @@ public class Server implements ServletContextListener {
 		}
 	}
 
+	public AgentLogic getAgentByName(String name) {
+		if (name != null)
+			for (AgentLogic a : this.getAgentsAvailable())
+				if (name.equals(a.getName()))
+					return (a);
+		return null;
+	}
+
 	/**
 	 * Get all the connected agents.
 	 *
 	 * @return
 	 */
-	public ArrayList<Agent> getAgentsAvailable() {
+	public List<AgentLogic> getAgentsAvailable() {
 		return (this.ioAgentContainer.getAgents());
 	}
 
@@ -188,7 +198,7 @@ public class Server implements ServletContextListener {
 	 *
 	 * @return
 	 */
-	public Modeling getCurrentModeling() {
+	public ModelingLogic getCurrentModeling() {
 		return (this.currentModeling);
 	}
 
@@ -206,7 +216,7 @@ public class Server implements ServletContextListener {
 	 *
 	 * @return
 	 */
-	public ArrayList<IoSession> getSessions() {
+	public List<IoSession> getSessions() {
 		return (this.ioAgentContainer.getSessions());
 	}
 
@@ -247,7 +257,7 @@ public class Server implements ServletContextListener {
 	public boolean modelingCreate(String name) {
 		if (this.manager.exists(name))
 			return (false);
-		this.currentModeling = new Modeling(name);
+		this.currentModeling = new ModelingLogic(name);
 		return (true);
 	}
 
@@ -267,7 +277,7 @@ public class Server implements ServletContextListener {
 	 *
 	 * @return
 	 */
-	public ArrayList<SimpleModelingProxy> modelingList() {
+	public List<Modeling> modelingList() {
 		return (this.manager.list());
 	}
 
@@ -282,7 +292,7 @@ public class Server implements ServletContextListener {
 		Modeling modeling = this.manager.load(name);
 		if (modeling == null)
 			return (false);
-		this.currentModeling = modeling;
+		this.currentModeling = new ModelingLogic(modeling);
 		return (true);
 	}
 

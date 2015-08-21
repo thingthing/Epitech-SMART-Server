@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.server.servlet.JsonServlet;
-import eip.smart.server.util.Configuration;
 
 /**
  * <b>The servlet ListStatus return the list of the status that can be returned.</b>

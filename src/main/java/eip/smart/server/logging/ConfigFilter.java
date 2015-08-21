@@ -1,8 +1,9 @@
-package eip.smart.server.util;
+package eip.smart.server.logging;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
+import eip.smart.cscommons.configuration.Configuration;
 
 public class ConfigFilter extends Filter<ILoggingEvent> {
 

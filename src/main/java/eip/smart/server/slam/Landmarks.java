@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import eip.smart.model.Area;
-import eip.smart.model.Modeling;
-import eip.smart.model.geometry.v2.Point3D;
-import eip.smart.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
+import eip.smart.cscommons.model.geometry.v2.Point3D;
+import eip.smart.cscommons.model.modeling.Area;
+import eip.smart.cscommons.model.modeling.Modeling;
 
 /**
  * @author Thing-leoh Nicolas
@@ -45,22 +46,22 @@ public class Landmarks {
 		}
 	}
 
-	private final static Logger					LOGGER			= Logger.getLogger(Landmarks.class.getName());
+	private final static Logger							LOGGER			= Logger.getLogger(Landmarks.class.getName());
 	// If a landmarks is within this distance of another landmarks, its the same
 	// landmarks (in cm i think)
-	public final static double					MAXERROR		= 0.5;
+	public final static double							MAXERROR		= 0.5;
 
 	// Number of times a landmark must be observed to be recognized as a
 	// landmark
-	public final static int						MINOBSERVATION	= 15;
+	public final static int								MINOBSERVATION	= 15;
 	// Use to reset life counter (counter use to determine whether to discard a
 	// landmark or not)
-	public final static int						LIFE			= 40;
-	public ArrayList<Pair<Integer, Integer>>	IDtoID			= new ArrayList<Pair<Integer, Integer>>();
+	public final static int								LIFE			= 40;
+	public ArrayList<ImmutablePair<Integer, Integer>>	IDtoID			= new ArrayList<ImmutablePair<Integer, Integer>>();
 
-	private ArrayList<Landmark>					landmarkDB		= new ArrayList<Landmark>();
+	private ArrayList<Landmark>							landmarkDB		= new ArrayList<Landmark>();
 
-	private int									idCounter		= 0;
+	private int											idCounter		= 0;
 
 	public Landmarks() {}
 
@@ -194,7 +195,7 @@ public class Landmarks {
 	 * @return id of landmark in matrices
 	 */
 	public int getMatriceId(int lmId) {
-		for (Pair<Integer, Integer> p : this.IDtoID)
+		for (ImmutablePair<Integer, Integer> p : this.IDtoID)
 			if (p.getKey() == lmId)
 				return (p.getValue());
 		return (-1);
@@ -243,6 +244,6 @@ public class Landmarks {
 	 *            Matrices id
 	 */
 	public void setMatriceId(int lmId, int matriceId) {
-		this.IDtoID.add(new Pair<Integer, Integer>(lmId, matriceId));
+		this.IDtoID.add(new ImmutablePair<Integer, Integer>(lmId, matriceId));
 	}
 }

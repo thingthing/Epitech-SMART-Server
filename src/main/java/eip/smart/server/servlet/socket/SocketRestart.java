@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -32,9 +32,9 @@ public class SocketRestart extends JsonServlet {
 			Server.getServer().socketTCPListen();
 			Server.getServer().socketUDPListen();
 		} catch (IOException e) {
-			throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
+			throw new StatusException(ServerStatus.ERR_UNKNOWN.addObjects(e.getMessage()));
 		} catch (IllegalArgumentException e) {
-			throw new StatusException(Status.SOCKET_ERROR.addObjects("port out of range or unavaiable."));
+			throw new StatusException(ServerStatus.SOCKET_ERROR.addObjects("port out of range or unavaiable."));
 		}
 
 	}

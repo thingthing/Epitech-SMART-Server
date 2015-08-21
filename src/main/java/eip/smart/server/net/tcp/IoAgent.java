@@ -1,32 +1,42 @@
 package eip.smart.server.net.tcp;
 
+import java.io.Serializable;
+import java.net.SocketAddress;
+import java.util.Date;
+
 import org.apache.mina.core.session.IoSession;
 
-import eip.smart.model.agent.Agent;
-import eip.smart.model.agent.Agent.sendMessageCallback;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import eip.smart.cscommons.model.JSONViews;
+import eip.smart.server.model.agent.AgentLogic;
+import eip.smart.server.model.agent.AgentLogic.sendMessageCallback;
 
 /**
  * Binding class between an Agent and a TCP IoSession.
- * 
+ *
  * @author Pierre Demessence
  *
  */
-public class IoAgent {
-	private Agent		agent	= null;
+public class IoAgent implements Serializable {
+
+	@JsonView(JSONViews.IMPORTANT.class)
+	private AgentLogic	agent	= null;
+
 	private IoSession	session	= null;
 
 	/**
 	 * Construct from an Agent.
-	 * 
+	 *
 	 * @param agent
 	 */
-	public IoAgent(Agent agent) {
+	public IoAgent(AgentLogic agent) {
 		this.agent = agent;
 	}
 
 	/**
 	 * Construct from an already connected session.
-	 * 
+	 *
 	 * @param session
 	 */
 	public IoAgent(IoSession session) {
@@ -35,12 +45,12 @@ public class IoAgent {
 
 	/**
 	 * Create a new agent for an IoAgent with only a session.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the agent to create.
 	 */
 	public void createAgent(String name) {
-		this.agent = new Agent(name);
+		this.agent = new AgentLogic(name);
 		this.agent.setSendMessageCallback(new sendMessageCallback() {
 			@Override
 			public void callback(Object message) {
@@ -53,16 +63,43 @@ public class IoAgent {
 
 	/**
 	 * Get the agent.
-	 * 
+	 *
 	 * @return the agent.
 	 */
-	public Agent getAgent() {
+	public AgentLogic getAgent() {
 		return (this.agent);
 	}
 
 	/**
+	 * @return
+	 * @see org.apache.mina.core.session.IoSession#getCreationTime()
+	 */
+	@JsonView(JSONViews.IMPORTANT.class)
+	private Date getCreationTime() {
+		return new Date(this.session.getCreationTime());
+	}
+
+	/**
+	 * @return
+	 * @see org.apache.mina.core.session.IoSession#getLocalAddress()
+	 */
+	@JsonView(JSONViews.IMPORTANT.class)
+	private SocketAddress getLocalAddress() {
+		return this.session.getLocalAddress();
+	}
+
+	/**
+	 * @return
+	 * @see org.apache.mina.core.session.IoSession#getRemoteAddress()
+	 */
+	@JsonView(JSONViews.IMPORTANT.class)
+	private SocketAddress getRemoteAddress() {
+		return this.session.getRemoteAddress();
+	}
+
+	/**
 	 * Get the TCP IoSession
-	 * 
+	 *
 	 * @return the TCP IoSession
 	 */
 	public IoSession getSession() {
@@ -78,7 +115,7 @@ public class IoAgent {
 
 	/**
 	 * Bound a session for an IoAgent with only an Agent.
-	 * 
+	 *
 	 * @param session
 	 *            the session to bind.
 	 */
