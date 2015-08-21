@@ -12,8 +12,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import eip.smart.model.Modeling;
-
-
 import eip.smart.model.proxy.FileModelingProxy;
 
 /**
@@ -49,24 +47,23 @@ public class DefaultZippedFileModelingManager extends FileModelingManager {
             ois.close();
             fis.close();
         } catch (InvalidClassException e) {
-            e.printStackTrace();
-            DefaultZippedFileModelingManager.LOGGER.log(Level.WARNING, "Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			FileModelingManager.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
+            DefaultZippedFileModelingManager.LOGGER.info("Saved modelisation (" + name + ") is obsolete and will be ignored.");
             return (null);
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
+        	FileModelingManager.LOGGER.error("Unable to find the file", e);        } finally {
             if (ois != null) {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the object stream", e);
                 }
             }
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
                 }
             }
         }
@@ -91,27 +88,27 @@ public class DefaultZippedFileModelingManager extends FileModelingManager {
             oos.writeObject(modelingParsed);
             zos.finish();
         } catch (IOException e) {
-            e.printStackTrace();
+			FileModelingManager.LOGGER.error("Unable to save the file", e);
         } finally {
             if (oos != null) {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the object stream", e);
                 }
             }
             if (zos != null) {
                 try {
                     zos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
                 }
             }
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
                 }
             }
         }

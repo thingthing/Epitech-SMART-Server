@@ -1,9 +1,9 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import org.apache.mina.core.session.IoSession;
 
-import eip.smart.model.Agent;
-import eip.smart.model.Agent.sendMessageCallback;
+import eip.smart.model.agent.Agent;
+import eip.smart.model.agent.Agent.sendMessageCallback;
 
 /**
  * Binding class between an Agent and a TCP IoSession.

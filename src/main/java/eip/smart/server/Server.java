@@ -2,12 +2,11 @@ package eip.smart.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -17,20 +16,25 @@ import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.DatagramSessionConfig;
+import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.apache.mina.util.AvailablePortFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import eip.smart.model.Agent;
 import eip.smart.model.Modeling;
+import eip.smart.model.agent.Agent;
 import eip.smart.model.proxy.SimpleModelingProxy;
 import eip.smart.server.modeling.DefaultFileModelingManager;
 import eip.smart.server.modeling.ModelingManager;
 import eip.smart.server.modeling.ModelingTask;
-import eip.smart.server.net.AgentServerHandler;
-import eip.smart.server.net.IoAgentContainer;
-import eip.smart.server.servlet.modeling.ModelingInfo;
+import eip.smart.server.net.tcp.AgentServerHandler;
+import eip.smart.server.net.tcp.IoAgentContainer;
+import eip.smart.server.net.tcp.TCPPacketCodecFactory;
+import eip.smart.server.net.udp.UDPHandler;
+import eip.smart.server.net.udp.UDPPacketCodecFactory;
 import eip.smart.server.util.Configuration;
 
 /**
@@ -40,10 +44,14 @@ import eip.smart.server.util.Configuration;
 @WebListener
 public class Server implements ServletContextListener {
 
+	static {
+		Configuration.initDefaultValues();
+	}
+
 	/**
 	 * The logger to log things.
 	 */
-	private final static Logger	LOGGER	= Logger.getLogger(ModelingInfo.class.getName());
+	private final static Logger	LOGGER	= LoggerFactory.getLogger(Server.class);
 
 	/**
 	 * The static instance of the server.
@@ -57,7 +65,8 @@ public class Server implements ServletContextListener {
 		return (Server.server);
 	}
 
-	private IoAcceptor			acceptor			= new NioSocketAcceptor();
+	private NioSocketAcceptor	acceptorTCP			= new NioSocketAcceptor();
+	private IoAcceptor			acceptorUDP			= new NioDatagramAcceptor();
 
 	private Configuration		conf				= new Configuration("server");
 
@@ -99,13 +108,13 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		Server.LOGGER.log(Level.INFO, "Server stopping");
+		Server.LOGGER.info("Server stopping");
 		if (this.currentModeling != null)
 			Server.getServer().modelingStop();
 		this.threadPool.shutdown();
 		this.threadPool.shutdownNow();
 
-		this.socketListenStop();
+		this.socketTCPListenStop();
 	}
 
 	/**
@@ -115,24 +124,49 @@ public class Server implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Configuration.setDefaultProperty("server", "TCP_PORT", "4200");
-
-		Server.LOGGER.log(Level.INFO, "Server starting");
-		Server.server = this;
-
-		this.acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-		this.acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
-
-		AgentServerHandler agentHandler = new AgentServerHandler();
-		agentHandler.setIoAgentContainer(this.ioAgentContainer);
-		this.acceptor.setHandler(agentHandler);
-
-		this.acceptor.getSessionConfig().setReadBufferSize(2048);
-		this.acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
 		try {
-			this.socketListen();
-		} catch (IllegalArgumentException | IOException e) {
-			e.printStackTrace();
+			Server.server = this;
+			Server.LOGGER.info("Server starting");
+
+			// Convert Tomcat JUL log to SLF4J
+			if (new Configuration("logging").getProperty("LOGGING_BRIDGE").equals("TRUE")) {
+				LogManager.getLogManager().reset();
+				SLF4JBridgeHandler.install();
+				java.util.logging.Logger.getLogger("global").setLevel(Level.FINEST);
+			}
+
+			// Config of TCP Acceptor
+			this.acceptorTCP.setCloseOnDeactivation(true);
+			this.acceptorTCP.setReuseAddress(true);
+			this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
+			this.acceptorTCP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
+			AgentServerHandler agentHandler = new AgentServerHandler();
+			agentHandler.setIoAgentContainer(this.ioAgentContainer);
+			this.acceptorTCP.setHandler(agentHandler);
+			this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
+			this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
+			try {
+				this.socketTCPListen();
+			} catch (IllegalArgumentException | IOException e) {
+				Server.LOGGER.error("Unable to open TCP socket", e);
+			}
+
+			// Config of UDP Acceptor
+			this.acceptorUDP.setCloseOnDeactivation(true);
+			((DatagramSessionConfig) this.acceptorUDP.getSessionConfig()).setReuseAddress(true);
+			this.acceptorUDP.getFilterChain().addLast("logger", new LoggingFilter());
+			this.acceptorUDP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new UDPPacketCodecFactory()));
+			this.acceptorUDP.setHandler(new UDPHandler());
+			this.acceptorUDP.getSessionConfig().setReadBufferSize(2048);
+			this.acceptorUDP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
+			try {
+				this.socketUDPListen();
+			} catch (IOException e) {
+				Server.LOGGER.error("Unable to open UDP socket", e);
+			}
+
+		} catch (Exception e) {
+			Server.LOGGER.error("Uncatched exception", e);
 		}
 	}
 
@@ -168,13 +202,6 @@ public class Server implements ServletContextListener {
 	}
 
 	/**
-	 * Get the port.
-	 */
-	public int getPort() {
-		return (this.conf.getPropertyInteger("TCP_PORT"));
-	}
-
-	/**
 	 * Get all the connected TCP sessions.
 	 *
 	 * @return
@@ -189,7 +216,7 @@ public class Server implements ServletContextListener {
 	 * @return
 	 */
 	public boolean isAcceptorActive() {
-		return (this.acceptor.isActive());
+		return (this.acceptorTCP.isActive());
 	}
 
 	/**
@@ -221,7 +248,6 @@ public class Server implements ServletContextListener {
 		if (this.manager.exists(name))
 			return (false);
 		this.currentModeling = new Modeling(name);
-		Server.LOGGER.log(Level.INFO, "New modeling (" + this.currentModeling.getName() + ") created.");
 		return (true);
 	}
 
@@ -265,7 +291,6 @@ public class Server implements ServletContextListener {
 	 */
 	public void modelingPause() {
 		this.currentTask.pause();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") paused.");
 	}
 
 	/**
@@ -273,7 +298,6 @@ public class Server implements ServletContextListener {
 	 */
 	public void modelingResume() {
 		this.currentTask.resume();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") resumed.");
 	}
 
 	/**
@@ -287,7 +311,6 @@ public class Server implements ServletContextListener {
 	 * Start the current modeling.
 	 */
 	public void modelingStart() {
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") started.");
 		this.running = true;
 		this.currentTask = new ModelingTask(this.currentModeling);
 		this.threadPool.execute(this.currentTask);
@@ -304,7 +327,6 @@ public class Server implements ServletContextListener {
 			this.currentTask = null;
 		}
 		this.modelingSave();
-		Server.LOGGER.log(Level.INFO, "Modeling (" + this.currentModeling.getName() + ") stopped.");
 		this.currentModeling = null;
 	}
 
@@ -314,19 +336,37 @@ public class Server implements ServletContextListener {
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
-	public void socketListen() throws IOException, IllegalArgumentException {
-		if (!AvailablePortFinder.available(this.getPort()))
-			throw new IllegalArgumentException();
-		this.acceptor.bind(new InetSocketAddress(this.getPort()));
+	public void socketTCPListen() throws IOException, IllegalArgumentException {
+		this.acceptorTCP.bind(new InetSocketAddress(this.conf.getPropertyInteger("TCP_PORT")));
+		Server.LOGGER.info("TCP Server open on port " + this.conf.getPropertyInteger("TCP_PORT"));
 	}
 
 	/**
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 */
-	public void socketListenStop() {
-		this.acceptor.setCloseOnDeactivation(true);
-		for (IoSession session : this.acceptor.getManagedSessions().values())
+	public void socketTCPListenStop() {
+		for (IoSession session : this.acceptorTCP.getManagedSessions().values())
 			session.close(true);
-		this.acceptor.unbind();
+		this.acceptorTCP.unbind();
+	}
+
+	/**
+	 * Open the UDP acceptor so it will handle new UDP connections.
+	 *
+	 * @throws IOException
+	 * @throws IllegalArgumentException
+	 */
+	public void socketUDPListen() throws IOException, IllegalArgumentException {
+		this.acceptorUDP.bind(new InetSocketAddress(this.conf.getPropertyInteger("UDP_PORT")));
+		Server.LOGGER.info("UDP Server open on port " + this.conf.getPropertyInteger("UDP_PORT"));
+	}
+
+	/**
+	 * Stop the UDP acceptor so it will not longer handle UDP connections.
+	 */
+	public void socketUDPListenStop() {
+		for (IoSession session : this.acceptorUDP.getManagedSessions().values())
+			session.close(true);
+		this.acceptorUDP.unbind();
 	}
 }

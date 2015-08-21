@@ -1,10 +1,10 @@
-package eip.smart.server.net;
+package eip.smart.server.net.tcp;
 
 import java.util.ArrayList;
 
 import org.apache.mina.core.session.IoSession;
 
-import eip.smart.model.Agent;
+import eip.smart.model.agent.Agent;
 
 /**
  * ArrayList container for IoAgents.
