@@ -53,6 +53,7 @@ public class AgentLogic extends Agent {
 	 * @param order
 	 *            Point, new order send to the agent
 	 */
+	@SuppressWarnings("unchecked")
 	public void pushOrder(Point3D order) {
 		this.orders.add(0, order);
 		this.sendMessage(new ImmutablePair<>("order", order));
@@ -88,6 +89,7 @@ public class AgentLogic extends Agent {
 	 * @param objects
 	 *            one or many objects that will be send
 	 */
+	@SuppressWarnings("unchecked")
 	public void sendMessage(ImmutablePair<String, Object>... objects) {
 		TCPMessagePacket message = new TCPMessagePacket();
 		for (ImmutablePair<String, Object> p : objects)

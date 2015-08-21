@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import eip.smart.cscommons.model.geometry.Point3D;
 
-@SuppressWarnings("static-method")
 public class LandmarksTest {
 
 	private Landmarks	parent;

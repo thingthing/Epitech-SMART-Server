@@ -20,20 +20,20 @@ import eip.smart.cscommons.model.modeling.Modeling;
 public class Landmarks {
 
 	public class Landmark {
-		public Point3D	position			= new Point3D(0.0, 0.0, 0.0);
+		// last position of agent when landmark was observed
+		public Point3D	agentPosition		= new Point3D(0.0, 0.0, 0.0);
+		// last observed bearing from agent to landmark
+		public double	bearing				= -1;
 		public int		id					= -1;
 		// a life counter to determine whether to discard a landmark or not
 		public int		life				= Landmarks.LIFE;
-		// the number of times we have seen the landmark
-		public int		totalTimeObserved	= 0;
+		public Point3D	position			= new Point3D(0.0, 0.0, 0.0);
 		// last observed range from agent to landmark
 		public double	range				= -1;
-		// last observed bearing from agent to landmark
-		public double	bearing				= -1;
-		// last position of agent when landmark was observed
-		public Point3D	agentPosition		= new Point3D(0.0, 0.0, 0.0);
+		// the number of times we have seen the landmark
+		public int		totalTimeObserved	= 0;
 
-		public Landmark() {};
+		public Landmark() {}
 
 		public Landmark(Point3D position, int life, int totalTimeObserved, double range, double bearing, Point3D agentPosition) {
 			this.position = position;
@@ -46,22 +46,22 @@ public class Landmarks {
 		}
 	}
 
-	private final static Logger							LOGGER			= Logger.getLogger(Landmarks.class.getName());
-	// If a landmarks is within this distance of another landmarks, its the same
-	// landmarks (in cm i think)
-	public final static double							MAXERROR		= 0.5;
-
-	// Number of times a landmark must be observed to be recognized as a
-	// landmark
-	public final static int								MINOBSERVATION	= 15;
 	// Use to reset life counter (counter use to determine whether to discard a
 	// landmark or not)
 	public final static int								LIFE			= 40;
-	public ArrayList<ImmutablePair<Integer, Integer>>	IDtoID			= new ArrayList<ImmutablePair<Integer, Integer>>();
+	private final static Logger							LOGGER			= Logger.getLogger(Landmarks.class.getName());
 
-	private ArrayList<Landmark>							landmarkDB		= new ArrayList<Landmark>();
-
+	// If a landmarks is within this distance of another landmarks, its the same
+	// landmarks (in cm i think)
+	public final static double							MAXERROR		= 0.5;
+	// Number of times a landmark must be observed to be recognized as a
+	// landmark
+	public final static int								MINOBSERVATION	= 15;
 	private int											idCounter		= 0;
+
+	public ArrayList<ImmutablePair<Integer, Integer>>	IDtoID			= new ArrayList<>();
+
+	private ArrayList<Landmark>							landmarkDB		= new ArrayList<>();
 
 	public Landmarks() {}
 
@@ -224,7 +224,7 @@ public class Landmarks {
 	}
 
 	public void removeBadLandmarksFromArea(Area toTest) {
-		ArrayList<Landmark> toDelete = new ArrayList<Landmark>();
+		ArrayList<Landmark> toDelete = new ArrayList<>();
 
 		for (Landmark current : this.landmarkDB)
 			// Landmark found in area so decrease life and delete if no more life
@@ -244,6 +244,6 @@ public class Landmarks {
 	 *            Matrices id
 	 */
 	public void setMatriceId(int lmId, int matriceId) {
-		this.IDtoID.add(new ImmutablePair<Integer, Integer>(lmId, matriceId));
+		this.IDtoID.add(new ImmutablePair<>(lmId, matriceId));
 	}
 }
