@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.v2.Point3D;
 
 @SuppressWarnings("static-method")
 public class LandmarksTest {
@@ -26,7 +26,7 @@ public class LandmarksTest {
 		double range = 15.0;
 
 		// Set some values
-		test.position = new Point(posx, posy, posz);
+		test.position = new Point3D(posx, posy, posz);
 		test.bearing = bearing;
 		test.range = range;
 

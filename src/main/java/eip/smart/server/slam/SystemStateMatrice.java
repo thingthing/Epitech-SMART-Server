@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.v2.Point3D;
 
 /**
  * @author Nicolas
@@ -16,7 +16,7 @@ import eip.smart.model.geometry.Point;
 public class SystemStateMatrice {
 
 	ArrayList<Agent>	agents	= new ArrayList<Agent>();
-	LinkedList<Point>	matrice	= new LinkedList<Point>();
+	LinkedList<Point3D>	matrice	= new LinkedList<Point3D>();
 
 	public SystemStateMatrice() {}
 
@@ -36,7 +36,7 @@ public class SystemStateMatrice {
 	 *            position to be add
 	 * @return the id of the position in the matrices
 	 */
-	public int addLandmarkPosition(Point landmarkPos) {
+	public int addLandmarkPosition(Point3D landmarkPos) {
 		this.matrice.push(landmarkPos);
 		return (this.matrice.size() - 1);
 	}
@@ -50,16 +50,16 @@ public class SystemStateMatrice {
 
 	/**
 	 * Get agent position in state matrices
-	 * 
+	 *
 	 * @param agent
 	 *            Agent to get position
 	 * @return Position of agent in list
 	 */
-	public Point getAgentPos(Agent agent) {
+	public Point3D getAgentPos(Agent agent) {
 		Agent tmp = this.getAgent(agent.getName(), this.agents);
 		if (tmp != null)
 			return (tmp.getCurrentPosition());
-		return (new Point(0.0, 0.0, 0.0));
+		return (new Point3D(0.0, 0.0, 0.0));
 	}
 
 	/**
@@ -84,10 +84,10 @@ public class SystemStateMatrice {
 	 * @param posAdjustment
 	 *            Position adjustment calculate by Kalman matrices
 	 */
-	public void updateAgentState(Agent agent, Double bearingAdjustment, Point posAdjustment) {
+	public void updateAgentState(Agent agent, Double bearingAdjustment, Point3D posAdjustment) {
 		Agent tmp = this.getAgent(agent.getName(), this.agents);
 		if (tmp != null) {
-			tmp.setCurrentPosition(Point.add(tmp.getCurrentPosition(), posAdjustment));
+			tmp.setCurrentPosition(new Point3D(tmp.getCurrentPosition().add(posAdjustment)));
 			tmp.setCurrentBearing(tmp.getCurrentBearing() + bearingAdjustment);
 		}
 	}
@@ -100,7 +100,7 @@ public class SystemStateMatrice {
 	 * @param newPos
 	 *            the position to be updated
 	 */
-	public void updateLandmarkPosition(int landmarkMatriceId, Point newPos) {
+	public void updateLandmarkPosition(int landmarkMatriceId, Point3D newPos) {
 		if (landmarkMatriceId < this.matrice.size())
 			this.matrice.set(landmarkMatriceId, newPos);
 	}

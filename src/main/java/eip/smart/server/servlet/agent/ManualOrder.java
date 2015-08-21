@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.Status;
 import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.v2.Point3D;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -40,10 +40,10 @@ public class ManualOrder extends JsonServlet {
 					agent = a;
 		}
 
-		Point order = null;
+		Point3D order = null;
 		if (JsonServlet.getParameter(req, "order") != null)
 			try {
-				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point.class);
+				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point3D.class);
 			} catch (IOException e) {
 				throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
 			}

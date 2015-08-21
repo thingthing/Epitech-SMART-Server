@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import eip.smart.model.Modeling;
 import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.Point;
+import eip.smart.model.geometry.v2.Point3D;
 
 /**
  * @author Thing-leoh Nicolas
@@ -73,7 +73,7 @@ public class Slam {
 			for (Landmarks.Landmark lm : this.reobservedLandmakrs)
 				// @TODO: calculate Kalman gain
 				// @TODO: Change to Update state using Kalman gain
-				this.state.updateAgentState(agent, 0.0, new Point(0.0, 0.0, 0.0));
+				this.state.updateAgentState(agent, 0.0, new Point3D(0.0, 0.0, 0.0));
 			agent.setCurrentPosition(this.state.getAgentPos(agent));
 		}
 
