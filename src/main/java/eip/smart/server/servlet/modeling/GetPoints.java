@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
-import eip.smart.cscommons.model.geometry.v2.PointCloud3DGenerator;
+import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;

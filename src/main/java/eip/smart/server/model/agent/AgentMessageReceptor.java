@@ -1,7 +1,7 @@
 package eip.smart.server.model.agent;
 
 import eip.smart.cscommons.model.agent.AgentState;
-import eip.smart.cscommons.model.geometry.v2.Point3D;
+import eip.smart.cscommons.model.geometry.Point3D;
 
 public enum AgentMessageReceptor {
 	POSITION("position", new AgentMessageHandler<Point3D>(Point3D.class) {

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import eip.smart.cscommons.model.agent.Agent;
 import eip.smart.cscommons.model.agent.AgentState;
 import eip.smart.cscommons.model.agent.AgentType;
-import eip.smart.cscommons.model.geometry.v2.Point3D;
+import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.cscommons.model.modeling.Area;
 
 public class AgentLogic extends Agent {

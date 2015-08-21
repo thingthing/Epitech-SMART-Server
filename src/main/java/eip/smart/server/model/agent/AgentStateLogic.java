@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import eip.smart.cscommons.model.agent.AgentState;
-import eip.smart.cscommons.model.geometry.v2.Point3D;
+import eip.smart.cscommons.model.geometry.Point3D;
 
 /**
  * <b>AgentState is the enum allowing the management of the Agents'states.</b>
