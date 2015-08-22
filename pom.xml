@@ -51,6 +51,31 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<show>protected</show>
+					<nohelp>false</nohelp>
+					<failOnError>false</failOnError>
+					<includeDependencySources>true</includeDependencySources>
+					<dependencySourceIncludes>
+						<!-- include ONLY dependencies I control -->
+						<dependencySourceInclude>eip.smart:*</dependencySourceInclude>
+					</dependencySourceIncludes>
+					<detectLinks>true</detectLinks>
+					<linksource>true</linksource>
+					<links>
+						<link>http://docs.oracle.com/javase/7/docs/api</link>
+						<link>http://static.netty.io/3.5/api</link>
+						<link>http://google-guice.googlecode.com/git/javadoc</link>
+						<link>http://docs.guava-libraries.googlecode.com/git-history/release/javadoc</link>
+						<link>http://fasterxml.github.com/jackson-databind/javadoc/2.0.4</link>
+						<link>https://developers.google.com/protocol-buffers/docs/reference/java</link>
+					</links>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
