@@ -49,7 +49,6 @@ public class AgentLogic extends Agent {
 	/**
 	 * Add a Point at the agent's list of orders
 	 *
-	 * @see Point
 	 * @param order
 	 *            Point, new order send to the agent
 	 */
@@ -69,7 +68,7 @@ public class AgentLogic extends Agent {
 	/**
 	 * Check if the message has been received by the agent
 	 *
-	 * @param msg
+	 * @param data
 	 *            String, the message
 	 */
 	public void receiveMessage(JsonNode data) {
@@ -84,8 +83,6 @@ public class AgentLogic extends Agent {
 	/**
 	 * Send a message to the dashboard
 	 *
-	 * @param message
-	 *            String
 	 * @param objects
 	 *            one or many objects that will be send
 	 */
