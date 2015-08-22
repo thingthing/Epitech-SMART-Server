@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.cscommons.model.JSONViews;
 import eip.smart.server.Server;
 import eip.smart.server.servlet.JsonServlet;
 
@@ -29,6 +30,6 @@ public class ModelingList extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		json.writeFieldName("modelings");
-		this.mapper.writeValue(json, Server.getServer().modelingList());
+		this.mapper.writerWithView(JSONViews.IMPORTANT.class).writeValue(json, Server.getServer().modelingList());
 	}
 }
