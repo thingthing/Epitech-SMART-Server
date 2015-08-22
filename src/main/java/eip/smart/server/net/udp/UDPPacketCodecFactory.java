@@ -1,18 +1,18 @@
-package eip.smart.server.net;
+package eip.smart.server.net.udp;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 
-public class PacketCodecFactory implements ProtocolCodecFactory {
+public class UDPPacketCodecFactory implements ProtocolCodecFactory {
 
 	private ProtocolEncoder	encoder;
 	private ProtocolDecoder	decoder;
 
-	public PacketCodecFactory() {
-		this.encoder = new PacketEncoder();
-		this.decoder = new PacketDecoder();
+	public UDPPacketCodecFactory() {
+		this.encoder = null;
+		this.decoder = new UDPPacketDecoder();
 	}
 
 	@Override

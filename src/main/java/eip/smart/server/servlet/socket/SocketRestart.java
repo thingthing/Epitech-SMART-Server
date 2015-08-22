@@ -15,7 +15,7 @@ import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet SocketListen open the port and start "listening" at it.</b>
+ * Restart the TCP and UDP socket.
  *
  * @author Pierre Demessence
  */
@@ -27,8 +27,10 @@ public class SocketRestart extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		try {
-			Server.getServer().socketListenStop();
-			Server.getServer().socketListen();
+			Server.getServer().socketTCPListenStop();
+			Server.getServer().socketUDPListenStop();
+			Server.getServer().socketTCPListen();
+			Server.getServer().socketUDPListen();
 		} catch (IOException e) {
 			throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
 		} catch (IllegalArgumentException e) {

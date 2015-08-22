@@ -14,7 +14,7 @@ import org.apache.mina.core.session.IoSession;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.server.Server;
-import eip.smart.server.net.IoSessionProxy;
+import eip.smart.server.net.tcp.IoSessionProxy;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
