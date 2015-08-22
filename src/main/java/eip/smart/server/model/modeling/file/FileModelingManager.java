@@ -3,6 +3,7 @@ package eip.smart.server.model.modeling.file;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public abstract class FileModelingManager implements ModelingManager {
 				modelings.add(smp);
 			} else {
 				ModelingLogic smpObsolete = new ModelingLogic();
-				smpObsolete.setName(file.getName());
+				smpObsolete.setName(FilenameUtils.removeExtension(file.getName()));
 				smpObsolete.setObsolete(true);
 				modelings.add(smpObsolete);
 			}
