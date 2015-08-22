@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eip.smart</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.42</version>
 	<packaging>war</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,31 +53,111 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.4</version>
 				<configuration>
-					<show>protected</show>
-					<nohelp>false</nohelp>
-					<failOnError>false</failOnError>
-					<includeDependencySources>true</includeDependencySources>
-					<dependencySourceIncludes>
-						<!-- include ONLY dependencies I control -->
-						<dependencySourceInclude>eip.smart:*</dependencySourceInclude>
-					</dependencySourceIncludes>
-					<detectLinks>true</detectLinks>
-					<linksource>true</linksource>
-					<links>
-						<link>http://docs.oracle.com/javase/7/docs/api</link>
-						<link>http://static.netty.io/3.5/api</link>
-						<link>http://google-guice.googlecode.com/git/javadoc</link>
-						<link>http://docs.guava-libraries.googlecode.com/git-history/release/javadoc</link>
-						<link>http://fasterxml.github.com/jackson-databind/javadoc/2.0.4</link>
-						<link>https://developers.google.com/protocol-buffers/docs/reference/java</link>
-					</links>
+					<port>80</port>
+					<tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+					<!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
+					<docletArtifact>
+						<groupId>org.umlgraph</groupId>
+						<artifactId>umlgraph</artifactId>
+						<version>5.6</version>
+					</docletArtifact>
+					<additionalparam>-views -all</additionalparam>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+					<docfilessubdirs>true</docfilessubdirs>
+					<doctitle>${project.name} (${project.version})</doctitle>
+					<show>private</show>
+					<failOnError>false</failOnError>
+					<includeDependencySources>true</includeDependencySources>
+					<dependencySourceIncludes>
+						<dependencySourceInclude>eip.smart:*</dependencySourceInclude>
+					</dependencySourceIncludes>
+					<linksource>true</linksource>
+					<links>
+						<link>https://commons.apache.org/proper/commons-math/javadocs/api-3.5/</link>
+						<link>https://commons.apache.org/proper/commons-io/javadocs/api-2.4/</link>
+						<link>https://commons.apache.org/proper/commons-lang/javadocs/api-3.4/</link>
+						<link>http://mina.apache.org/mina-project/apidocs/</link>
+						<link>http://tomcat.apache.org/tomcat-8.0-doc/servletapi/</link>
+						<link>http://logback.qos.ch/apidocs/</link>
+						<link>http://fasterxml.github.io/jackson-core/javadoc/2.1.0/</link>
+						<link>http://fasterxml.github.io/jackson-databind/javadoc/2.1.0/</link>
+						<link>http://fasterxml.github.io/jackson-annotations/javadoc/2.1.0/</link>
+					</links>
+					<quiet>true</quiet>
+					<groups>
+						<group>
+							<title>Models</title>
+							<packages>eip.smart.server.model*:eip.smart.cscommons.model*</packages>
+						</group>
+						<group>
+							<title>Net</title>
+							<packages>eip.smart.server.servlet*:eip.smart.server.net*</packages>
+						</group>
+						<group>
+							<title>Util</title>
+							<packages>eip.smart.cscommons.util*:eip.smart.cscommons.configuration*:eip.smart.server.configuration*:eip.smart.server.logging*</packages>
+						</group>
+					</groups>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.16</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.5</version>
+				<configuration>
+					<targetJdk>1.6</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.18.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+		</plugins>
+	</reporting>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -88,7 +168,7 @@
 		<dependency>
 			<groupId>eip.smart</groupId>
 			<artifactId>cs-commons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.42</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -112,4 +192,10 @@
 			<version>2.4.3</version>
 		</dependency>
 	</dependencies>
+	<name>Smart Server</name>
+	<organization>
+		<name>SMART</name>
+		<url>http://epitechsmart.bitbucket.org/</url>
+	</organization>
+	<url>http://epitechsmart.bitbucket.org/</url>
 </project>
