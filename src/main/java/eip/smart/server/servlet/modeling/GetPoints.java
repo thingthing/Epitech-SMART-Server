@@ -36,7 +36,7 @@ public class GetPoints extends JsonServlet {
 		Modeling modeling = Server.getServer().getCurrentModeling();
 		if (modeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		json.writeFieldName("points");
+		json.writeFieldName("pointcloud");
 		this.mapper.writeValue(json, new PointCloud3DGenerator().generatePointCloud(50));
 		throw new StatusException(ServerStatus.ERR_SIMULATION);
 	}
