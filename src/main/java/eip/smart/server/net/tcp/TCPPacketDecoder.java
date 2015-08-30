@@ -53,7 +53,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				// Protocol Version
 				int protocolVersion = in.getUnsignedShort();
 				TCPPacketDecoder.LOGGER.debug("TCP packet protocolVersion : {}", protocolVersion);
-				if (protocolVersion > TCPPacket.PROTOCOL_VERSION)
+				if (protocolVersion != TCPPacket.PROTOCOL_VERSION)
 					TCPPacketDecoder.LOGGER.warn("Warning : Protocol Version mismatch : TCP packet received uses version {}, Server uses version {}", protocolVersion, TCPPacket.PROTOCOL_VERSION);
 
 				// Header Size
@@ -61,6 +61,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				TCPPacketDecoder.LOGGER.debug("TCP packet headersize : {}", headerSize);
 				if (headerSize < TCPPacket.HEADER_SIZE) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : required minimal header size of {}, {} given", TCPPacket.HEADER_SIZE, headerSize);
+					return;
+				}
+				if (headerSize > packetSize) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : given header size of {} is bigger than given packet size of {} ", headerSize, packetSize);
 					return;
 				}
 				if (headerSize > TCPPacket.HEADER_SIZE) {
