@@ -33,6 +33,14 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				// Packet Size
 				int packetSize = in.getUnsignedShort();
 				TCPPacketDecoder.LOGGER.debug("TCP packet packetSize : {}", packetSize);
+				if (packetSize > in.limit()) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : buffer size of {} is too little to contain received packet size of {}", in.limit(), packetSize);
+					return;
+				}
+				if (packetSize < TCPPacket.HEADER_SIZE) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : packet size of {} is too little to contain minimal header size of {}", packetSize, TCPPacket.HEADER_SIZE);
+					return;
+				}
 				if (packetSize != in.limit()) {
 					TCPPacketDecoder.LOGGER.warn("Warning : TCP packet buffer size of {} does not match received packet size of {}", in.limit(), packetSize);
 					// return;
@@ -97,7 +105,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				TCPPacket packet = new TCPPacket(packetSize, protocolVersion, headerSize, payload, jsonPayload);
 				out.write(packet);
 			} else
-				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : size too low. Minimal size of {} for header", TCPPacket.HEADER_SIZE);
+				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : buffer size too low. Minimal size of {} for header", TCPPacket.HEADER_SIZE);
 		} catch (Exception e) {
 			throw e;
 		} finally {
