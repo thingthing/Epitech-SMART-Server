@@ -15,6 +15,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
+
 import eip.smart.server.exception.StatusException;
 import eip.smart.model.Status;
 import eip.smart.server.servlet.JsonServlet;
@@ -28,11 +32,21 @@ public class LogCleanServlet extends JsonServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String filename = System.getProperty("catalina.base") + "/log/log.html";
 		File log = new File(filename);
+		/*
 		try {
         	log.delete();
 			log.createNewFile();
 		} catch (IOException | SecurityException e) {
 			throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
+		}
+		*/
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory(); 
+		ContextInitializer ci = new ContextInitializer(lc); 
+		lc.reset();
+		try {   
+			ci.autoConfig();  
+		} catch (JoranException e) {  
+			e.printStackTrace(); 
 		}
         LogCleanServlet.LOGGER.info("Log cleaned.");
 	}
