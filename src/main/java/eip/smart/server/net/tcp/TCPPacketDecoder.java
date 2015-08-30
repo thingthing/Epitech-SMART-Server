@@ -9,6 +9,7 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,7 +85,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				JsonNode jsonPayload = null;
 				try {
 					jsonPayload = new ObjectMapper().readTree(payload);
-				} catch (JsonMappingException e) {
+				} catch (JsonMappingException | JsonParseException e) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded :", e);
 					return;
 				}
