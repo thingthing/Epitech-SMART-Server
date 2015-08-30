@@ -87,10 +87,14 @@ public class TCPPacket {
 	}
 
 	public int getStatusCode() {
-		return (this.jsonPayload.get("status").get("code").asInt());
+		if (this.getJsonStatus() == null)
+			return (-1);
+		return (this.getJsonStatus().get("code").asInt());
 	}
 
 	public String getStatusMessage() {
-		return (this.jsonPayload.get("status").get("message").asText());
+		if (this.getJsonStatus() == null)
+			return (null);
+		return (this.getJsonStatus().get("message").asText());
 	}
 }

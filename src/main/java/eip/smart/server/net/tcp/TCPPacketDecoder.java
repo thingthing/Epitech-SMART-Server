@@ -20,7 +20,6 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 	@Override
 	public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 		try {
-			TCPPacketDecoder.LOGGER.debug("Endianness : {}", ByteOrder.nativeOrder());
 			TCPPacketDecoder.LOGGER.debug("Received TCP packet of size {} from {}", in.remaining(), session.getRemoteAddress());
 			TCPPacketDecoder.LOGGER.debug("HexDump : {}", in.getHexDump());
 			if (in.remaining() >= TCPPacket.HEADER_SIZE) {
@@ -81,6 +80,18 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded :", e);
 					return;
 				}
+				if (jsonPayload.get("data") == null) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"data\" json object after parsing");
+					return ;
+				}
+				if (jsonPayload.get("status") == null) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"status\" json object after parsing");
+					return ;
+				}
+				if (jsonPayload.get("status").get("code") == null) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"code\" json object in \"status\" after parsing");
+					return ;
+				}
 
 				// Good packet
 				TCPPacket packet = new TCPPacket(packetSize, protocolVersion, headerSize, payload, jsonPayload);
@@ -90,8 +101,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
-			in.skip(in.remaining());
+			if (in.remaining() > 0) {
+				TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
+				in.skip(in.remaining());
+			}
 		}
 	}
 }
