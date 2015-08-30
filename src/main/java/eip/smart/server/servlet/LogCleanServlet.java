@@ -25,7 +25,7 @@ public class LogCleanServlet extends JsonServlet {
     private final static Logger	LOGGER	= LoggerFactory.getLogger(LogCleanServlet.class);
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String filename = System.getProperty("catalina.base") + "/log/log.html";
 		File log = new File(filename);
 		try {
