@@ -32,14 +32,12 @@ public class LogCleanServlet extends JsonServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String filename = System.getProperty("catalina.base") + "/log/log.html";
 		File log = new File(filename);
-		/*
 		try {
         	log.delete();
 			log.createNewFile();
 		} catch (IOException | SecurityException e) {
 			throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
 		}
-		*/
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory(); 
 		ContextInitializer ci = new ContextInitializer(lc); 
 		lc.reset();
