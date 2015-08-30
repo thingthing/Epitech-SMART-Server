@@ -15,7 +15,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eip.smart.server.exception.StatusException;
 import eip.smart.model.Status;
+import eip.smart.server.servlet.JsonServlet;
 
 @WebServlet("/log_clean")
 public class LogCleanServlet extends JsonServlet {
