@@ -23,6 +23,7 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 		MessagePacket messagePacket = (MessagePacket) message;
 		StringWriter writer = new StringWriter();
 		JsonGenerator json = new JsonFactory().createGenerator(writer);
+		json.setCodec(new ObjectMapper());
 
 		json.writeStartObject();
 
