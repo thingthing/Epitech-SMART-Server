@@ -27,7 +27,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				// Magic
 				short magic = in.getUnsigned();
 				if (magic != TCPPacket.MAGIC) {
-					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : Wrong magic");
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : Wrong magic {} (expected {})", magic, TCPPacket.MAGIC);
 					return;
 				}
 
@@ -54,7 +54,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				// Protocol Version
 				int protocolVersion = in.getUnsignedShort();
 				TCPPacketDecoder.LOGGER.debug("TCP packet protocolVersion : {}", protocolVersion);
-				if (protocolVersion > TCPPacket.PROTOCOL_VERSION)
+				if (protocolVersion != TCPPacket.PROTOCOL_VERSION)
 					TCPPacketDecoder.LOGGER.warn("Warning : Protocol Version mismatch : TCP packet received uses version {}, Server uses version {}", protocolVersion, TCPPacket.PROTOCOL_VERSION);
 
 				// Header Size
@@ -62,6 +62,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				TCPPacketDecoder.LOGGER.debug("TCP packet headersize : {}", headerSize);
 				if (headerSize < TCPPacket.HEADER_SIZE) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : required minimal header size of {}, {} given", TCPPacket.HEADER_SIZE, headerSize);
+					return;
+				}
+				if (headerSize > packetSize) {
+					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : given header size of {} is bigger than given packet size of {} ", headerSize, packetSize);
 					return;
 				}
 				if (headerSize > TCPPacket.HEADER_SIZE) {
@@ -105,14 +109,17 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				// Good packet
 				TCPPacket packet = new TCPPacket(packetSize, protocolVersion, headerSize, payload, jsonPayload);
 				out.write(packet);
-			} else
+			} else {
 				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : buffer size too low. Minimal size of {} for header", TCPPacket.HEADER_SIZE);
+				in.skip(in.remaining());
+			}
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			if (in.remaining() > 0) {
-				TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
-				in.skip(in.remaining());
+				TCPPacketDecoder.LOGGER.debug("{} unused bytes at the end of the buffer", in.remaining());
+				//TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
+				//in.skip(in.remaining());
 			}
 		}
 	}
