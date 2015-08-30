@@ -9,6 +9,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.model.MessagePacket;
 import eip.smart.util.Pair;
