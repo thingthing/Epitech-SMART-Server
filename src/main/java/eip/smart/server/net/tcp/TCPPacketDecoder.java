@@ -90,8 +90,10 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
-			in.skip(in.remaining());
+			if (in.remaining() > 0) {
+				TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
+				in.skip(in.remaining());
+			}
 		}
 	}
 }
