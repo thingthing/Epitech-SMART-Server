@@ -3,7 +3,7 @@ package eip.smart.server.net.tcp;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class TCPPacket {
-	public static final short	MAGIC				= 0x42;
+	public static final int		MAGIC				= 0x42;
 	public static final int		PROTOCOL_VERSION	= 1;
 	public static final int		HEADER_SIZE			= 7;
 

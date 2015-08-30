@@ -26,7 +26,7 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 			TCPPacketDecoder.LOGGER.debug("HexDump : {}", in.getHexDump());
 			if (in.remaining() >= TCPPacket.HEADER_SIZE) {
 				// Magic
-				short magic = in.getUnsigned();
+				int magic = in.getUnsigned();
 				if (magic != TCPPacket.MAGIC) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : Wrong magic {} (expected {})", magic, TCPPacket.MAGIC);
 					return;
