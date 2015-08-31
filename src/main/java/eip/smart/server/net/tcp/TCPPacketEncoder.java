@@ -10,11 +10,19 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eip.smart.cscommons.model.JSONViews;
 import eip.smart.server.model.agent.TCPMessagePacket;
 
 public class TCPPacketEncoder implements ProtocolEncoder {
+
+	private ObjectMapper	mapper	= new ObjectMapper();
+
+	public TCPPacketEncoder() {
+		this.mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+	}
 
 	@Override
 	public void dispose(IoSession session) throws Exception {}
@@ -24,14 +32,15 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 		TCPMessagePacket messagePacket = (TCPMessagePacket) message;
 		StringWriter writer = new StringWriter();
 		JsonGenerator json = new JsonFactory().createGenerator(writer);
-		json.setCodec(new ObjectMapper());
 
 		json.writeStartObject();
 
 		json.writeFieldName("data");
 		json.writeStartObject();
-		for (ImmutablePair<String, Object> p : messagePacket.getData())
-			json.writeObjectField(p.getKey(), p.getValue());
+		for (ImmutablePair<String, Object> p : messagePacket.getData()) {
+			json.writeFieldName(p.getKey());
+			this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, p.getValue());
+		}
 		json.writeEndObject();
 
 		json.writeFieldName("status");
