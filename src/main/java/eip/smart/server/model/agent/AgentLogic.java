@@ -96,6 +96,10 @@ public class AgentLogic extends Agent {
 			this.messageCallback.callback(message);
 	}
 
+	public void setBattery(double battery) {
+		this.battery = battery;
+	}
+
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
