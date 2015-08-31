@@ -36,6 +36,7 @@ public class TCPHandler implements IoHandler {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		TCPPacket packet = (TCPPacket) message;
 		TCPHandler.LOGGER.debug("Received TCP data from {}", session.getRemoteAddress());
+		TCPHandler.LOGGER.debug("{}", packet.getJsonData());
 		if (packet.getStatusCode() != 0) {
 			TCPHandler.LOGGER.warn("Received packet with code {} and message {}", packet.getStatusCode(), packet.getStatusMessage());
 			return;

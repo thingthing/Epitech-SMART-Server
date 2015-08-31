@@ -23,7 +23,7 @@ public class TCPCommandManager {
 	}
 
 	private HashMap<String, AgentCommandHandler<?>>	agentHandlers	= new HashMap<>();
-	private HashMap<String, SessionCommandHandler>		sessionHandlers	= new HashMap<>();
+	private HashMap<String, SessionCommandHandler>	sessionHandlers	= new HashMap<>();
 
 	public TCPCommandManager() {
 		for (SessionCommandList receptor : SessionCommandList.values())
@@ -73,7 +73,7 @@ public class TCPCommandManager {
 			TCPCommandManager.LOGGER.warn("Error during execution of command {} : {}", key, e.getMessage());
 			TCPCommandManager.sendStatus(session, 1, "Error during execution of command " + key + " : " + e.getMessage());
 		} catch (IOException e) {
-			TCPCommandManager.LOGGER.error("Error during execution of command {}", key, e);
+			TCPCommandManager.LOGGER.warn("Error during execution of command {}", key, e);
 			TCPCommandManager.sendStatus(session, 1, "Error during execution of command " + key + " : " + e.getMessage());
 		}
 	}
