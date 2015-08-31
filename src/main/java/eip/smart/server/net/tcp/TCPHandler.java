@@ -1,5 +1,6 @@
 package eip.smart.server.net.tcp;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -36,7 +37,7 @@ public class TCPHandler implements IoHandler {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		TCPPacket packet = (TCPPacket) message;
 		TCPHandler.LOGGER.debug("Received TCP data from {}", session.getRemoteAddress());
-		TCPHandler.LOGGER.debug("{}", packet.getJsonData());
+		TCPHandler.LOGGER.debug("{}", StringEscapeUtils.escapeJson(packet.getJsonData().toString()));
 		if (packet.getStatusCode() != 0) {
 			TCPHandler.LOGGER.warn("Received packet with code {} and message {}", packet.getStatusCode(), packet.getStatusMessage());
 			return;
