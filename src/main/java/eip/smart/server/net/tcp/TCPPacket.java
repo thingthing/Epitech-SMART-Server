@@ -3,9 +3,9 @@ package eip.smart.server.net.tcp;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class TCPPacket {
-	public static final short	MAGIC				= 0x42;
+	public static final int		MAGIC				= 0x42;
 	public static final int		PROTOCOL_VERSION	= 1;
-	public static final int		HEADER_SIZE			= 7;
+	public static final int		HEADER_SIZE			= 8;
 
 	public static final int		MAX_PACKET_SIZE		= Character.MAX_VALUE;
 	public static final int		MAX_PAYLOAD_SIZE	= TCPPacket.MAX_PACKET_SIZE - TCPPacket.HEADER_SIZE;
@@ -87,10 +87,14 @@ public class TCPPacket {
 	}
 
 	public int getStatusCode() {
-		return (this.jsonPayload.get("status").get("code").asInt());
+		if (this.getJsonStatus() == null)
+			return (-1);
+		return (this.getJsonStatus().get("code").asInt());
 	}
 
 	public String getStatusMessage() {
-		return (this.jsonPayload.get("status").get("message").asText());
+		if (this.getJsonStatus() == null)
+			return (null);
+		return (this.getJsonStatus().get("message").asText());
 	}
 }

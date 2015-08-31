@@ -10,6 +10,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eip.smart.server.model.agent.TCPMessagePacket;
 
@@ -23,6 +24,7 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 		TCPMessagePacket messagePacket = (TCPMessagePacket) message;
 		StringWriter writer = new StringWriter();
 		JsonGenerator json = new JsonFactory().createGenerator(writer);
+		json.setCodec(new ObjectMapper());
 
 		json.writeStartObject();
 
@@ -43,7 +45,7 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 
 		TCPPacket packet = new TCPPacket(writer.toString().getBytes());
 		IoBuffer buffer = IoBuffer.allocate(packet.getPacketSize(), false);
-		buffer.putUnsigned(TCPPacket.MAGIC);
+		buffer.putUnsignedShort(TCPPacket.MAGIC);
 		buffer.putUnsignedShort(packet.getPacketSize());
 		buffer.putUnsignedShort(packet.getProtocolVersion());
 		buffer.putUnsignedShort(packet.getHeaderSize());

@@ -19,7 +19,7 @@ import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
- * <b>The servlet ManualOrder take an agent's name and a Point as parameter set this Point as the new current goal of the corresponding Agent.</b>
+ * <b>The servlet ManualOrder takes an agent's name and a Point as parameter and set this Point as the new current goal of the corresponding Agent.</b>
  *
  * @author Pierre Demessence
  */
@@ -46,6 +46,6 @@ public class ManualOrder extends JsonServlet {
 		if (order == null)
 			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("order"));
 
-		agent.pushOrder(order);
+		agent.newOrder(order);
 	}
 }
