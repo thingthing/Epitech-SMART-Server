@@ -1,7 +1,6 @@
 package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -11,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
-import eip.smart.model.agent.Agent;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -30,20 +29,14 @@ public class AgentAdd extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		Agent agent = null;
-		if (name != null) {
-			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
-			for (Agent a : agents)
-				if (name.equals(a.getName()))
-					agent = a;
-		}
-
+		AgentLogic agent = Server.getServer().getAgentByName(name);
 		if (agent == null)
-			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
+			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
 		if (Server.getServer().getCurrentModeling() == null)
-			throw new StatusException(Status.MODELING_NO_CURRENT);
+			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		if (Server.getServer().getCurrentModeling().getAgents().contains(agent))
-			throw new StatusException(Status.AGENT_ALREADY_ADDED);
-		Server.getServer().getCurrentModeling().addAgent(agent);
+			throw new StatusException(ServerStatus.AGENT_ALREADY_ADDED);
+		Server.getServer().getCurrentModeling().addAgent(new AgentLogic(agent));
 	}
+
 }

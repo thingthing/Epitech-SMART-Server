@@ -1,7 +1,6 @@
 package eip.smart.server.servlet.agent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -12,11 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eip.smart.model.Status;
-import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.Point;
+import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -32,26 +31,20 @@ public class ManualOrder extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		Agent agent = null;
-		if (name != null) {
-			ArrayList<Agent> agents = Server.getServer().getAgentsAvailable();
-			for (Agent a : agents)
-				if (name.equals(a.getName()))
-					agent = a;
-		}
+		AgentLogic agent = Server.getServer().getAgentByName(name);
 
-		Point order = null;
+		Point3D order = null;
 		if (JsonServlet.getParameter(req, "order") != null)
 			try {
-				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point.class);
+				order = new ObjectMapper().readValue(JsonServlet.getParameter(req, "order"), Point3D.class);
 			} catch (IOException e) {
-				throw new StatusException(Status.ERR_UNKNOWN.addObjects(e.getMessage()));
+				throw new StatusException(ServerStatus.ERR_UNKNOWN.addObjects(e.getMessage()));
 			}
 
 		if (agent == null)
-			throw new StatusException(Status.NOT_FOUND.addObjects("agent", "name", name));
+			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
 		if (order == null)
-			throw new StatusException(Status.MISSING_PARAMETER.addObjects("order"));
+			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("order"));
 
 		agent.newOrder(order);
 	}

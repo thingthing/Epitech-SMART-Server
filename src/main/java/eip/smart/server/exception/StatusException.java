@@ -1,15 +1,15 @@
 package eip.smart.server.exception;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
 
 public class StatusException extends Exception {
-	private Status	status;
+	private ServerStatus	status;
 
-	public StatusException(Status s) {
+	public StatusException(ServerStatus s) {
 		this.status = s;
 	}
 
-	public Status getStatus() {
+	public ServerStatus getStatus() {
 		return (this.status);
 	}
 }

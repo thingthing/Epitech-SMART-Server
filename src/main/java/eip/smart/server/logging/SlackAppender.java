@@ -1,4 +1,4 @@
-package eip.smart.server.util;
+package eip.smart.server.logging;
 
 import java.io.IOException;
 import java.io.OutputStream;

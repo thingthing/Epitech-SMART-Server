@@ -1,6 +1,8 @@
-package eip.smart.server.util;
+package eip.smart.server.configuration;
 
-public enum DefaultConfiguration {
+import eip.smart.cscommons.configuration.DefaultConfiguration;
+
+public enum ServerDefaultConfiguration implements DefaultConfiguration {
 	LOGGING_SLACK("FALSE", "logging"),
 	LOGGING_BRIDGE("FALSE", "logging"),
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
@@ -10,19 +12,22 @@ public enum DefaultConfiguration {
 	private String	defaut_value;
 	private String	file;
 
-	private DefaultConfiguration(String default_value, String file) {
+	private ServerDefaultConfiguration(String default_value, String file) {
 		this.defaut_value = default_value;
 		this.file = file;
 	}
 
+	@Override
 	public String getFile() {
 		return (this.file);
 	}
 
+	@Override
 	public String getKey() {
 		return (this.name());
 	}
 
+	@Override
 	public String getValue() {
 		return (this.defaut_value);
 	}

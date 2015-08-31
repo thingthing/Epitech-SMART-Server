@@ -12,7 +12,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
-import eip.smart.model.MessagePacket;
+import eip.smart.server.model.agent.TCPMessagePacket;
 
 public class TCPProtoTest extends IoHandlerAdapter {
 
@@ -44,7 +44,7 @@ public class TCPProtoTest extends IoHandlerAdapter {
 				msg = bufferedReader.readLine();
 				if (!msg.contains(":"))
 					continue;
-				session.write(new MessagePacket().addObject(msg.substring(0, msg.indexOf(":")), msg.substring(msg.indexOf(":") + 1)));
+				session.write(new TCPMessagePacket().addObject(msg.substring(0, msg.indexOf(":")), msg.substring(msg.indexOf(":") + 1)));
 				if (msg.substring(0, msg.indexOf(":")).equals("exit"))
 					this.read = false;
 			} catch (IOException e) {

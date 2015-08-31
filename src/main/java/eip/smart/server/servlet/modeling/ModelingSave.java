@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -32,7 +32,7 @@ public class ModelingSave extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (Server.getServer().getCurrentModeling() == null)
-			throw new StatusException(Status.MODELING_NO_CURRENT);
+			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		Server.getServer().modelingSave();
 	}
 }

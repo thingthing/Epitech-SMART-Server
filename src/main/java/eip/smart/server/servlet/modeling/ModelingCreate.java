@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -28,11 +28,11 @@ public class ModelingCreate extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (Server.getServer().getCurrentModeling() != null)
-			throw new StatusException(Status.MODELING_ALREADY_CURRENT);
+			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		else if (JsonServlet.getParameter(request, "name") == null || JsonServlet.getParameter(request, "name").equals(""))
-			throw new StatusException(Status.MISSING_PARAMETER.addObjects("name"));
+			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("name"));
 		else if (!Server.getServer().modelingCreate(JsonServlet.getParameter(request, "name")))
-			throw new StatusException(Status.DUPLICATE.addObjects("modeling", "name", JsonServlet.getParameter(request, "name")));
+			throw new StatusException(ServerStatus.DUPLICATE.addObjects("modeling", "name", JsonServlet.getParameter(request, "name")));
 	}
 
 }

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.agent.Agent;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -36,6 +36,6 @@ public class CreateTestAgents extends JsonServlet {
 			if (Server.getServer().getIoAgentContainer().getByAgentName("TestAgent#" + i) != null)
 				++nb;
 			else
-				Server.getServer().getIoAgentContainer().addAgent(new Agent("TestAgent#" + i));
+				Server.getServer().getIoAgentContainer().addAgent(new AgentLogic("TestAgent#" + i));
 	}
 }
