@@ -1,7 +1,5 @@
 package eip.smart.server.net.tcp;
 
-import java.nio.ByteOrder;
-
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderAdapter;
@@ -43,10 +41,8 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : packet size of {} is too little to contain minimal header size of {}", packetSize, TCPPacket.HEADER_SIZE);
 					return;
 				}
-				if (packetSize != bufferSize) {
+				if (packetSize != bufferSize)
 					TCPPacketDecoder.LOGGER.warn("Warning : TCP packet buffer size of {} does not match received packet size of {}", bufferSize, packetSize);
-					// return;
-				}
 				if (packetSize > TCPPacket.MAX_PACKET_SIZE) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : packet size of {} is bigger than max packet size of {}", packetSize, TCPPacket.MAX_PACKET_SIZE);
 					return;
@@ -80,10 +76,8 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no data");
 					return;
 				}
-				if (in.remaining() != payload.length) {
+				if (in.remaining() != payload.length)
 					TCPPacketDecoder.LOGGER.warn("Warning : TCP packet expected data size of {}, {} given", payload.length, in.remaining());
-					// return;
-				}
 				in.get(payload);
 
 				// JSON Deserialization
@@ -96,15 +90,15 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 				}
 				if (jsonPayload.get("data") == null) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"data\" json object after parsing");
-					return ;
+					return;
 				}
 				if (jsonPayload.get("status") == null) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"status\" json object after parsing");
-					return ;
+					return;
 				}
 				if (jsonPayload.get("status").get("code") == null) {
 					TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no \"code\" json object in \"status\" after parsing");
-					return ;
+					return;
 				}
 
 				// Good packet
@@ -117,11 +111,8 @@ public class TCPPacketDecoder extends ProtocolDecoderAdapter {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (in.remaining() > 0) {
+			if (in.remaining() > 0)
 				TCPPacketDecoder.LOGGER.debug("Warning : {} unused bytes at the end of the buffer", in.remaining());
-				//TCPPacketDecoder.LOGGER.warn("Warning : Skipped {} unused bytes at the end of the buffer", in.remaining());
-				//in.skip(in.remaining());
-			}
 		}
 	}
 }
