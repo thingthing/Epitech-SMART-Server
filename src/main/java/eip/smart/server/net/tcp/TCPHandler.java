@@ -6,10 +6,6 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import eip.smart.server.model.agent.TCPMessagePacket;
-
 /**
  * Implementation of IoHandler to handle Agents.
  *
@@ -21,12 +17,7 @@ public class TCPHandler implements IoHandler {
 	private final static Logger	LOGGER				= LoggerFactory.getLogger(TCPHandler.class);
 
 	private IoAgentContainer	ioAgentContainer	= null;
-
-	private void authenticate(IoSession session, TCPPacket packet) {
-		TCPHandler.LOGGER.debug("Authentication succeeded", session.getRemoteAddress());
-		session.write(new TCPMessagePacket().setStatus(0, "authenticated"));
-		this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
-	}
+	private TCPCommandManager	manager				= new TCPCommandManager();
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
@@ -44,44 +35,12 @@ public class TCPHandler implements IoHandler {
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		TCPPacket packet = (TCPPacket) message;
+		TCPHandler.LOGGER.debug("Received TCP data from {}", session.getRemoteAddress());
 		if (packet.getStatusCode() != 0) {
-			TCPHandler.LOGGER.error(packet.getStatusMessage());
+			TCPHandler.LOGGER.warn("Received packet with code {} and message {}", packet.getStatusCode(), packet.getStatusMessage());
 			return;
 		}
-		TCPHandler.LOGGER.debug("Received TCP data from {}", session.getRemoteAddress());
-		JsonNode jsonData = packet.getJsonData();
-		if (jsonData.has("exit")) {
-			TCPHandler.LOGGER.debug("Session closed remotely by {}", session.getRemoteAddress());
-			session.close(true);
-		} else if (this.ioAgentContainer.getBySession(session).getAgent() == null) {
-			if (jsonData.has("name")) {
-				String name = jsonData.get("name").asText().trim();
-				TCPHandler.LOGGER.debug("{} trying to authenticate as \"{}\"", session.getRemoteAddress(), name);
-				if (name.isEmpty()) {
-					TCPHandler.LOGGER.warn("Authentication failed : invalid name");
-					session.write(new TCPMessagePacket().setStatus(1, "invalid name"));
-					return;
-				}
-				IoAgent ioAgent = this.ioAgentContainer.getByAgentName(name);
-				if (ioAgent != null) {
-					if (ioAgent.getAgent().isConnected()) {
-						TCPHandler.LOGGER.warn("Authentication failed : name already used");
-						session.write(new TCPMessagePacket().setStatus(1, "name already used"));
-					} else {
-						this.ioAgentContainer.remove(this.ioAgentContainer.getBySession(session));
-						ioAgent.sessionCreated(session);
-						this.authenticate(session, packet);
-					}
-				} else {
-					this.ioAgentContainer.getBySession(session).createAgent(name);
-					this.authenticate(session, packet);
-				}
-			} else {
-				TCPHandler.LOGGER.warn("TCP data discarded : {} not authenticated", session.getRemoteAddress());
-				session.write(new TCPMessagePacket().setStatus(1, "not authenticated"));
-			}
-		} else
-			this.ioAgentContainer.getBySession(session).getAgent().receiveMessage(packet.getJsonData());
+		this.manager.handleTCPData(packet.getJsonData(), session);
 	}
 
 	@Override

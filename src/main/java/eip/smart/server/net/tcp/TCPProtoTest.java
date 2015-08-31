@@ -21,9 +21,9 @@ public class TCPProtoTest extends IoHandlerAdapter {
 		new TCPProtoTest();
 	}
 
-	private boolean			read	= true;
-
 	private SocketConnector	connector;
+
+	private boolean			read	= true;
 
 	public TCPProtoTest() {
 		this.connector = new NioSocketConnector();
@@ -40,7 +40,7 @@ public class TCPProtoTest extends IoHandlerAdapter {
 		String msg;
 		while (this.read)
 			try {
-				// session.write(new MessagePacket().addObject("name", "titi").addObject("state", 0).addObject("noz", 0));
+				// session.write(new TCPMessagePacket().addObject("name", "titi").addObject("state", 0).addObject("noz", 0));
 				msg = bufferedReader.readLine();
 				if (!msg.contains(":"))
 					continue;
