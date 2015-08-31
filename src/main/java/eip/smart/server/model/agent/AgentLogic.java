@@ -1,11 +1,8 @@
 package eip.smart.server.model.agent;
 
-import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import eip.smart.cscommons.model.agent.Agent;
 import eip.smart.cscommons.model.agent.AgentState;
@@ -31,8 +28,6 @@ public class AgentLogic extends Agent {
 	 *
 	 * @see AgentMessageManager
 	 */
-	private AgentMessageManager	messageManager	= new AgentMessageManager();
-
 	private AgentStateManager	stateManager	= new AgentStateManager();
 
 	public AgentLogic(Agent agent) {
@@ -80,21 +75,6 @@ public class AgentLogic extends Agent {
 	}
 
 	/**
-	 * Check if the message has been received by the agent
-	 *
-	 * @param data
-	 *            String, the message
-	 */
-	public void receiveMessage(JsonNode data) {
-		try {
-			this.messageManager.handleMessage(data, this);
-		} catch (IOException e) {
-			this.sendStatus(1, e.getMessage());
-		}
-
-	}
-
-	/**
 	 * Send a message to the dashboard
 	 *
 	 * @param objects
@@ -114,6 +94,10 @@ public class AgentLogic extends Agent {
 		message.setStatus(statusCode, statusMessage);
 		if (this.messageCallback != null)
 			this.messageCallback.callback(message);
+	}
+
+	public void setBattery(double battery) {
+		this.battery = battery;
 	}
 
 	public void setConnected(boolean connected) {
