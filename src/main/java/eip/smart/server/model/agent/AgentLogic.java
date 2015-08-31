@@ -49,6 +49,20 @@ public class AgentLogic extends Agent {
 	/**
 	 * Add a Point at the agent's list of orders
 	 *
+	 * @see Point
+	 * @param order
+	 *            Point, new order send to the agent
+	 */
+	@SuppressWarnings("unchecked")
+	public void newOrder(Point3D order) {
+		this.orders.clear();
+		this.orders.add(order);
+		this.sendMessage(new ImmutablePair<>("order", order));
+	}
+
+	/**
+	 * Add a Point at the agent's list of orders
+	 *
 	 * @param order
 	 *            Point, new order send to the agent
 	 */
