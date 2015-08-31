@@ -5,9 +5,10 @@ package eip.smart.server.slam;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
-import eip.smart.model.agent.Agent;
-import eip.smart.model.geometry.Point;
+import eip.smart.cscommons.model.geometry.Point3D;
+import eip.smart.server.model.agent.AgentLogic;
 
 /**
  * @author Nicolas
@@ -15,18 +16,26 @@ import eip.smart.model.geometry.Point;
  */
 public class SystemStateMatrice {
 
-	ArrayList<Agent>	agents	= new ArrayList<Agent>();
-	LinkedList<Point>	matrice	= new LinkedList<Point>();
+	public static AgentLogic getAgent(String name, List<AgentLogic> agentList) {
+		for (AgentLogic a : agentList)
+			if (name.equals(a.getName()))
+				return (a);
+		return (null);
+	}
+
+	List<AgentLogic>	agents	= new ArrayList<>();
+
+	List<Point3D>		matrice	= new LinkedList<>();
 
 	public SystemStateMatrice() {}
 
-	public SystemStateMatrice(Agent agent) {
-		this.agents.add(new Agent(agent));
+	public SystemStateMatrice(AgentLogic agent) {
+		this.agents.add(new AgentLogic(agent));
 	}
 
-	public SystemStateMatrice(ArrayList<Agent> agents) {
-		for (Agent a : agents)
-			this.agents.add(new Agent(a));
+	public SystemStateMatrice(List<AgentLogic> agents) {
+		for (AgentLogic a : agents)
+			this.agents.add(new AgentLogic(a));
 	}
 
 	/**
@@ -36,30 +45,23 @@ public class SystemStateMatrice {
 	 *            position to be add
 	 * @return the id of the position in the matrices
 	 */
-	public int addLandmarkPosition(Point landmarkPos) {
-		this.matrice.push(landmarkPos);
+	public int addLandmarkPosition(Point3D landmarkPos) {
+		this.matrice.add(0, landmarkPos);
 		return (this.matrice.size() - 1);
-	}
-
-	public Agent getAgent(String name, ArrayList<Agent> agentList) {
-		for (Agent a : agentList)
-			if (name.equals(a.getName()))
-				return (a);
-		return (null);
 	}
 
 	/**
 	 * Get agent position in state matrices
-	 * 
+	 *
 	 * @param agent
 	 *            Agent to get position
 	 * @return Position of agent in list
 	 */
-	public Point getAgentPos(Agent agent) {
-		Agent tmp = this.getAgent(agent.getName(), this.agents);
+	public Point3D getAgentPos(AgentLogic agent) {
+		AgentLogic tmp = SystemStateMatrice.getAgent(agent.getName(), this.agents);
 		if (tmp != null)
 			return (tmp.getCurrentPosition());
-		return (new Point(0.0, 0.0, 0.0));
+		return (new Point3D(0.0, 0.0, 0.0));
 	}
 
 	/**
@@ -68,8 +70,8 @@ public class SystemStateMatrice {
 	 * @param agent
 	 *            Agent which state has to be set
 	 */
-	public void setAgentState(Agent agent) {
-		Agent tmp = this.getAgent(agent.getName(), this.agents);
+	public void setAgentState(AgentLogic agent) {
+		AgentLogic tmp = SystemStateMatrice.getAgent(agent.getName(), this.agents);
 		if (tmp != null)
 			tmp.setCurrentPosition(agent.getCurrentPosition());
 	}
@@ -84,10 +86,10 @@ public class SystemStateMatrice {
 	 * @param posAdjustment
 	 *            Position adjustment calculate by Kalman matrices
 	 */
-	public void updateAgentState(Agent agent, Double bearingAdjustment, Point posAdjustment) {
-		Agent tmp = this.getAgent(agent.getName(), this.agents);
+	public void updateAgentState(AgentLogic agent, Double bearingAdjustment, Point3D posAdjustment) {
+		AgentLogic tmp = SystemStateMatrice.getAgent(agent.getName(), this.agents);
 		if (tmp != null) {
-			tmp.setCurrentPosition(Point.add(tmp.getCurrentPosition(), posAdjustment));
+			tmp.setCurrentPosition(new Point3D(tmp.getCurrentPosition().add(posAdjustment)));
 			tmp.setCurrentBearing(tmp.getCurrentBearing() + bearingAdjustment);
 		}
 	}
@@ -100,7 +102,7 @@ public class SystemStateMatrice {
 	 * @param newPos
 	 *            the position to be updated
 	 */
-	public void updateLandmarkPosition(int landmarkMatriceId, Point newPos) {
+	public void updateLandmarkPosition(int landmarkMatriceId, Point3D newPos) {
 		if (landmarkMatriceId < this.matrice.size())
 			this.matrice.set(landmarkMatriceId, newPos);
 	}

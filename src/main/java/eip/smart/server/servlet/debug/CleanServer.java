@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.agent.Agent;
-import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
+import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -23,9 +23,9 @@ public class CleanServer extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		for (Agent a : Server.getServer().getAgentsAvailable())
+		for (AgentLogic a : Server.getServer().getAgentsAvailable())
 			Server.getServer().getIoAgentContainer().getByAgent(a).removeAgent();
-		for (SimpleModelingProxy m : Server.getServer().modelingList())
+		for (Modeling m : Server.getServer().modelingList())
 			Server.getServer().modelingDelete(m.getName());
 	}
 }

@@ -1,25 +1,23 @@
-package eip.smart.server.modeling;
+package eip.smart.server.model.modeling;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import eip.smart.model.Modeling;
 
 public class ModelingTask implements Runnable {
 
 	private final static Logger	LOGGER			= Logger.getLogger(ModelingTask.class.getName());
 
-	private Modeling			currentModeling	= null;
+	private ModelingLogic		currentModeling	= null;
 	private Object				o				= new Object();
 	private volatile boolean	paused			= false;
 	private boolean				running			= true;
 
 	/**
 	 * Creates a new ModelingTask using given argument as current Modeling
-	 * 
+	 *
 	 * @param currentModeling
 	 */
-	public ModelingTask(Modeling currentModeling) {
+	public ModelingTask(ModelingLogic currentModeling) {
 		this.currentModeling = currentModeling;
 	}
 

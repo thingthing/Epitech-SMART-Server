@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 
@@ -24,16 +26,20 @@ public abstract class JsonServlet extends HttpServlet {
 	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
 		String param = req.getParameter(name);
 		if (param == null || param.isEmpty())
-			throw new StatusException(Status.MISSING_PARAMETER.addObjects(name));
+			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects(name));
 		return (param);
 	}
 
 	protected ObjectMapper	mapper	= new ObjectMapper();
-
-	protected Status		status	= Status.OK;
+	protected ServerStatus	status	= ServerStatus.OK;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		this.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+		this.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		this.mapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+		this.mapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
+
 		JsonServlet.LOGGER.info("GET request from {} on {}", req.getRemoteAddr(), req.getServletPath());
 		try {
 			JsonGenerator json = new JsonFactory().createGenerator(resp.getWriter());
@@ -41,7 +47,7 @@ public abstract class JsonServlet extends HttpServlet {
 
 			json.writeFieldName("data");
 			json.writeStartObject();
-			this.status = Status.OK;
+			this.status = ServerStatus.OK;
 			try {
 				this.doGet(req, resp, json);
 			} catch (StatusException e) {

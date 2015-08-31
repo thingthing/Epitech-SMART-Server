@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import org.apache.mina.core.session.IoSession;
 
-import eip.smart.model.agent.Agent;
+import eip.smart.server.model.agent.AgentLogic;
 
 /**
  * ArrayList container for IoAgents.
- * 
+ *
  * @author Pierre Demessence
  *
  */
@@ -16,17 +16,17 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Add an IoAgent from an agent to the list;
-	 * 
+	 *
 	 * @param agent
 	 *            the agent to add.
 	 */
-	public void addAgent(Agent agent) {
+	public void addAgent(AgentLogic agent) {
 		this.add(new IoAgent(agent));
 	}
 
 	/**
 	 * Add an IoAgent from a TCP session to the list.
-	 * 
+	 *
 	 * @param session
 	 *            the TCP session to add.
 	 */
@@ -36,11 +36,11 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Get the list of all the agents contained in each IoAgent.
-	 * 
+	 *
 	 * @return a list of all the agents.
 	 */
-	public ArrayList<Agent> getAgents() {
-		ArrayList<Agent> agents = new ArrayList<>();
+	public ArrayList<AgentLogic> getAgents() {
+		ArrayList<AgentLogic> agents = new ArrayList<>();
 		for (IoAgent ioAgent : this)
 			if (ioAgent.getAgent() != null)
 				agents.add(ioAgent.getAgent());
@@ -49,12 +49,12 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Return an IoAgent from an agent.
-	 * 
+	 *
 	 * @param agent
 	 *            the agent of the IoAgent to get.
 	 * @return The corresponding IoAgent.
 	 */
-	public IoAgent getByAgent(Agent agent) {
+	public IoAgent getByAgent(AgentLogic agent) {
 		for (IoAgent ioAgent : this)
 			if (ioAgent.getAgent() == agent)
 				return (ioAgent);
@@ -63,7 +63,7 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Return an IoAgent from an agent name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the agent of the IoAgent to get.
 	 * @return The corresponding IoAgent
@@ -77,7 +77,7 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Return an IoAgent from a TCP session.
-	 * 
+	 *
 	 * @param session
 	 *            the TCP session of the IoAgent to get.
 	 * @return
@@ -91,7 +91,7 @@ public class IoAgentContainer extends ArrayList<IoAgent> {
 
 	/**
 	 * Get the list of all the TCP sessions contained in each IoAgent.
-	 * 
+	 *
 	 * @return a list of all the TCP sessions.
 	 */
 	public ArrayList<IoSession> getSessions() {

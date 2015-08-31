@@ -1,10 +1,9 @@
-package eip.smart.server.modeling;
+package eip.smart.server.model.modeling.file;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import eip.smart.model.Modeling;
-import eip.smart.model.proxy.SimpleModelingProxy;
+import eip.smart.cscommons.model.modeling.Modeling;
 
 /**
  * Stores the modeling it handles as an ArrayList in the memory
@@ -34,10 +33,10 @@ public class ArrayModelingManager implements ModelingManager {
 	}
 
 	@Override
-	public ArrayList<SimpleModelingProxy> list() {
-		ArrayList<SimpleModelingProxy> modelings = new ArrayList<>();
+	public ArrayList<Modeling> list() {
+		ArrayList<Modeling> modelings = new ArrayList<>();
 		for (Modeling modeling : this.modelings)
-			modelings.add(new SimpleModelingProxy(modeling));
+			modelings.add(new Modeling(modeling));
 		return (modelings);
 	}
 

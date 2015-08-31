@@ -6,8 +6,8 @@ import ch.qos.logback.core.FileAppender
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.classic.PatternLayout
-import eip.smart.server.util.SlackAppender
-import eip.smart.server.util.ConfigFilter;
+import eip.smart.server.logging.SlackAppender
+import eip.smart.server.logging.ConfigFilter;
 import static ch.qos.logback.classic.Level.DEBUG
 import static ch.qos.logback.classic.Level.TRACE
 

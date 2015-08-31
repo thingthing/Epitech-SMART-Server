@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Modeling;
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
+import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
-import eip.smart.util.PointCloudGenerator;
 
 /**
  * <b>The servlet GetPoints return the list of the new points of the current modeling.</b>
@@ -35,10 +35,10 @@ public class GetPoints extends JsonServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		Modeling modeling = Server.getServer().getCurrentModeling();
 		if (modeling == null)
-			throw new StatusException(Status.MODELING_NO_CURRENT);
-		json.writeFieldName("points");
-		this.mapper.writeValue(json, new PointCloudGenerator().generatePointCloud(50));
-		throw new StatusException(Status.ERR_SIMULATION);
+			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
+		json.writeFieldName("pointcloud");
+		this.mapper.writeValue(json, new PointCloud3DGenerator().generatePointCloud(50));
+		throw new StatusException(ServerStatus.ERR_SIMULATION);
 	}
 
 }

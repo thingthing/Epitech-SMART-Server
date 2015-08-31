@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import eip.smart.model.Status;
+import eip.smart.cscommons.configuration.Configuration;
+import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
-import eip.smart.server.util.Configuration;
 
 /**
  * <b>The servlet ListStatus return the list of the status that can be returned.</b>
@@ -28,7 +28,7 @@ public class ConfSet extends JsonServlet {
 		String key = JsonServlet.getParameter(req, "key");
         String value = JsonServlet.getParameter(req, "value");
         if (!Configuration.confExists(name))
-			throw new StatusException(Status.NOT_FOUND.addObjects("configuration", "name", name));
+			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("configuration", "name", name));
 		Configuration conf = new Configuration(name);
         conf.setProperty(key, value);
 	}

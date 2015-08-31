@@ -3,218 +3,222 @@ package eip.smart.server.benchmark;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
-import eip.smart.model.Area;
-import eip.smart.model.Modeling;
-import eip.smart.server.modeling.DefaultFileModelingManager;
-import eip.smart.server.modeling.DefaultZippedFileModelingManager;
-import eip.smart.server.modeling.FileModelingManager;
-import eip.smart.server.modeling.JacksonFileModelingManager;
-import eip.smart.server.modeling.JacksonZippedFileModelingManager;
+import eip.smart.cscommons.model.modeling.Area;
+import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.model.modeling.file.DefaultFileModelingManager;
+import eip.smart.server.model.modeling.file.DefaultZippedFileModelingManager;
+import eip.smart.server.model.modeling.file.FileModelingManager;
+import eip.smart.server.model.modeling.file.JacksonFileModelingManager;
+import eip.smart.server.model.modeling.file.JacksonZippedFileModelingManager;
 
 /**
  * Created by vincent on 2/28/15.
  */
 public class SerializationBenchmark {
-    FileModelingManager benchmarkedManager;
-    Modeling            modeling;
-    Modeling            result;
+	public static final String[]	SIZE_UNITS	= { "o", "Ko", "Mo", "Go", "To" };
 
-    /**
-     * Starts a new benchmark of the different serialization methods
-     * @param s Le flux sur lequel écrire les résultats.
-     */
-    public void startBenchmark(PrintStream s) {
-        long elapsed, elapsedDecimals, size;
-        File file;
+	/**
+	 * This is the entry point of the benchmark module,
+	 * it starts a certain number of tests and print their result in the java log
+	 *
+	 * @param args
+	 *            unused
+	 */
+	public static void main(String[] args) {
+		SerializationBenchmark benchmark = new SerializationBenchmark();
 
-        s.println("\n\nNow testing " + benchmarkedManager.getClass().getSimpleName() + "\n");
+		ModelingLogic smallModeling = new ModelingLogic(); // 1 500 pts
+		ModelingLogic mediumModeling = new ModelingLogic(); // 30 000 pts
+		ModelingLogic largeModeling = new ModelingLogic(); // 1 500 000 pts
 
+		smallModeling.setName("small_modeling_test");
+		mediumModeling.setName("medium_modeling_test");
+		largeModeling.setName("large_modeling_test");
 
-        //Write test
-        s.println("Now starting write benchmark...");
-        elapsed = System.nanoTime(); // in nanoseconds
-        startWriteBenchmark();
-        elapsed = System.nanoTime() - elapsed;
+		DefaultFileModelingManager defaultManager = new DefaultFileModelingManager();
+		DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
+		JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
+		JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
 
-        elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
-        s.println("Elapsed time : " +
-                elapsed / 1000000000 /* in seconds */ + " s " + elapsedDecimals);
-        file = new File(FileModelingManager.DEFAULT_DIR, modeling.getName() + FileModelingManager.EXTENSION);
-        size = file.length();
-        s.println("File size : " + size + " bytes (" + smartsize(size) + ")");
+		List<Area> smallAreas = new ArrayList<>();
+		List<Area> mediumAreas = new ArrayList<>();
+		List<Area> largeAreas = new ArrayList<>();
 
-        //Read test
-        s.println("Now starting read benchmark...");
-        elapsed = System.nanoTime(); // in nanoseconds
-        startReadBenchmark();
+		for (int i = 0; i < 3; ++i) {
+			smallAreas.add(new Area());
+			mediumAreas.add(new Area());
+			largeAreas.add(new Area());
+		}
 
-        elapsed = System.nanoTime() - elapsed;
-        elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
-        s.println("Elapsed time : " +
-                elapsed / 1000000000 /* in seconds */ + " s " + elapsedDecimals);
-        //TODO compare result
+		System.out.println("Generating points...");
+		for (int i = 0; i < 3; ++i) {
+			System.out.print("Pass " + (i + 1) + "/3.");
+			smallAreas.get(i).generateTestPoints(500);
+			System.out.print(".");
+			mediumAreas.get(i).generateTestPoints(10000);
+			System.out.print(".");
+			largeAreas.get(i).generateTestPoints(500000);
+			System.out.println(" DONE");
+		}
+		smallModeling.setAreas(smallAreas);
+		mediumModeling.setAreas(mediumAreas);
+		largeModeling.setAreas(largeAreas);
 
+		// DEFAULT
+		benchmark.setBenchmarkedManager(defaultManager);
+		benchmark.setModeling(smallModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    }
+		benchmark.setModeling(mediumModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    public static final String[] SIZE_UNITS = {
-            "o", "Ko", "Mo", "Go", "To"
-    };
+		benchmark.setModeling(largeModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    /**
-     * Print a string formatted size (eg : "12 Go")
-     * @param size byte count size
-     * @return formatted size
-     */
-    public static String smartsize(long size) {
-        int i;
-        for (i = 0; i < 5; i++)
-            if (size < 1024)
-                return size + " " + SIZE_UNITS[i];
-            else
-                size /= 1024;
-        return size + " " + SIZE_UNITS[i];
-    }
+		// DEFAULT ZIP
+		benchmark.setBenchmarkedManager(defaultZippedManager);
+		benchmark.setModeling(smallModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    /**
-     * Deletes the current modeling from the benchmark manager
-     */
-    public void clean() {
-        result = null;
-        benchmarkedManager.delete(modeling.getName());
-    }
+		benchmark.setModeling(mediumModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    /**
-     * Starts the benchmarking of writing methods
-     */
-    private void startWriteBenchmark() {
-        benchmarkedManager.save(modeling);
-    }
+		benchmark.setModeling(largeModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    /**
-     * Starts the benchmarking of reading methods
-     */
-    private void startReadBenchmark() {
-        result = benchmarkedManager.load(modeling.getName());
-    }
+		// JACKSON
+		benchmark.setBenchmarkedManager(jacksonManager);
+		benchmark.setModeling(smallModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-    /**
-     * This is the entry point of the benchmark module,
-     * it starts a certain number of tests and print their result in the java log
-     * @param args unused
-     */
-    public static void main(String [] args) {
-        SerializationBenchmark benchmark = new SerializationBenchmark();
+		benchmark.setModeling(mediumModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-        Modeling smallModeling = new Modeling();    // 1 500 pts
-        Modeling mediumModeling = new Modeling();   // 30 000 pts
-        Modeling largeModeling = new Modeling();     // 1 500 000 pts
+		benchmark.setModeling(largeModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-        smallModeling.setName("small_modeling_test");
-        mediumModeling.setName("medium_modeling_test");
-        largeModeling.setName("large_modeling_test");
+		// JACKSON ZIP
+		benchmark.setBenchmarkedManager(jacksonZippedManager);
+		benchmark.setModeling(smallModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-        DefaultFileModelingManager defaultManager = new DefaultFileModelingManager();
-        DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
-        JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
-        JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
+		benchmark.setModeling(mediumModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-        ArrayList<Area> smallAreas = new ArrayList<Area>();
-        ArrayList<Area> mediumAreas = new ArrayList<Area>();
-        ArrayList<Area> largeAreas = new ArrayList<Area>();
+		benchmark.setModeling(largeModeling);
+		benchmark.startBenchmark(System.out);
+		benchmark.clean();
 
-        for (int i = 0; i < 3; ++i) {
-            smallAreas.add(new Area());
-            mediumAreas.add(new Area());
-            largeAreas.add(new Area());
-        }
+	}
 
-        System.out.println("Generating points...");
-        for (int i = 0; i < 3; ++i) {
-            System.out.print("Pass " + (i + 1) + "/3.");
-            smallAreas.get(i).generateTestPoints(500);
-            System.out.print(".");
-            mediumAreas.get(i).generateTestPoints(10000);
-            System.out.print(".");
-            largeAreas.get(i).generateTestPoints(500000);
-            System.out.println(" DONE");
-        }
-        smallModeling.setAreas(smallAreas);
-        mediumModeling.setAreas(mediumAreas);
-        largeModeling.setAreas(largeAreas);
+	/**
+	 * Print a string formatted size (eg : "12 Go")
+	 *
+	 * @param size
+	 *            byte count size
+	 * @return formatted size
+	 */
+	public static String smartsize(long size) {
+		int i;
+		for (i = 0; i < 5; i++) {
+			if (size < 1024)
+				return size + " " + SerializationBenchmark.SIZE_UNITS[i];
+			size /= 1024;
+		}
+		return size + " " + SerializationBenchmark.SIZE_UNITS[i];
+	}
 
-        //DEFAULT
-        benchmark.setBenchmarkedManager(defaultManager);
-        benchmark.setModeling(smallModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	FileModelingManager	benchmarkedManager;
 
-        benchmark.setModeling(mediumModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	Modeling			modeling;
 
-        benchmark.setModeling(largeModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	Modeling			result;
 
-        //DEFAULT ZIP
-        benchmark.setBenchmarkedManager(defaultZippedManager);
-        benchmark.setModeling(smallModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	/**
+	 * Deletes the current modeling from the benchmark manager
+	 */
+	public void clean() {
+		this.result = null;
+		this.benchmarkedManager.delete(this.modeling.getName());
+	}
 
-        benchmark.setModeling(mediumModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	public FileModelingManager getBenchmarkedManager() {
+		return this.benchmarkedManager;
+	}
 
-        benchmark.setModeling(largeModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	public Modeling getModeling() {
+		return this.modeling;
+	}
 
-        //JACKSON
-        benchmark.setBenchmarkedManager(jacksonManager);
-        benchmark.setModeling(smallModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	public void setBenchmarkedManager(FileModelingManager benchmarkedManager) {
+		this.benchmarkedManager = benchmarkedManager;
+	}
 
-        benchmark.setModeling(mediumModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	public void setModeling(Modeling modeling) {
+		this.modeling = modeling;
+	}
 
-        benchmark.setModeling(largeModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+	/**
+	 * Starts a new benchmark of the different serialization methods
+	 *
+	 * @param s
+	 *            Le flux sur lequel écrire les résultats.
+	 */
+	public void startBenchmark(PrintStream s) {
+		long elapsed, elapsedDecimals, size;
+		File file;
 
-        //JACKSON ZIP
-        benchmark.setBenchmarkedManager(jacksonZippedManager);
-        benchmark.setModeling(smallModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+		s.println("\n\nNow testing " + this.benchmarkedManager.getClass().getSimpleName() + "\n");
 
-        benchmark.setModeling(mediumModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+		// Write test
+		s.println("Now starting write benchmark...");
+		elapsed = System.nanoTime(); // in nanoseconds
+		this.startWriteBenchmark();
+		elapsed = System.nanoTime() - elapsed;
 
-        benchmark.setModeling(largeModeling);
-        benchmark.startBenchmark(System.out);
-        benchmark.clean();
+		elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
+		s.println("Elapsed time : " + elapsed / 1000000000 /* in seconds */+ " s " + elapsedDecimals);
+		file = new File(FileModelingManager.getDir(), this.modeling.getName() + FileModelingManager.EXTENSION);
+		size = file.length();
+		s.println("File size : " + size + " bytes (" + SerializationBenchmark.smartsize(size) + ")");
 
-    }
+		// Read test
+		s.println("Now starting read benchmark...");
+		elapsed = System.nanoTime(); // in nanoseconds
+		this.startReadBenchmark();
 
-    public FileModelingManager getBenchmarkedManager() {
-        return benchmarkedManager;
-    }
+		elapsed = System.nanoTime() - elapsed;
+		elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
+		s.println("Elapsed time : " + elapsed / 1000000000 /* in seconds */+ " s " + elapsedDecimals);
+		// TODO compare result
 
-    public void setBenchmarkedManager(FileModelingManager benchmarkedManager) {
-        this.benchmarkedManager = benchmarkedManager;
-    }
+	}
 
-    public Modeling getModeling() {
-        return modeling;
-    }
+	/**
+	 * Starts the benchmarking of reading methods
+	 */
+	private void startReadBenchmark() {
+		this.result = this.benchmarkedManager.load(this.modeling.getName());
+	}
 
-    public void setModeling(Modeling modeling) {
-        this.modeling = modeling;
-    }
+	/**
+	 * Starts the benchmarking of writing methods
+	 */
+	private void startWriteBenchmark() {
+		this.benchmarkedManager.save(this.modeling);
+	}
 }

@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eip.smart.model.Area;
-import eip.smart.model.Status;
+import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -35,9 +35,9 @@ public class AddArea extends JsonServlet {
 			} catch (Exception e) {}
 
 		if (area == null)
-			throw new StatusException(Status.MISSING_PARAMETER.addObjects("area"));
+			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("area"));
 		else if (Server.getServer().getCurrentModeling() == null)
-			throw new StatusException(Status.MODELING_NO_CURRENT);
+			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		else
 			Server.getServer().getCurrentModeling().addArea(area);
 	}
