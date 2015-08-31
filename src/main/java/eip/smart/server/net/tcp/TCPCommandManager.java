@@ -2,14 +2,12 @@ package eip.smart.server.net.tcp;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import eip.smart.server.Server;
@@ -32,21 +30,22 @@ public class TCPCommandManager {
 			this.agentHandlers.put(receptor.getKey(), receptor.getHandler());
 	}
 
-	public void handleTCPData(JsonNode data, IoSession session) throws JsonParseException, JsonMappingException, IOException {
+	public void handleTCPData(JsonNode data, IoSession session) {
 		if (data.size() <= 0) {
 			TCPCommandManager.sendStatus(session, 1, "no command");
 			return;
 		}
 
-		JsonParser parser = data.traverse();
-		while (parser.nextValue() != null)
-			if (parser.getCurrentName() != null)
-				this.searchHandler(parser.getCurrentName(), data.get(parser.getCurrentName()), session);
-		parser.close();
+		Iterator<String> fieldNames = data.fieldNames();
+		while (fieldNames.hasNext()) {
+			String key = fieldNames.next();
+			this.searchHandler(key, data.get(key), session);
+		}
+
 	}
 
 	private void searchHandler(String key, JsonNode value, IoSession session) {
-		TCPCommandManager.LOGGER.debug("Received command {} with value {}", key, value);
+		TCPCommandManager.LOGGER.debug("Received command {} with value {}", key, value.toString());
 		try {
 			if (this.sessionHandlers.containsKey(key)) {
 				TCPCommandManager.LOGGER.debug("Executing session command {}", key);
@@ -57,7 +56,7 @@ public class TCPCommandManager {
 				IoAgent ioAgent = Server.getServer().getIoAgentContainer().getBySession(session);
 				if (ioAgent.getAgent() != null) {
 					TCPCommandManager.LOGGER.debug("Executing agent command {}", key);
-					this.agentHandlers.get(key).handleCommand(value.asText(), ioAgent.getAgent());
+					this.agentHandlers.get(key).handleCommand(value, ioAgent.getAgent());
 					TCPCommandManager.sendStatus(session, 0, "command " + key + " ok");
 					TCPCommandManager.LOGGER.debug("Command {} executed", key);
 				} else {
