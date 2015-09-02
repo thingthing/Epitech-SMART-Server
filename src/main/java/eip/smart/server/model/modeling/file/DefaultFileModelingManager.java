@@ -39,10 +39,10 @@ public class DefaultFileModelingManager extends FileModelingManager {
 
 			ois.close();
 			fis.close();
-		} catch (InvalidClassException e) {
+		} catch (InvalidClassException | ClassNotFoundException e) {
 			FileModelingManager.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
 			return (null);
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
 			FileModelingManager.LOGGER.error("file not found", e);
 		} finally {
 			if (ois != null)
