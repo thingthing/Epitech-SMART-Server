@@ -35,8 +35,8 @@ IntelliJ se lance directement depuis le dossier dans lequel il a été décompre
 * Artifact > server:war exploded > Onglet Output Layout > Ajouter TOUS les éléments de la colonne de droite dans la colonne de gauche (double clic dessus)
 
 
-Afin de créer une configuration de lancement
-* Run > Edit Configurations
+Afin de créer une configuration de lancement :
+* Run > Edit Configurations.
 * Créer une nouvelle configuration à l'aide du bouton +.
 * Choisir Tomcat Server > Local.
 Vous pourrez modifier ici les options de lancement du projet.
