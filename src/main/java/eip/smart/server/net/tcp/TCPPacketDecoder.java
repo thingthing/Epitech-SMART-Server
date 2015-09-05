@@ -80,8 +80,6 @@ public class TCPPacketDecoder extends CumulativeProtocolDecoder {
 				TCPPacketDecoder.LOGGER.warn("TCP packet discarded : no data");
 				return false;
 			}
-			if (in.remaining() != payload.length)
-				TCPPacketDecoder.LOGGER.warn("Warning : TCP packet expected data size of {}, {} given", payload.length, in.remaining());
 			in.get(payload);
 
 			// JSON Deserialization
