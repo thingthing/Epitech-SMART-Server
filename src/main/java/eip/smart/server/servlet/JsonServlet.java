@@ -40,9 +40,10 @@ public abstract class JsonServlet extends HttpServlet {
 		this.mapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 		this.mapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
 
-		JsonServlet.LOGGER.info("GET request from {} on {}", req.getRemoteAddr(), req.getServletPath());
+		JsonServlet.LOGGER.debug("GET request from {} on {}", req.getRemoteAddr(), req.getServletPath());
 		try {
 			JsonGenerator json = new JsonFactory().createGenerator(resp.getWriter());
+			json.setCodec(this.mapper);
 			json.writeStartObject();
 
 			json.writeFieldName("data");
@@ -66,7 +67,7 @@ public abstract class JsonServlet extends HttpServlet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		JsonServlet.LOGGER.info("GET response from {} to {} with status {}", req.getServletPath(), req.getRemoteAddr(), this.status);
+		JsonServlet.LOGGER.debug("GET response from {} to {} with status {}", req.getServletPath(), req.getRemoteAddr(), this.status);
 	}
 
 	protected abstract void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException;
