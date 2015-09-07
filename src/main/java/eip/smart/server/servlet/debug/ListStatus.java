@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.debug;
 
 import java.io.IOException;
 
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.server.servlet.JsonServlet;
 
 /**
  * <b>The servlet ListStatus return the list of the status that can be returned.</b>

@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.log;
 
 import java.io.FileInputStream;
 import java.io.IOException;

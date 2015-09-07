@@ -1,4 +1,4 @@
-package eip.smart.server.servlet;
+package eip.smart.server.servlet.log;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.servlet.JsonServlet;
 
 @WebServlet("/log_clean")
 public class LogCleanServlet extends JsonServlet {
