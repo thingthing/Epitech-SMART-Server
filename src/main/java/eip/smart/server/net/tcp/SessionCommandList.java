@@ -8,16 +8,16 @@ import eip.smart.server.Server;
 
 public enum SessionCommandList {
 
-	EXIT("exit", new SessionCommandHandler() {
+	EXIT("exit", new SessionCommandHandler<Byte>(Byte.class) {
 		@Override
-		public void handleCommand(String data, IoSession session) {
+		public void innerHandleCommand(Byte data, IoSession session) {
 			session.close(true);
-			SessionCommandList.LOGGER.info("Session closed remotely by {}", session.getRemoteAddress());
+			SessionCommandList.LOGGER.info("Session closed remotely by {} with exit code {}", session.getRemoteAddress(), data);
 		}
 	}),
-	NAME("name", new SessionCommandHandler() {
+	NAME("name", new SessionCommandHandler<String>(String.class) {
 		@Override
-		public void handleCommand(String data, IoSession session) throws CommandException {
+		public void innerHandleCommand(String data, IoSession session) throws CommandException {
 
 			String name = data.trim();
 			if (name.isEmpty())
@@ -37,12 +37,12 @@ public enum SessionCommandList {
 		}
 	});
 
-	private final static Logger		LOGGER	= LoggerFactory.getLogger(SessionCommandList.class);
+	private final static Logger			LOGGER	= LoggerFactory.getLogger(SessionCommandList.class);
 
-	private SessionCommandHandler	handler;
-	private String					key;
+	private SessionCommandHandler<?>	handler;
+	private String						key;
 
-	private SessionCommandList(String key, SessionCommandHandler handler) {
+	private SessionCommandList(String key, SessionCommandHandler<?> handler) {
 		this.key = key;
 		this.handler = handler;
 	}
@@ -50,7 +50,7 @@ public enum SessionCommandList {
 	/**
 	 * @return the handler
 	 */
-	public SessionCommandHandler getHandler() {
+	public SessionCommandHandler<?> getHandler() {
 		return this.handler;
 	}
 

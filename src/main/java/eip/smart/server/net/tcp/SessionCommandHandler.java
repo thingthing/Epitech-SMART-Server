@@ -2,9 +2,13 @@ package eip.smart.server.net.tcp;
 
 import org.apache.mina.core.session.IoSession;
 
-public interface SessionCommandHandler extends CommandHandler<String, IoSession> {
+public abstract class SessionCommandHandler<T> extends CommandHandler<T, IoSession> {
+
+	public SessionCommandHandler(Class<T> type) {
+		super(type);
+	}
 
 	@Override
-	public abstract void handleCommand(String data, IoSession ioAgent) throws CommandException;
+	public abstract void innerHandleCommand(T data, IoSession ioAgent) throws CommandException;
 
 }

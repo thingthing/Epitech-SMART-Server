@@ -20,8 +20,8 @@ public class TCPCommandManager {
 		session.write(new TCPMessagePacket().setStatus(code, message));
 	}
 
-	private HashMap<String, AgentCommandHandler<?>>	agentHandlers	= new HashMap<>();
-	private HashMap<String, SessionCommandHandler>	sessionHandlers	= new HashMap<>();
+	private HashMap<String, AgentCommandHandler<?>>		agentHandlers	= new HashMap<>();
+	private HashMap<String, SessionCommandHandler<?>>	sessionHandlers	= new HashMap<>();
 
 	public TCPCommandManager() {
 		for (SessionCommandList receptor : SessionCommandList.values())
@@ -49,7 +49,7 @@ public class TCPCommandManager {
 		try {
 			if (this.sessionHandlers.containsKey(key)) {
 				TCPCommandManager.LOGGER.debug("Executing session command {}", key);
-				this.sessionHandlers.get(key).handleCommand(value.asText(), session);
+				this.sessionHandlers.get(key).handleCommand(value, session);
 				TCPCommandManager.sendStatus(session, 0, "command " + key + " ok");
 				TCPCommandManager.LOGGER.debug("Command {} executed", key);
 			} else if (this.agentHandlers.containsKey(key)) {

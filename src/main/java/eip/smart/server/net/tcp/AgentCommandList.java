@@ -7,19 +7,19 @@ import eip.smart.server.model.agent.AgentLogic;
 public enum AgentCommandList {
 	BATTERY("battery", new AgentCommandHandler<Double>(Double.class) {
 		@Override
-		public void handleCommand(Double battery, AgentLogic agent) throws CommandException {
+		public void innerHandleCommand(Double battery, AgentLogic agent) throws CommandException {
 			agent.setBattery(battery);
 		}
 	}),
 	POSITION("position", new AgentCommandHandler<Point3D>(Point3D.class) {
 		@Override
-		public void handleCommand(Point3D point, AgentLogic agent) {
+		public void innerHandleCommand(Point3D point, AgentLogic agent) {
 			agent.setCurrentPosition(point);
 		}
 	}),
 	STATE("state", new AgentCommandHandler<String>(String.class) {
 		@Override
-		public void handleCommand(String state, AgentLogic agent) throws CommandException {
+		public void innerHandleCommand(String state, AgentLogic agent) throws CommandException {
 			for (AgentState as : AgentState.values())
 				if (as.name().equals(state)) {
 					agent.setState(as);
