@@ -1,10 +1,16 @@
 package eip.smart.server.net.udp;
 
+import java.util.Arrays;
+
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eip.smart.server.Server;
+import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.slam.Landmarks.Landmark;
 
 @SuppressWarnings("static-method")
 public class UDPHandler implements IoHandler {
@@ -18,10 +24,18 @@ public class UDPHandler implements IoHandler {
 
 	private void handleUDPPacketLandmark(UDPPacketLandmark packet) {
 		UDPHandler.LOGGER.info("Received landmark packet : {}", packet);
+		ModelingLogic currentModeling = Server.getServer().getCurrentModeling();
+		if (currentModeling != null) {
+			Landmark[] landmark = new Landmark[1];
+			landmark[0] = currentModeling.getSlam().landmarkDB.new Landmark(packet.getPos(), packet.getLife(), packet.getTotalTimeObserved(), packet.getRange(), packet.getRange(), packet.getRobotPos());
+			currentModeling.getSlam().addLandmarks(Arrays.asList(landmark));
+		}
 	}
 
 	private void handleUDPPacketPointCloud(UDPPacketPointCloud packet) {
 		UDPHandler.LOGGER.info("Received pointcloud packet : {}", packet);
+		if (Server.getServer().getCurrentModeling() != null)
+			Server.getServer().getCurrentModeling().addPoints(Arrays.asList(packet.getDataPoints()));
 	}
 
 	@Override

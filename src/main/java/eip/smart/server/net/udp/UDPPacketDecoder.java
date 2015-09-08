@@ -9,8 +9,8 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.server.Server;
-import eip.smart.server.net.udp.UDPPacket.UDPPacketPoint;
 
 @SuppressWarnings({ "static-method", "unused" })
 public class UDPPacketDecoder extends ProtocolDecoderAdapter {
@@ -20,7 +20,10 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 	@Override
 	public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 		try {
-			UDPPacketDecoder.LOGGER.debug("Received UDP packet of size {} from {}", in.remaining(), session.getRemoteAddress());
+			int bufferSize = in.remaining();
+			int oldPos = in.position();
+			UDPPacketDecoder.LOGGER.debug("Received UDP packet of size {} from {}", bufferSize, session.getRemoteAddress());
+			UDPPacketDecoder.LOGGER.debug("HexDump : {}", in.getHexDump());
 
 			IoSession tcpSession = null;
 			for (IoSession s : Server.getServer().getSessions())
@@ -58,8 +61,8 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 	private void decodeLandmark(IoSession session, IoBuffer in, ProtocolDecoderOutput out, long chunkID) throws Exception {
 		UDPPacketDecoder.LOGGER.debug("Received UDP Landmark packet");
 		if (in.remaining() >= UDPPacketLandmark.HEADER_SIZE - 9) {
-			UDPPacketPoint pos = new UDPPacketPoint(in.getFloat(), in.getFloat(), in.getFloat());
-			UDPPacketPoint robotPos = new UDPPacketPoint(in.getFloat(), in.getFloat(), in.getFloat());
+			Point3D pos = new Point3D(in.getFloat(), in.getFloat(), in.getFloat());
+			Point3D robotPos = new Point3D(in.getFloat(), in.getFloat(), in.getFloat());
 			int ID = in.getInt();
 			int life = in.getInt();
 			int totalTimeObserved = in.getInt();
@@ -84,9 +87,9 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 				return;
 			}
 			in.asFloatBuffer().get(data);
-			UDPPacketPoint[] dataPoints = new UDPPacketPoint[data.length / 3];
+			Point3D[] dataPoints = new Point3D[data.length / 3];
 			for (int i = 0; i < data.length; i += 3)
-				dataPoints[i / 3] = new UDPPacketPoint(data[i], data[i + 1], data[i + 2]);
+				dataPoints[i / 3] = new Point3D(data[i], data[i + 1], data[i + 2]);
 			UDPPacketPointCloud packet = new UDPPacketPointCloud(chunkID, packetID, currentPart, totalPart, dataSize, data, dataPoints);
 			out.write(packet);
 		} else

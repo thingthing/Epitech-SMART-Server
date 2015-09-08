@@ -11,6 +11,8 @@ import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.agent.AgentLogic;
+import eip.smart.server.slam.Landmarks;
+import eip.smart.server.slam.Slam;
 
 public class ModelingLogic extends Modeling {
 	private final static Logger	LOGGER	= LoggerFactory.getLogger(ModelingLogic.class);
@@ -19,6 +21,8 @@ public class ModelingLogic extends Modeling {
 	protected static double getDiffPoint(Point3D point3d, Point3D point3d2) {
 		return (Math.abs((Math.abs(point3d.getX() - point3d2.getX())) - (Math.abs(point3d.getY() - point3d2.getY()))));
 	}
+
+	protected Slam	slam	= new Slam(this, new ArrayList<Landmarks.Landmark>());
 
 	public ModelingLogic() {
 		super();
@@ -54,6 +58,14 @@ public class ModelingLogic extends Modeling {
 		this.areas.add(area);
 	}
 
+	public void addPoint(Point3D point) {
+		this.mapping.add(point);
+	}
+
+	public void addPoints(List<Point3D> points) {
+		this.mapping.add(points);
+	}
+
 	@Override
 	public List<AgentLogic> getAgents() {
 		List<AgentLogic> res = new ArrayList<>();
@@ -61,6 +73,10 @@ public class ModelingLogic extends Modeling {
 		for (Agent a : super.getAgents())
 			res.add(new AgentLogic(a));
 		return res;
+	}
+
+	public Slam getSlam() {
+		return (this.slam);
 	}
 
 	/**

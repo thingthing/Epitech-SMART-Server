@@ -1,22 +1,24 @@
 package eip.smart.server.net.udp;
 
+import eip.smart.cscommons.model.geometry.Point3D;
+
 public class UDPPacketLandmark extends UDPPacket {
-	public static final byte	MAGIC		= 'L';
 	public static final byte	HEADER_SIZE	= 53;								// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
+	public static final byte	MAGIC		= 'L';
 	public static final byte	PACKET_SIZE	= UDPPacketLandmark.HEADER_SIZE;
 
-	private UDPPacketPoint		pos;
-	private UDPPacketPoint		robotPos;
+	private float				bearing;
 	private int					ID;
 	private int					life;
-	private int					totalTimeObserved;
-	private float				bearing;
+	private Point3D				pos;
 	private float				range;
+	private Point3D				robotPos;
+	private int					totalTimeObserved;
 
 	/**
 	 * When decoding a Packet
 	 */
-	public UDPPacketLandmark(long chunkID, UDPPacketPoint pos, UDPPacketPoint robotPos, int ID, int life, int totalTimeObserved, float bearing, float range) {
+	public UDPPacketLandmark(long chunkID, Point3D pos, Point3D robotPos, int ID, int life, int totalTimeObserved, float bearing, float range) {
 		super(chunkID);
 		this.pos = pos;
 		this.robotPos = robotPos;
@@ -51,7 +53,7 @@ public class UDPPacketLandmark extends UDPPacket {
 	/**
 	 * @return the pos
 	 */
-	public UDPPacketPoint getPos() {
+	public Point3D getPos() {
 		return this.pos;
 	}
 
@@ -65,7 +67,7 @@ public class UDPPacketLandmark extends UDPPacket {
 	/**
 	 * @return the robotPos
 	 */
-	public UDPPacketPoint getRobotPos() {
+	public Point3D getRobotPos() {
 		return this.robotPos;
 	}
 

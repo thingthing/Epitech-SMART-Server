@@ -2,22 +2,24 @@ package eip.smart.server.net.udp;
 
 import java.util.Arrays;
 
+import eip.smart.cscommons.model.geometry.Point3D;
+
 public class UDPPacketPointCloud extends UDPPacket {
 
-	public static final byte	MAGIC		= 'P';
 	public static final byte	HEADER_SIZE	= 53;	// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
+	public static final byte	MAGIC		= 'P';
 
-	private int					packetID;
 	private int					currentPart;
-	private int					totalPart;
-	private short				dataSize;
 	private float[]				data;
-	private UDPPacketPoint[]	dataPoints;
+	private Point3D[]			dataPoints;
+	private short				dataSize;
+	private int					packetID;
+	private int					totalPart;
 
 	/**
 	 * When decoding a Packet
 	 */
-	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short dataSize, float[] data, UDPPacketPoint[] dataPoints) {
+	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short dataSize, float[] data, Point3D[] dataPoints) {
 		super(chunkID);
 		this.packetID = packetID;
 		this.currentPart = currentPart;
@@ -44,7 +46,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 	/**
 	 * @return the dataPoints
 	 */
-	public UDPPacketPoint[] getDataPoints() {
+	public Point3D[] getDataPoints() {
 		return this.dataPoints;
 	}
 

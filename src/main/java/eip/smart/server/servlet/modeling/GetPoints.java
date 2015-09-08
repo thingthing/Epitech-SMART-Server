@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
-import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
@@ -37,8 +36,7 @@ public class GetPoints extends JsonServlet {
 		if (modeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("pointcloud");
-		this.mapper.writeValue(json, new PointCloud3DGenerator().generatePointCloud(50));
-		throw new StatusException(ServerStatus.ERR_SIMULATION);
+		this.mapper.writeValue(json, Server.getServer().getCurrentModeling().getMapping());
 	}
 
 }
