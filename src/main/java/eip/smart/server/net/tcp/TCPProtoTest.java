@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
@@ -12,9 +15,22 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.server.model.agent.TCPMessagePacket;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TCPProtoTest extends IoHandlerAdapter {
+
+	private static Map<String, Class>	map	= new HashMap<String, Class>() {
+												{
+													this.put("position", Point3D.class);
+													this.put("exit", Byte.class);
+													this.put("battery", Float.class);
+												}
+											};
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
@@ -44,12 +60,20 @@ public class TCPProtoTest extends IoHandlerAdapter {
 				msg = bufferedReader.readLine();
 				if (!msg.contains(":"))
 					continue;
-				session.write(new TCPMessagePacket().addObject(msg.substring(0, msg.indexOf(":")), msg.substring(msg.indexOf(":") + 1)));
-				if (msg.substring(0, msg.indexOf(":")).equals("exit"))
+				String key = msg.substring(0, msg.indexOf(":"));
+				Object value = msg.substring(msg.indexOf(":") + 1);
+				for (Entry<String, Class> entry : TCPProtoTest.map.entrySet())
+					if (entry.getKey().equals(key)) {
+						value = new ObjectMapper().readValue((String) value, entry.getValue());
+						break;
+					}
+				session.write(new TCPMessagePacket().addObject(key, value));
+				if (key.equals("exit"))
 					this.read = false;
+			} catch (JsonParseException e) {
+				System.err.println(e.getMessage());
 			} catch (IOException e) {
 				e.printStackTrace();
-				return;
 			}
 		this.connector.dispose();
 	}
