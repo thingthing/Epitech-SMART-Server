@@ -75,6 +75,8 @@ public enum AgentStateLogic {
 	/**
 	 * this state is decided by server (not checked)
 	 * this state is locked
+	 * 
+	 * @TODO LOCKED ???
 	 */
 	NO_BATTERY(new AgentStateHandler(true) {
 

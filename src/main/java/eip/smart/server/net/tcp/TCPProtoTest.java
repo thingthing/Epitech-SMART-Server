@@ -14,6 +14,10 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +38,7 @@ public class TCPProtoTest extends IoHandlerAdapter {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
+		((Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(Level.INFO);
 		new TCPProtoTest();
 	}
 
@@ -86,17 +91,9 @@ public class TCPProtoTest extends IoHandlerAdapter {
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		TCPPacket packet = (TCPPacket) message;
-		System.out.println("##Received packet:");
-		System.out.println("--magic: " + TCPPacket.MAGIC);
-		System.out.println("--packetSize: " + packet.getPacketSize());
-		System.out.println("--protocolVersion: " + packet.getProtocolVersion());
-		System.out.println("--headerSize: " + packet.getHeaderSize());
-		System.out.println("--payload: " + new String(packet.getPayload()));
-		System.out.println("##END");
-		System.out.println("##PAYLOAD:");
+		System.out.println("Received packet from server:");
 		System.out.println("--data: " + packet.getJsonData());
 		System.out.println("--status:" + packet.getJsonStatus());
-		System.out.println("##END");
 	}
 
 	@Override
