@@ -75,7 +75,7 @@ public enum AgentStateLogic {
 	/**
 	 * this state is decided by server (not checked)
 	 * this state is locked
-	 * 
+	 *
 	 * @TODO LOCKED ???
 	 */
 	NO_BATTERY(new AgentStateHandler(true) {
@@ -139,7 +139,11 @@ public enum AgentStateLogic {
 		@Override
 		// do all the normal agent actions
 		public void doAction(AgentLogic agent) {
-
+			if (!agent.getOrders().isEmpty()) {
+				if (!agent.getCurrentOrder().equals(agent.getLastOrder()))
+					agent.sendOrder(agent.getCurrentOrder());
+			} else if (agent.getCurrentDestination() != null && !agent.getCurrentDestination().equals(agent.getLastOrder()))
+				agent.sendOrder(agent.getCurrentDestination());
 		}
 
 		@Override

@@ -16,9 +16,12 @@ public class AgentStateManager {
 
 	private final static Logger						LOGGER	= LoggerFactory.getLogger(AgentStateManager.class);
 
+	private AgentLogic								agent;
+
 	private HashMap<AgentState, AgentStateLogic>	states	= new HashMap<>();
 
-	public AgentStateManager() {
+	public AgentStateManager(AgentLogic agent) {
+		this.agent = agent;
 		for (AgentState state : AgentState.values()) {
 			AgentStateLogic logic = AgentStateLogic.valueOf(state.name());
 			if (logic != null)
@@ -33,8 +36,8 @@ public class AgentStateManager {
 
 	}
 
-	public void doAction(AgentLogic agent) {
-		this.states.get(agent.getState()).getHandler().doAction(agent);
+	public void doAction() {
+		this.states.get(this.agent.getState()).getHandler().doAction(this.agent);
 	}
 
 	private AgentState getByLogic(AgentStateLogic logic) {
@@ -44,10 +47,10 @@ public class AgentStateManager {
 		return (null);
 	}
 
-	public void updateState(AgentLogic agent) {
-		if (this.states.get(agent.getState()).getHandler().isLocked())
+	public void updateState() {
+		if (this.states.get(this.agent.getState()).getHandler().isLocked())
 			return;
-		AgentState res = agent.getState();
+		AgentState res = this.agent.getState();
 
 		List<AgentStateLogic> list = new ArrayList<>(this.states.values());
 		Collections.sort(list, new Comparator<Object>() {
@@ -66,8 +69,8 @@ public class AgentStateManager {
 		});
 
 		for (AgentStateLogic logic : list)
-			if (logic.getHandler().checkState(agent))
+			if (logic.getHandler().checkState(this.agent))
 				res = this.getByLogic(logic);
-		agent.setState(res);
+		this.agent.setState(res);
 	}
 }

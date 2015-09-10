@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import eip.smart.cscommons.model.agent.Agent;
 import eip.smart.cscommons.model.geometry.Point3D;
+import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.Server;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.slam.Landmarks;
 import eip.smart.server.slam.Slam;
@@ -22,7 +24,7 @@ public class ModelingLogic extends Modeling {
 		return (Math.abs((Math.abs(point3d.getX() - point3d2.getX())) - (Math.abs(point3d.getY() - point3d2.getY()))));
 	}
 
-	protected Slam	slam	= new Slam(this, new ArrayList<Landmarks.Landmark>());
+	protected Slam	slam;
 
 	public ModelingLogic() {
 		super();
@@ -30,10 +32,12 @@ public class ModelingLogic extends Modeling {
 
 	public ModelingLogic(Modeling modeling) {
 		super(modeling);
+		this.slam = new Slam(this, new ArrayList<Landmarks.Landmark>());
 	}
 
 	public ModelingLogic(String name) {
 		super(name);
+		this.slam = new Slam(this, new ArrayList<Landmarks.Landmark>());
 	}
 
 	/**
@@ -69,9 +73,12 @@ public class ModelingLogic extends Modeling {
 	@Override
 	public List<AgentLogic> getAgents() {
 		List<AgentLogic> res = new ArrayList<>();
-		System.out.println(super.getAgents());
-		for (Agent a : super.getAgents())
-			res.add(new AgentLogic(a));
+		List<? extends Agent> agents = super.getAgents();
+		if (agents.isEmpty())
+			return (res);
+		for (AgentLogic a : Server.getServer().getAgentsAvailable())
+			if (agents.contains(a))
+				res.add(a);
 		return res;
 	}
 
@@ -103,7 +110,7 @@ public class ModelingLogic extends Modeling {
 	 */
 	public void run() {
 		++this.tick;
-		ModelingLogic.LOGGER.info("Modeling (" + this.name + ") running (tick " + this.tick + ")");
+		ModelingLogic.LOGGER.trace("Modeling (" + this.name + ") running (tick " + this.tick + ")");
 		this.updateAreaAgentsAttributed();
 		this.updateAgents();
 	}
@@ -129,10 +136,14 @@ public class ModelingLogic extends Modeling {
 	 *
 	 * @see Agent
 	 */
+	@SuppressWarnings("static-method")
 	private void updateAgents() {
-		ModelingLogic.LOGGER.info("->Updating Agents...");
-		for (AgentLogic agent : this.getAgents())
+		ModelingLogic.LOGGER.trace("->Updating Agents...");
+		// for (AgentLogic agent : this.getAgents()) {
+		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
 			agent.updateState();
+			agent.run();
+		}
 	}
 
 	/**
@@ -140,18 +151,17 @@ public class ModelingLogic extends Modeling {
 	 *
 	 * @see Agent
 	 */
+	@SuppressWarnings("static-method")
 	private void updateAreaAgentsAttributed() {
-		// for (Area a : this.areas)
-		// a.updateCompletion();
-		Area dest;
-		if (this.areas.size() > 0)
-			for (AgentLogic agent : this.getAgents()) {
-				dest = this.areas.get(0);
-				for (Area area : this.areas)
-					if (ModelingLogic.getDiffPoint(agent.getCurrentPosition(), area.getAvgPoint()) < ModelingLogic.getDiffPoint(agent.getCurrentPosition(), dest.getAvgPoint()))
-						dest = area;
-				agent.setDestination(dest);
-			}
-		ModelingLogic.LOGGER.info("->Attributing number of agents for each area...");
+		// for (AgentLogic agent : this.getAgents()) {
+		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
+			if (agent.getCurrentDestination() != null && agent.getCurrentDestination().equals(agent.getCurrentPosition()))
+				agent.setCurrentDestination(null);
+			PointCloud3DGenerator r = new PointCloud3DGenerator();
+			if (agent.getCurrentDestination() == null)
+				agent.setCurrentDestination(r.generateIntPoint());
+			if (!agent.getOrders().isEmpty() && agent.getCurrentOrder().equals(agent.getCurrentPosition()))
+				agent.popCurrentOrder();
+		}
 	}
 }
