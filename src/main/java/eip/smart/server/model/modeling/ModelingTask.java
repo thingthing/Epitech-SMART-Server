@@ -7,6 +7,8 @@ public class ModelingTask implements Runnable {
 
 	private final static Logger	LOGGER			= Logger.getLogger(ModelingTask.class.getName());
 
+	private static final int	RUN_DELAY		= 1000;
+
 	private ModelingLogic		currentModeling	= null;
 	private Object				o				= new Object();
 	private volatile boolean	paused			= false;
@@ -50,7 +52,7 @@ public class ModelingTask implements Runnable {
 		while (this.running && !Thread.currentThread().isInterrupted())
 			if (!this.paused) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(ModelingTask.RUN_DELAY);
 				} catch (InterruptedException e) {}
 				this.currentModeling.run();
 			} else
