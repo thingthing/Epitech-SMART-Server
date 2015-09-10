@@ -43,7 +43,7 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 			if (in.remaining() >= 9) {
 				byte magic = in.get();
 				UDPPacketDecoder.LOGGER.debug("Magic : {}", magic);
-				long chunkID = in.getLong();
+				long chunkID = in.getUnsignedInt();
 				UDPPacketDecoder.LOGGER.debug("Chunk ID : {}", chunkID);
 				if (magic == UDPPacketLandmark.MAGIC)
 					this.decodeLandmark(session, in, out, chunkID);
@@ -79,19 +79,21 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 	private void decodePointCloud(IoSession session, IoBuffer in, ProtocolDecoderOutput out, long chunkID) throws Exception {
 		UDPPacketDecoder.LOGGER.debug("Received UDP PointCloud packet");
 		if (in.remaining() >= UDPPacketPointCloud.HEADER_SIZE - 9) {
-			int packetID = in.getInt();
+			long packetID = in.getUnsignedInt();
 			UDPPacketDecoder.LOGGER.debug("packetID : {}", packetID);
-			int currentPart = in.getInt();
+			long currentPart = in.getUnsignedInt();
 			UDPPacketDecoder.LOGGER.debug("currentPart : {}", currentPart);
-			int totalPart = in.getInt();
+			long totalPart = in.getUnsignedInt();
 			UDPPacketDecoder.LOGGER.debug("totalPart : {}", totalPart);
-			short dataSize = in.getShort();
+			int dataSize = in.getUnsignedShort();
 			UDPPacketDecoder.LOGGER.debug("dataSize : {}", dataSize);
 			float[] data = new float[dataSize];
+			/*
 			if (in.remaining() != data.length) {
 				UDPPacketDecoder.LOGGER.warn("UDP PointCloud packet discarded : expected data size of {}, given data size of {}", data.length, in.remaining());
 				return;
 			}
+			*/
 			in.asFloatBuffer().get(data);
 			Point3D[] dataPoints = new Point3D[data.length / 3];
 			for (int i = 0; i < data.length; i += 3)

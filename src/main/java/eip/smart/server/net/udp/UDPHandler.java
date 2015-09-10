@@ -46,7 +46,7 @@ public class UDPHandler implements IoHandler {
 		UDPPacket packet = (UDPPacket) message;
 		if (packet.getType().equals(UDPPacket.Type.LANDMARK))
 			this.handleUDPPacketLandmark((UDPPacketLandmark) packet);
-		else if (packet.getType().equals(UDPPacket.Type.LANDMARK))
+		else if (packet.getType().equals(UDPPacket.Type.POINTCLOUD))
 			this.handleUDPPacketPointCloud((UDPPacketPointCloud) packet);
 		else
 			UDPHandler.LOGGER.error("UDP Packet discarded : Impossible packet");

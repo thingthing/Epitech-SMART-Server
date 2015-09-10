@@ -9,22 +9,22 @@ public class UDPPacketPointCloud extends UDPPacket {
 	public static final byte	HEADER_SIZE	= 53;	// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
 	public static final byte	MAGIC		= 'P';
 
-	private int					currentPart;
+	private long				currentPart;
 	private float[]				data;
 	private Point3D[]			dataPoints;
-	private short				dataSize;
-	private int					packetID;
-	private int					totalPart;
+	private int					dataSize;
+	private long				packetID;
+	private long				totalPart;
 
 	/**
 	 * When decoding a Packet
 	 */
-	public UDPPacketPointCloud(long chunkID, int packetID, int currentPart, int totalPart, short dataSize, float[] data, Point3D[] dataPoints) {
+	public UDPPacketPointCloud(long chunkID, long packetID2, long currentPart2, long totalPart2, int dataSize2, float[] data, Point3D[] dataPoints) {
 		super(chunkID);
-		this.packetID = packetID;
-		this.currentPart = currentPart;
-		this.totalPart = totalPart;
-		this.dataSize = dataSize;
+		this.packetID = packetID2;
+		this.currentPart = currentPart2;
+		this.totalPart = totalPart2;
+		this.dataSize = dataSize2;
 		this.data = data;
 		this.dataPoints = dataPoints;
 	}
@@ -32,7 +32,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 	/**
 	 * @return the currentPart
 	 */
-	public int getCurrentPart() {
+	public long getCurrentPart() {
 		return this.currentPart;
 	}
 
@@ -53,21 +53,21 @@ public class UDPPacketPointCloud extends UDPPacket {
 	/**
 	 * @return the datatSize
 	 */
-	public short getDataSize() {
+	public int getDataSize() {
 		return this.dataSize;
 	}
 
 	/**
 	 * @return the packetID
 	 */
-	public int getPacketID() {
+	public long getPacketID() {
 		return this.packetID;
 	}
 
 	/**
 	 * @return the totalPart
 	 */
-	public int getTotalPart() {
+	public long getTotalPart() {
 		return this.totalPart;
 	}
 
@@ -81,7 +81,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 	 */
 	@Override
 	public String toString() {
-		return "UDPPacketPointCloud [packetID=" + this.packetID + ", currentPart=" + this.currentPart + ", totalPart=" + this.totalPart + ", dataSize=" + this.dataSize + ", data=" + Arrays.toString(this.data) + ", dataPoints=" + Arrays.toString(this.dataPoints) + ", getType()=" + this.getType() + ", toString()=" + super.toString() + "]";
+		return "UDPPacketPointCloud [packetID=" + this.packetID + ", currentPart=" + this.currentPart + ", totalPart=" + this.totalPart + ", dataSize=" + this.dataSize + ", dataPoints=" + Arrays.toString(this.dataPoints) + ", getType()=" + this.getType() + ", toString()=" + super.toString() + "]";
 	}
 
 }
