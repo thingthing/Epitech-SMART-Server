@@ -127,6 +127,8 @@ public class AgentLogic extends Agent {
 	}
 
 	public void setCurrentPosition(Point3D position) {
+		if (!this.positions.isEmpty() && this.getCurrentPosition().equals(position))
+			return;
 		this.positions.add(0, position);
 	}
 
