@@ -58,7 +58,7 @@ public class IoAgent implements Serializable {
 					IoAgent.this.session.write(message);
 			}
 		});
-		this.agent.setConnected(true);
+		this.agent.connect();
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class IoAgent implements Serializable {
 	 */
 	public void sessionCreated(IoSession session) {
 		this.session = session;
-		this.agent.setConnected(true);
+		this.agent.connect();
 	}
 
 	/**

@@ -44,6 +44,11 @@ public class AgentLogic extends Agent {
 		super(name);
 	}
 
+	public void connect() {
+		this.connected = true;
+		this.lastOrder = null;
+	}
+
 	public Point3D getLastOrder() {
 		return this.lastOrder;
 	}
