@@ -24,11 +24,20 @@ public class ConfDump extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		String name = JsonServlet.getParameter(req, "name");
-		if (!Configuration.confExists(name))
-			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("configuration", "name", name));
-		Configuration conf = new Configuration(name);
-		json.writeFieldName("conf");
-		this.mapper.writeValue(json, conf.getProperties());
+		if (!JsonServlet.hasParameter(req, "name"))
+			for (String confName : Configuration.getConfigurations()) {
+				Configuration conf = new Configuration(confName);
+				json.writeFieldName(confName);
+				this.mapper.writeValue(json, conf.getProperties());
+			}
+		else {
+			String name = JsonServlet.getParameter(req, "name");
+			if (!Configuration.confExists(name))
+				throw new StatusException(ServerStatus.NOT_FOUND.addObjects("configuration", "name", name));
+			Configuration conf = new Configuration(name);
+			System.out.println(conf.getProperties());
+			json.writeFieldName(name);
+			this.mapper.writeValue(json, conf.getProperties());
+		}
 	}
 }

@@ -25,9 +25,16 @@ public abstract class JsonServlet extends HttpServlet {
 
 	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
 		String param = req.getParameter(name);
-		if (param == null || param.isEmpty())
+		if (!JsonServlet.hasParameter(req, name))
 			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects(name));
 		return (param);
+	}
+
+	protected static boolean hasParameter(HttpServletRequest req, String name) {
+		String param = req.getParameter(name);
+		if (param == null || param.isEmpty())
+			return (false);
+		return (true);
 	}
 
 	protected ObjectMapper	mapper	= new ObjectMapper();
