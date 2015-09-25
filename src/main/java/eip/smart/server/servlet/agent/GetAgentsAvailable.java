@@ -30,6 +30,6 @@ public class GetAgentsAvailable extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		json.writeFieldName("agents");
-		this.mapper.writerWithView(JSONViews.IMPORTANT.class).writeValue(json, Server.getServer().getAgentsAvailable());
+		this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, Server.getServer().getAgentsAvailable());
 	}
 }

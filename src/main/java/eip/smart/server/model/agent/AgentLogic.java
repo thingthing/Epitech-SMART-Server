@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.cscommons.model.agent.Agent;
 import eip.smart.cscommons.model.agent.AgentState;
 import eip.smart.cscommons.model.agent.AgentType;
@@ -15,6 +16,10 @@ public class AgentLogic extends Agent {
 
 	public interface sendMessageCallback {
 		public void callback(Object message);
+	}
+
+	private static int getPosMax() {
+		return new Configuration("server").getPropertyInteger("AGENTS_MAX_POS");
 	}
 
 	private Point3D				lastOrder		= null;
@@ -134,7 +139,9 @@ public class AgentLogic extends Agent {
 	public void setCurrentPosition(Point3D position) {
 		if (!this.positions.isEmpty() && this.getCurrentPosition().equals(position))
 			return;
-		this.positions.add(0, position);
+		this.positions.put(new Date(), position);
+		if (this.positions.size() > AgentLogic.getPosMax())
+			this.positions.remove(this.positions.lastKey());
 	}
 
 	public void setDestination(Area destination) {

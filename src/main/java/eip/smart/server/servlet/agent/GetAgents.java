@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import eip.smart.cscommons.model.JSONViews;
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
@@ -36,6 +37,6 @@ public class GetAgents extends JsonServlet {
 		if (currentModeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("agents");
-		this.mapper.writeValue(json, currentModeling.getAgents());
+		this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, currentModeling.getAgents());
 	}
 }

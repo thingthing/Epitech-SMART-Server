@@ -3,9 +3,10 @@ package eip.smart.server.configuration;
 import eip.smart.cscommons.configuration.DefaultConfiguration;
 
 public enum ServerDefaultConfiguration implements DefaultConfiguration {
-	LOGGING_SLACK("FALSE", "logging"),
-	LOGGING_BRIDGE("FALSE", "logging"),
+	AGENTS_MAX_POS("50", "server"),
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
+	LOGGING_BRIDGE("FALSE", "logging"),
+	LOGGING_SLACK("FALSE", "logging"),
 	TCP_PORT("4200", "server"),
 	UDP_PORT("4300", "server");
 

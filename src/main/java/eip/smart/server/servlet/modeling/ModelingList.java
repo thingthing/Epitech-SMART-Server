@@ -30,6 +30,6 @@ public class ModelingList extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		json.writeFieldName("modelings");
-		this.mapper.writerWithView(JSONViews.IMPORTANT.class).writeValue(json, Server.getServer().modelingList());
+		this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, Server.getServer().modelingList());
 	}
 }
