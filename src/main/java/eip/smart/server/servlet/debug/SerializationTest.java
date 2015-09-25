@@ -44,7 +44,7 @@ public class SerializationTest extends JsonServlet {
 		objects.add(ServerStatus.OK);
 		for (Object object : objects) {
 			json.writeFieldName(object.getClass().getSimpleName());
-			this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, object);
+			this.mapper.writerWithView(JSONViews.HTTP.class).writeValue(json, object);
 		}
 	}
 }

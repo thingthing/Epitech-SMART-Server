@@ -37,6 +37,6 @@ public class GetAgents extends JsonServlet {
 		if (currentModeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("agents");
-		this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, currentModeling.getAgents());
+		this.mapper.writerWithView(JSONViews.HTTP.class).writeValue(json, currentModeling.getAgents());
 	}
 }

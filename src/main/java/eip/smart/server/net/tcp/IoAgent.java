@@ -20,7 +20,7 @@ import eip.smart.server.model.agent.AgentLogic.sendMessageCallback;
  */
 public class IoAgent implements Serializable {
 
-	@JsonView(JSONViews.IMPORTANT.class)
+	@JsonView(JSONViews.HTTP.class)
 	private AgentLogic	agent	= null;
 
 	private IoSession	session	= null;
@@ -74,7 +74,7 @@ public class IoAgent implements Serializable {
 	 * @return
 	 * @see org.apache.mina.core.session.IoSession#getCreationTime()
 	 */
-	@JsonView(JSONViews.IMPORTANT.class)
+	@JsonView(JSONViews.HTTP.class)
 	private Date getCreationTime() {
 		return new Date(this.session.getCreationTime());
 	}
@@ -83,7 +83,7 @@ public class IoAgent implements Serializable {
 	 * @return
 	 * @see org.apache.mina.core.session.IoSession#getLocalAddress()
 	 */
-	@JsonView(JSONViews.IMPORTANT.class)
+	@JsonView(JSONViews.HTTP.class)
 	private SocketAddress getLocalAddress() {
 		return this.session.getLocalAddress();
 	}
@@ -92,7 +92,7 @@ public class IoAgent implements Serializable {
 	 * @return
 	 * @see org.apache.mina.core.session.IoSession#getRemoteAddress()
 	 */
-	@JsonView(JSONViews.IMPORTANT.class)
+	@JsonView(JSONViews.HTTP.class)
 	private SocketAddress getRemoteAddress() {
 		return this.session.getRemoteAddress();
 	}

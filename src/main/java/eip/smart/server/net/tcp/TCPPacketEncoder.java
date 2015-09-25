@@ -39,7 +39,7 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 		json.writeStartObject();
 		for (ImmutablePair<String, Object> p : messagePacket.getData()) {
 			json.writeFieldName(p.getKey());
-			this.mapper.writerWithView(JSONViews.ALL.class).writeValue(json, p.getValue());
+			this.mapper.writerWithView(JSONViews.TCP.class).writeValue(json, p.getValue());
 		}
 		json.writeEndObject();
 
