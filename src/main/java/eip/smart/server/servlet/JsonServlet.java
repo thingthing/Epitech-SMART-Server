@@ -46,6 +46,7 @@ public abstract class JsonServlet extends HttpServlet {
 		this.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		this.mapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 		this.mapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
+		this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
 		JsonServlet.LOGGER.trace("GET request from {} on {}", req.getRemoteAddr(), req.getServletPath());
 		try {
