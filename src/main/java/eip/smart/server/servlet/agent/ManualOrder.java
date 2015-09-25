@@ -32,6 +32,8 @@ public class ManualOrder extends JsonServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
 		AgentLogic agent = Server.getServer().getAgentByName(name);
+		if (agent == null)
+			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
 
 		Point3D order = null;
 		if (JsonServlet.getParameter(req, "order") != null)
@@ -40,12 +42,9 @@ public class ManualOrder extends JsonServlet {
 			} catch (IOException e) {
 				throw new StatusException(ServerStatus.ERR_UNKNOWN.addObjects(e.getMessage()));
 			}
-
-		if (agent == null)
-			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
 		if (order == null)
-			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("order"));
-
-		agent.newOrder(order);
+			agent.clearOrders();
+		else
+			agent.newOrder(order);
 	}
 }

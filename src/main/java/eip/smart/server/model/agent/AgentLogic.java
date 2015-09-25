@@ -49,6 +49,10 @@ public class AgentLogic extends Agent {
 		super(name);
 	}
 
+	public void clearOrders() {
+		this.orders.clear();
+	}
+
 	public void connect() {
 		this.connected = true;
 		this.lastOrder = null;
@@ -66,7 +70,7 @@ public class AgentLogic extends Agent {
 	 *            Point, new order send to the agent
 	 */
 	public void newOrder(Point3D order) {
-		this.orders.clear();
+		this.clearOrders();
 		this.pushOrder(order);
 	}
 
