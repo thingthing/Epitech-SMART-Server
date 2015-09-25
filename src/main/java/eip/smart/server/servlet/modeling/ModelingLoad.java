@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
@@ -36,7 +37,11 @@ public class ModelingLoad extends JsonServlet {
 			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		if (JsonServlet.getParameter(request, "name") == null || JsonServlet.getParameter(request, "name").equals(""))
 			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("name"));
-		if (!Server.getServer().modelingLoad(JsonServlet.getParameter(request, "name")))
+		if (!Server.getServer().modelingLoad(JsonServlet.getParameter(request, "name"))) {
+			for (Modeling m : Server.getServer().modelingList())
+				if (m.getName().equals(JsonServlet.getParameter(request, "name")))
+					throw new StatusException(ServerStatus.MODELING_OBSOLETE.addObjects(JsonServlet.getParameter(request, "name")));
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", JsonServlet.getParameter(request, "name")));
+		}
 	}
 }
