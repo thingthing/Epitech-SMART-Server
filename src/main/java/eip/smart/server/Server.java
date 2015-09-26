@@ -258,6 +258,7 @@ public class Server implements ServletContextListener {
 		if (this.manager.exists(name))
 			return (false);
 		this.currentModeling = new ModelingLogic(name);
+		this.modelingSave();
 		return (true);
 	}
 
