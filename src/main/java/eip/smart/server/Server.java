@@ -142,10 +142,8 @@ public class Server implements ServletContextListener {
 			this.acceptorTCP.setReuseAddress(true);
 			this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
 			this.acceptorTCP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
-			TCPHandler agentHandler = new TCPHandler();
-			agentHandler.setIoAgentContainer(this.ioAgentContainer);
-			this.acceptorTCP.setHandler(agentHandler);
 			this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
+			this.acceptorTCP.setHandler(new TCPHandler().setIoAgentContainer(this.ioAgentContainer));
 			this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 			try {
 				this.socketTCPListen();

@@ -83,8 +83,9 @@ public class TCPHandler implements IoHandler {
 	 *
 	 * @param ioAgentContainer
 	 */
-	public void setIoAgentContainer(IoAgentContainer ioAgentContainer) {
+	public TCPHandler setIoAgentContainer(IoAgentContainer ioAgentContainer) {
 		this.ioAgentContainer = ioAgentContainer;
+		return (this);
 	}
 
 }
