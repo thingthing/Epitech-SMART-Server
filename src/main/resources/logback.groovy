@@ -45,4 +45,4 @@ appender("SLACK", SlackAppender) {
 	}
 }
 
-root(ALL, ["STDOUT", "FILE", "SLACK"])
+root(DEBUG, ["STDOUT", "FILE", "SLACK"])
