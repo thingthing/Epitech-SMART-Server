@@ -3,18 +3,18 @@ package eip.smart.server.net.tcp;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class TCPPacket {
-	public static final int		MAGIC				= 0x42;
-	public static final int		PROTOCOL_VERSION	= 1;
-	public static final int		HEADER_SIZE			= 8;
+	public static final int	HEADER_SIZE			= 8;
+	public static final int	MAGIC				= 0x42;
+	public static final int	MAX_PACKET_SIZE		= Character.MAX_VALUE;
 
-	public static final int		MAX_PACKET_SIZE		= Character.MAX_VALUE;
-	public static final int		MAX_PAYLOAD_SIZE	= TCPPacket.MAX_PACKET_SIZE - TCPPacket.HEADER_SIZE;
+	public static final int	MAX_PAYLOAD_SIZE	= TCPPacket.MAX_PACKET_SIZE - TCPPacket.HEADER_SIZE;
+	public static final int	PROTOCOL_VERSION	= 1;
 
-	private int					packetSize;
-	private int					protocolVersion		= TCPPacket.PROTOCOL_VERSION;
-	private int					headerSize			= TCPPacket.HEADER_SIZE;
-	private byte[]				payload;
-	private JsonNode			jsonPayload;
+	private int				headerSize			= TCPPacket.HEADER_SIZE;
+	private JsonNode		jsonPayload;
+	private int				packetSize;
+	private byte[]			payload;
+	private int				protocolVersion		= TCPPacket.PROTOCOL_VERSION;
 
 	/**
 	 * When encoding a packet.
@@ -97,4 +97,10 @@ public class TCPPacket {
 			return (null);
 		return (this.getJsonStatus().get("message").asText());
 	}
+
+	@Override
+	public String toString() {
+		return "TCPPacket [packetSize=" + this.packetSize + ", protocolVersion=" + this.protocolVersion + ", headerSize=" + this.headerSize + ", jsonPayload=" + this.jsonPayload + "]";
+	}
+
 }

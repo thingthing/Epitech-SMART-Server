@@ -7,6 +7,8 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -18,7 +20,9 @@ import eip.smart.server.model.agent.TCPMessagePacket;
 
 public class TCPPacketEncoder implements ProtocolEncoder {
 
-	private ObjectMapper	mapper	= new ObjectMapper();
+	private final static Logger	LOGGER	= LoggerFactory.getLogger(TCPPacketEncoder.class);
+
+	private ObjectMapper		mapper	= new ObjectMapper();
 
 	public TCPPacketEncoder() {
 		this.mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
@@ -61,5 +65,6 @@ public class TCPPacketEncoder implements ProtocolEncoder {
 		buffer.put(packet.getPayload());
 		buffer.flip();
 		out.write(buffer);
+		TCPPacketEncoder.LOGGER.debug("Send {} to {}", packet, session.getRemoteAddress());
 	}
 }
