@@ -87,7 +87,8 @@ public class UDPPacketDecoder extends ProtocolDecoderAdapter {
 			UDPPacketDecoder.LOGGER.debug("totalPart : {}", totalPart);
 			int dataSize = in.getUnsignedShort();
 			UDPPacketDecoder.LOGGER.debug("dataSize : {}", dataSize);
-			float[] data = new float[dataSize];
+			// UDPPacketDecoder.LOGGER.debug("remaining : {}", in.remaining());
+			float[] data = new float[dataSize / 4];
 			/*
 			if (in.remaining() != data.length) {
 				UDPPacketDecoder.LOGGER.warn("UDP PointCloud packet discarded : expected data size of {}, given data size of {}", data.length, in.remaining());
