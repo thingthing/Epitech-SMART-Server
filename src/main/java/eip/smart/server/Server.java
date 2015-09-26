@@ -12,12 +12,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
-import org.apache.mina.transport.socket.DatagramSessionConfig;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
@@ -69,8 +67,8 @@ public class Server implements ServletContextListener {
 	}
 
 	private NioSocketAcceptor	acceptorTCP			= new NioSocketAcceptor();
+	private NioDatagramAcceptor	acceptorUDP			= new NioDatagramAcceptor();
 
-	private IoAcceptor			acceptorUDP			= new NioDatagramAcceptor();
 	private Configuration		conf				= new Configuration("server");
 	/**
 	 * The current selected modeling.
@@ -139,11 +137,11 @@ public class Server implements ServletContextListener {
 
 			// Config of TCP Acceptor
 			this.acceptorTCP.setCloseOnDeactivation(true);
-			this.acceptorTCP.setReuseAddress(true);
+			this.acceptorTCP.getSessionConfig().setReuseAddress(true);
 			this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
 			this.acceptorTCP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
-			this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
 			this.acceptorTCP.setHandler(new TCPHandler().setIoAgentContainer(this.ioAgentContainer));
+			// this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
 			this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 			try {
 				this.socketTCPListen();
@@ -153,11 +151,12 @@ public class Server implements ServletContextListener {
 
 			// Config of UDP Acceptor
 			this.acceptorUDP.setCloseOnDeactivation(true);
-			((DatagramSessionConfig) this.acceptorUDP.getSessionConfig()).setReuseAddress(true);
+			this.acceptorUDP.getSessionConfig().setReuseAddress(true);
 			this.acceptorUDP.getFilterChain().addLast("logger", new LoggingFilter());
 			this.acceptorUDP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new UDPPacketCodecFactory()));
 			this.acceptorUDP.setHandler(new UDPHandler());
-			this.acceptorUDP.getSessionConfig().setReadBufferSize(2048);
+			// this.acceptorUDP.getSessionConfig().setReadBufferSize(2048);
+			// this.acceptorUDP.getSessionConfig().setReadBufferSize(65536);
 			this.acceptorUDP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 			try {
 				this.socketUDPListen();
