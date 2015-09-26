@@ -17,6 +17,8 @@ public class UDPHandler implements IoHandler {
 
 	private final static Logger	LOGGER	= LoggerFactory.getLogger(UDPHandler.class);
 
+	private static int			nbPart	= 0;
+
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		UDPHandler.LOGGER.error("UDP Exception", cause);
@@ -36,6 +38,7 @@ public class UDPHandler implements IoHandler {
 		UDPHandler.LOGGER.info("Received pointcloud packet : {}", packet);
 		if (Server.getServer().getCurrentModeling() != null)
 			Server.getServer().getCurrentModeling().addPoints(Arrays.asList(packet.getDataPoints()));
+		UDPHandler.LOGGER.warn("Received {} PCL paquets until now", ++UDPHandler.nbPart);
 	}
 
 	@Override
@@ -59,7 +62,9 @@ public class UDPHandler implements IoHandler {
 	public void sessionClosed(IoSession session) throws Exception {}
 
 	@Override
-	public void sessionCreated(IoSession session) throws Exception {}
+	public void sessionCreated(IoSession session) throws Exception {
+		UDPHandler.nbPart = 0;
+	}
 
 	@Override
 	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {}
