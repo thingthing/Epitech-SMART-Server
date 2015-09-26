@@ -6,7 +6,7 @@ import eip.smart.cscommons.model.geometry.Point3D;
 
 public class UDPPacketPointCloud extends UDPPacket {
 
-	public static final byte	HEADER_SIZE	= 53;	// 8 + 1 + 12 + 12 + 4 + 4 + 4 + 4 + 4;
+	public static final byte	HEADER_SIZE	= 19;	// 1 + 4 + 4 + 4 + 2;
 	public static final byte	MAGIC		= 'P';
 
 	private long				currentPart;
