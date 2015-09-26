@@ -100,7 +100,7 @@ public class TCPPacket {
 
 	@Override
 	public String toString() {
-		return "TCPPacket [packetSize=" + this.packetSize + ", protocolVersion=" + this.protocolVersion + ", headerSize=" + this.headerSize + ", jsonPayload=" + this.jsonPayload + "]";
+		return "TCPPacket [packetSize=" + this.packetSize + ", protocolVersion=" + this.protocolVersion + ", headerSize=" + this.headerSize + ", jsonPayload=" + new String(this.payload) + "]";
 	}
 
 }
