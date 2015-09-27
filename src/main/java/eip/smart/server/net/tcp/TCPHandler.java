@@ -46,7 +46,9 @@ public class TCPHandler implements IoHandler {
 	}
 
 	@Override
-	public void messageSent(IoSession session, Object message) throws Exception {}
+	public void messageSent(IoSession session, Object message) throws Exception {
+		TCPHandler.LOGGER.debug("Sent TCP data to {} : {}", session.getRemoteAddress(), message);
+	}
 
 	/**
 	 * Delete the session and remote it from the bound IoAgent.
