@@ -27,10 +27,10 @@ public class SocketRestart extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		try {
-			Server.getServer().socketTCPListenStop();
-			Server.getServer().socketUDPListenStop();
-			Server.getServer().socketTCPListen();
-			Server.getServer().socketUDPListen();
+			Server.getServer().getSocketManager().socketTCPListenStop();
+			Server.getServer().getSocketManager().socketUDPListenStop();
+			Server.getServer().getSocketManager().socketTCPListen();
+			Server.getServer().getSocketManager().socketUDPListen();
 		} catch (IOException e) {
 			throw new StatusException(ServerStatus.ERR_UNKNOWN.addObjects(e.getMessage()));
 		} catch (IllegalArgumentException e) {

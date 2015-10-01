@@ -11,6 +11,7 @@ import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.cscommons.model.modeling.ModelingState;
 import eip.smart.server.Server;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.slam.Landmarks;
@@ -129,6 +130,10 @@ public class ModelingLogic extends Modeling {
 
 	public void setObsolete(boolean obsolete) {
 		this.obsolete = obsolete;
+	}
+
+	public void setState(ModelingState s) {
+		this.state = s;
 	}
 
 	/**

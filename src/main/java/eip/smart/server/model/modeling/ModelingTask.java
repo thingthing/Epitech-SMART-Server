@@ -1,26 +1,28 @@
 package eip.smart.server.model.modeling;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eip.smart.cscommons.model.modeling.ModelingState;
 
 public class ModelingTask implements Runnable {
 
-	private final static Logger	LOGGER			= Logger.getLogger(ModelingTask.class.getName());
+	private final static Logger	LOGGER		= LoggerFactory.getLogger(ModelingTask.class);
+	private static final int	RUN_DELAY	= 1000;
 
-	private static final int	RUN_DELAY		= 1000;
-
-	private ModelingLogic		currentModeling	= null;
-	private Object				o				= new Object();
-	private volatile boolean	paused			= false;
-	private boolean				running			= true;
+	private ModelingLogic		modeling	= null;
+	private Object				o			= new Object();
+	private volatile boolean	paused		= false;
+	private boolean				running		= true;
 
 	/**
 	 * Creates a new ModelingTask using given argument as current Modeling
 	 *
-	 * @param currentModeling
+	 * @param modeling
 	 */
-	public ModelingTask(ModelingLogic currentModeling) {
-		this.currentModeling = currentModeling;
+	public ModelingTask(ModelingLogic modeling) {
+		this.modeling = modeling;
+		this.modeling.setState(ModelingState.RUNNING);
 	}
 
 	/**
@@ -35,6 +37,7 @@ public class ModelingTask implements Runnable {
 	 */
 	public void pause() {
 		this.paused = true;
+		this.modeling.setState(ModelingState.PAUSED);
 	}
 
 	/**
@@ -42,6 +45,7 @@ public class ModelingTask implements Runnable {
 	 */
 	public void resume() {
 		this.paused = false;
+		this.modeling.setState(ModelingState.RUNNING);
 		synchronized (this.o) {
 			this.o.notifyAll();
 		}
@@ -54,7 +58,7 @@ public class ModelingTask implements Runnable {
 				try {
 					Thread.sleep(ModelingTask.RUN_DELAY);
 				} catch (InterruptedException e) {}
-				this.currentModeling.run();
+				this.modeling.run();
 			} else
 				try {
 					while (this.paused)
@@ -62,13 +66,14 @@ public class ModelingTask implements Runnable {
 							this.o.wait();
 						}
 				} catch (InterruptedException e) {}
-		ModelingTask.LOGGER.log(Level.INFO, "Thread stopped");
+		ModelingTask.LOGGER.info("Thread stopped");
 	}
 
 	public void stop() {
 		this.resume();
 		Thread.currentThread().interrupt();
 		this.running = false;
+		this.modeling.setState(ModelingState.STOPPED);
 	}
 
 }
