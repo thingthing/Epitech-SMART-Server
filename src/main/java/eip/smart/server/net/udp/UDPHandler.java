@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolDecoderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,8 @@ public class UDPHandler implements IoHandler {
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		if (cause instanceof ProtocolDecoderException)
+			return;
 		UDPHandler.LOGGER.error("UDP Exception", cause);
 	}
 
