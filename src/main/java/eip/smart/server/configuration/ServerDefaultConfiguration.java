@@ -4,6 +4,7 @@ import eip.smart.cscommons.configuration.DefaultConfiguration;
 
 public enum ServerDefaultConfiguration implements DefaultConfiguration {
 	AGENTS_MAX_POS("50", "server"),
+	DEVELOPPEMENT("TRUE", "server"),
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
 	LOGGING_BRIDGE("FALSE", "logging"),
 	LOGGING_SLACK("FALSE", "logging"),
