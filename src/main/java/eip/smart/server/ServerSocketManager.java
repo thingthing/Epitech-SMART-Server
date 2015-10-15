@@ -64,8 +64,8 @@ public class ServerSocketManager {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketTCPListen() throws IOException, IllegalArgumentException {
-		this.acceptorTCP.bind(new InetSocketAddress(Server.getServer().getConf().getPropertyInteger("TCP_PORT")));
-		Server.LOGGER.info("TCP Server open on port " + Server.getServer().getConf().getPropertyInteger("TCP_PORT"));
+		this.acceptorTCP.bind(new InetSocketAddress(Server.getServer().getConfiguration().getPropertyInteger("TCP_PORT")));
+		Server.LOGGER.info("TCP Server open on port " + Server.getServer().getConfiguration().getPropertyInteger("TCP_PORT"));
 	}
 
 	/**
@@ -89,8 +89,8 @@ public class ServerSocketManager {
 	 * @throws IllegalArgumentException
 	 */
 	public void socketUDPListen() throws IOException, IllegalArgumentException {
-		this.acceptorUDP.bind(new InetSocketAddress(Server.getServer().getConf().getPropertyInteger("UDP_PORT")));
-		Server.LOGGER.info("UDP Server open on port " + Server.getServer().getConf().getPropertyInteger("UDP_PORT"));
+		this.acceptorUDP.bind(new InetSocketAddress(Server.getServer().getConfiguration().getPropertyInteger("UDP_PORT")));
+		Server.LOGGER.info("UDP Server open on port " + Server.getServer().getConfiguration().getPropertyInteger("UDP_PORT"));
 	}
 
 	/**

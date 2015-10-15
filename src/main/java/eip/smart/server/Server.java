@@ -148,12 +148,8 @@ public class Server implements ServletContextListener {
 		return (this.ioAgentContainer.getAgents());
 	}
 
-	public Configuration getConf() {
-		return this.conf;
-	}
-
 	public Configuration getConfiguration() {
-		return (this.conf);
+		return this.conf;
 	}
 
 	/**
