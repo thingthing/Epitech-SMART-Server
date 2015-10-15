@@ -1,8 +1,10 @@
 package eip.smart.server.model.modeling.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ public abstract class FileModelingManager implements ModelingManager {
 	 */
 	protected static String addExtension(String name) {
 		String res = name;
-		if (!res.matches(".*\\.modeling$"))
+		if (!res.matches(".*\\" + FileModelingManager.EXTENSION + "$"))
 			res += FileModelingManager.EXTENSION;
 		return (res);
 	}
@@ -42,6 +44,24 @@ public abstract class FileModelingManager implements ModelingManager {
 	}
 
 	public FileModelingManager() {}
+
+	@Override
+	public boolean copy(String name, String copy) {
+		name = FileModelingManager.addExtension(name);
+		copy = FileModelingManager.addExtension(copy);
+		if (!this.exists(name))
+			return (false);
+		if (this.exists(copy))
+			return (false);
+		File file = new File(FileModelingManager.getDir(), name);
+		File fileCopy = new File(FileModelingManager.getDir(), copy);
+		try {
+			FileUtils.copyFile(file, fileCopy);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return (true);
+	}
 
 	@Override
 	public boolean delete(String name) {

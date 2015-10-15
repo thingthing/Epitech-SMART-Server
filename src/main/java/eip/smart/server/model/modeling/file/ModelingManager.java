@@ -9,6 +9,8 @@ import eip.smart.cscommons.model.modeling.Modeling;
  */
 public interface ModelingManager {
 
+	public boolean copy(String name, String copy);
+
 	/**
 	 * Deletes the modeling associated with given name
 	 *

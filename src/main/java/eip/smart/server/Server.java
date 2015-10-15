@@ -22,7 +22,7 @@ import eip.smart.server.configuration.ServerDefaultConfiguration;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.ModelingTask;
-import eip.smart.server.model.modeling.file.DefaultFileModelingManager;
+import eip.smart.server.model.modeling.file.JavaFileModelingManager;
 import eip.smart.server.model.modeling.file.ModelingManager;
 import eip.smart.server.net.tcp.IoAgentContainer;
 
@@ -76,7 +76,7 @@ public class Server implements ServletContextListener {
 	 * The Manager to manage Modelings and store it.
 	 * Different implementations allow to different ways of storage.
 	 */
-	private ModelingManager		manager				= new DefaultFileModelingManager();
+	private ModelingManager		manager				= new JavaFileModelingManager();
 
 	/**
 	 * Is the current modeling running.
@@ -203,6 +203,10 @@ public class Server implements ServletContextListener {
 	 */
 	public boolean isRunning() {
 		return (this.running);
+	}
+
+	public boolean modelingCopy(String name, String copy) {
+		return (this.manager.copy(name, copy));
 	}
 
 	/**
