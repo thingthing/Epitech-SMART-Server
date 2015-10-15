@@ -14,7 +14,7 @@ import eip.smart.server.model.modeling.ModelingLogic;
 /**
  * This class implements the standard way of storing a Modeling to a file, through Java serialization.
  */
-public class DefaultFileModelingManager extends FileModelingManager {
+public class JavaFileModelingManager extends FileModelingManager {
 
 	@Override
 	public Modeling load(String name) {
