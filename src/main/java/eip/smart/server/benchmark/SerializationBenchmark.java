@@ -8,11 +8,8 @@ import java.util.List;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
-import eip.smart.server.model.modeling.file.DefaultFileModelingManager;
-import eip.smart.server.model.modeling.file.DefaultZippedFileModelingManager;
 import eip.smart.server.model.modeling.file.FileModelingManager;
-import eip.smart.server.model.modeling.file.JacksonFileModelingManager;
-import eip.smart.server.model.modeling.file.JacksonZippedFileModelingManager;
+import eip.smart.server.model.modeling.file.JavaFileModelingManager;
 
 /**
  * Created by vincent on 2/28/15.
@@ -38,10 +35,10 @@ public class SerializationBenchmark {
 		mediumModeling.setName("medium_modeling_test");
 		largeModeling.setName("large_modeling_test");
 
-		DefaultFileModelingManager defaultManager = new DefaultFileModelingManager();
-		DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
-		JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
-		JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
+		JavaFileModelingManager defaultManager = new JavaFileModelingManager();
+		// DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
+		// JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
+		// JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
 
 		List<Area> smallAreas = new ArrayList<>();
 		List<Area> mediumAreas = new ArrayList<>();
@@ -82,7 +79,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// DEFAULT ZIP
-		benchmark.setBenchmarkedManager(defaultZippedManager);
+		// benchmark.setBenchmarkedManager(defaultZippedManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();
@@ -96,7 +93,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// JACKSON
-		benchmark.setBenchmarkedManager(jacksonManager);
+		// benchmark.setBenchmarkedManager(jacksonManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();
@@ -110,7 +107,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// JACKSON ZIP
-		benchmark.setBenchmarkedManager(jacksonZippedManager);
+		// benchmark.setBenchmarkedManager(jacksonZippedManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();

@@ -17,7 +17,7 @@ import eip.smart.server.model.modeling.ModelingLogic;
  * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.
  * Uses Java serialization.
  */
-public class DefaultZippedFileModelingManager extends FileModelingManager {
+public abstract class DefaultZippedFileModelingManager extends FileModelingManager {
 
 	protected int	compressionLevel	= -1;
 

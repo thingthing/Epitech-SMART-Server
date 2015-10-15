@@ -14,7 +14,7 @@ import eip.smart.cscommons.model.modeling.Modeling;
 /**
  * This class implements storage of a Modeling through JSON serialization, using Jackson implementation of JSON.
  */
-public class JacksonFileModelingManager extends FileModelingManager {
+public abstract class JacksonFileModelingManager extends FileModelingManager {
 
 	@Override
 	public Modeling load(String name) {
