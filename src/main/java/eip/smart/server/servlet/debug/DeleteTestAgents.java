@@ -22,8 +22,8 @@ public class DeleteTestAgents extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		for (AgentLogic a : Server.getServer().getAgentsAvailable())
+		for (AgentLogic a : Server.getServer().getAgentManager().getAgentsAvailable())
 			if (a.getName().startsWith("TestAgent#"))
-				Server.getServer().getIoAgentContainer().getByAgent(a).removeAgent();
+				Server.getServer().getAgentManager().getIoAgentContainer().getByAgent(a).removeAgent();
 	}
 }

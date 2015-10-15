@@ -14,6 +14,7 @@ import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -36,9 +37,9 @@ public class AddArea extends JsonServlet {
 
 		if (area == null)
 			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects("area"));
-		else if (Server.getServer().getCurrentModeling() == null)
+		ModelingLogic currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
+		if (currentModeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		else
-			Server.getServer().getCurrentModeling().addArea(area);
+		currentModeling.addArea(area);
 	}
 }

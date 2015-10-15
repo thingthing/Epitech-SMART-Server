@@ -30,7 +30,7 @@ public class GetAgentInfo extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		AgentLogic agent = Server.getServer().getAgentByName(name);
+		AgentLogic agent = Server.getServer().getAgentManager().getAgentByName(name);
 		if (agent == null)
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
 		json.writeFieldName("agent");

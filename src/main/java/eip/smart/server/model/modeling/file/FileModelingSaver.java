@@ -18,11 +18,11 @@ import eip.smart.server.model.modeling.ModelingLogic;
  * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
  * leaving its subclass implements the save and load management.
  */
-public abstract class FileModelingManager implements ModelingManager {
+public abstract class FileModelingSaver implements ModelingSaver {
 
 	public static final String	EXTENSION	= ".modeling";
 
-	protected static Logger		LOGGER		= LoggerFactory.getLogger(FileModelingManager.class);
+	protected static Logger		LOGGER		= LoggerFactory.getLogger(FileModelingSaver.class);
 
 	/**
 	 * Adds a .modeling extension to a file name if not yet present.
@@ -32,8 +32,8 @@ public abstract class FileModelingManager implements ModelingManager {
 	 */
 	protected static String addExtension(String name) {
 		String res = name;
-		if (!res.matches(".*\\" + FileModelingManager.EXTENSION + "$"))
-			res += FileModelingManager.EXTENSION;
+		if (!res.matches(".*\\" + FileModelingSaver.EXTENSION + "$"))
+			res += FileModelingSaver.EXTENSION;
 		return (res);
 	}
 
@@ -43,18 +43,18 @@ public abstract class FileModelingManager implements ModelingManager {
 		return (dir);
 	}
 
-	public FileModelingManager() {}
+	public FileModelingSaver() {}
 
 	@Override
 	public boolean copy(String name, String copy) {
-		name = FileModelingManager.addExtension(name);
-		copy = FileModelingManager.addExtension(copy);
+		name = FileModelingSaver.addExtension(name);
+		copy = FileModelingSaver.addExtension(copy);
 		if (!this.exists(name))
 			return (false);
 		if (this.exists(copy))
 			return (false);
-		File file = new File(FileModelingManager.getDir(), name);
-		File fileCopy = new File(FileModelingManager.getDir(), copy);
+		File file = new File(FileModelingSaver.getDir(), name);
+		File fileCopy = new File(FileModelingSaver.getDir(), copy);
 		try {
 			FileUtils.copyFile(file, fileCopy);
 		} catch (IOException e) {
@@ -65,25 +65,25 @@ public abstract class FileModelingManager implements ModelingManager {
 
 	@Override
 	public boolean delete(String name) {
-		name = FileModelingManager.addExtension(name);
+		name = FileModelingSaver.addExtension(name);
 		if (!this.exists(name))
 			return (false);
-		File file = new File(FileModelingManager.getDir(), name);
+		File file = new File(FileModelingSaver.getDir(), name);
 		file.delete();
 		return (true);
 	}
 
 	@Override
 	public boolean exists(String name) {
-		name = FileModelingManager.addExtension(name);
-		File file = new File(FileModelingManager.getDir(), name);
+		name = FileModelingSaver.addExtension(name);
+		File file = new File(FileModelingSaver.getDir(), name);
 		return (file.exists());
 	}
 
 	@Override
 	public ArrayList<Modeling> list() {
 		ArrayList<Modeling> modelings = new ArrayList<>();
-		for (File file : FileModelingManager.getDir().listFiles()) {
+		for (File file : FileModelingSaver.getDir().listFiles()) {
 			Modeling modeling = this.load(file.getName());
 			if (modeling != null) {
 				Modeling smp = new ModelingLogic(modeling);

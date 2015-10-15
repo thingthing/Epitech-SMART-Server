@@ -8,8 +8,8 @@ import java.util.List;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
-import eip.smart.server.model.modeling.file.FileModelingManager;
-import eip.smart.server.model.modeling.file.JavaFileModelingManager;
+import eip.smart.server.model.modeling.file.FileModelingSaver;
+import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
 
 /**
  * Created by vincent on 2/28/15.
@@ -35,7 +35,7 @@ public class SerializationBenchmark {
 		mediumModeling.setName("medium_modeling_test");
 		largeModeling.setName("large_modeling_test");
 
-		JavaFileModelingManager defaultManager = new JavaFileModelingManager();
+		JavaFileModelingSaver defaultManager = new JavaFileModelingSaver();
 		// DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
 		// JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
 		// JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
@@ -139,7 +139,7 @@ public class SerializationBenchmark {
 		return size + " " + SerializationBenchmark.SIZE_UNITS[i];
 	}
 
-	FileModelingManager	benchmarkedManager;
+	FileModelingSaver	benchmarkedManager;
 
 	Modeling			modeling;
 
@@ -153,7 +153,7 @@ public class SerializationBenchmark {
 		this.benchmarkedManager.delete(this.modeling.getName());
 	}
 
-	public FileModelingManager getBenchmarkedManager() {
+	public FileModelingSaver getBenchmarkedManager() {
 		return this.benchmarkedManager;
 	}
 
@@ -161,7 +161,7 @@ public class SerializationBenchmark {
 		return this.modeling;
 	}
 
-	public void setBenchmarkedManager(FileModelingManager benchmarkedManager) {
+	public void setBenchmarkedManager(FileModelingSaver benchmarkedManager) {
 		this.benchmarkedManager = benchmarkedManager;
 	}
 
@@ -189,7 +189,7 @@ public class SerializationBenchmark {
 
 		elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
 		s.println("Elapsed time : " + elapsed / 1000000000 /* in seconds */+ " s " + elapsedDecimals);
-		file = new File(FileModelingManager.getDir(), this.modeling.getName() + FileModelingManager.EXTENSION);
+		file = new File(FileModelingSaver.getDir(), this.modeling.getName() + FileModelingSaver.EXTENSION);
 		size = file.length();
 		s.println("File size : " + size + " bytes (" + SerializationBenchmark.smartsize(size) + ")");
 

@@ -17,7 +17,7 @@ import eip.smart.server.model.modeling.ModelingLogic;
  * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.
  * Uses Java serialization.
  */
-public abstract class DefaultZippedFileModelingManager extends FileModelingManager {
+public abstract class DefaultZippedFileModelingSaver extends FileModelingSaver {
 
 	protected int	compressionLevel	= -1;
 
@@ -27,11 +27,11 @@ public abstract class DefaultZippedFileModelingManager extends FileModelingManag
 
 	@Override
 	public Modeling load(String name) {
-		name = FileModelingManager.addExtension(name);
+		name = FileModelingSaver.addExtension(name);
 
 		if (!this.exists(name))
 			return (null);
-		File file = new File(FileModelingManager.getDir(), name);
+		File file = new File(FileModelingSaver.getDir(), name);
 		FileInputStream fis = null;
 		ZipInputStream zis = null;
 		ObjectInputStream ois = null;
@@ -50,23 +50,23 @@ public abstract class DefaultZippedFileModelingManager extends FileModelingManag
 			ois.close();
 			fis.close();
 		} catch (InvalidClassException e) {
-			FileModelingManager.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
-			FileModelingManager.LOGGER.info("Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			FileModelingSaver.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
+			FileModelingSaver.LOGGER.info("Saved modelisation (" + name + ") is obsolete and will be ignored.");
 			return (null);
 		} catch (IOException | ClassNotFoundException e) {
-			FileModelingManager.LOGGER.error("Unable to find the file", e);
+			FileModelingSaver.LOGGER.error("Unable to find the file", e);
 		} finally {
 			if (ois != null)
 				try {
 					ois.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the object stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the object stream", e);
 				}
 			if (fis != null)
 				try {
 					fis.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
 		return (modeling);
@@ -74,7 +74,7 @@ public abstract class DefaultZippedFileModelingManager extends FileModelingManag
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(FileModelingManager.getDir(), FileModelingManager.addExtension(modeling.getName()));
+		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName()));
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		ZipOutputStream zos = null;
@@ -90,25 +90,25 @@ public abstract class DefaultZippedFileModelingManager extends FileModelingManag
 			oos.writeObject(modelingParsed);
 			zos.finish();
 		} catch (IOException e) {
-			FileModelingManager.LOGGER.error("Unable to save the file", e);
+			FileModelingSaver.LOGGER.error("Unable to save the file", e);
 		} finally {
 			if (oos != null)
 				try {
 					oos.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the object stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the object stream", e);
 				}
 			if (zos != null)
 				try {
 					zos.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the zip stream", e);
 				}
 			if (fos != null)
 				try {
 					fos.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
 	}

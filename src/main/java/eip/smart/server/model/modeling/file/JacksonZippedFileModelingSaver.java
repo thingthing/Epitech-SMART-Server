@@ -19,7 +19,7 @@ import eip.smart.cscommons.model.modeling.Modeling;
  * This implementation of the FileModelingManager uses a compression method to reduce size taken by files.
  * Uses JSON serialization with Jackson implementation.
  */
-public abstract class JacksonZippedFileModelingManager extends FileModelingManager {
+public abstract class JacksonZippedFileModelingSaver extends FileModelingSaver {
 
 	protected int	compressionLevel	= -1;
 
@@ -29,14 +29,14 @@ public abstract class JacksonZippedFileModelingManager extends FileModelingManag
 
 	@Override
 	public Modeling load(String name) {
-		name = FileModelingManager.addExtension(name);
+		name = FileModelingSaver.addExtension(name);
 		Modeling modeling = null;
 		if (!this.exists(name))
 			return (null);
-		File file = new File(FileModelingManager.getDir(), name);
+		File file = new File(FileModelingSaver.getDir(), name);
 		FileInputStream fis = null;
 		ZipInputStream zis = null;
-		FileModelingManager.LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
+		FileModelingSaver.LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
@@ -45,23 +45,23 @@ public abstract class JacksonZippedFileModelingManager extends FileModelingManag
 			Modeling tmp = mapper.readerWithView(JSONViews.DISK.class).forType(Modeling.class).readValue(zis);
 			modeling = new Modeling();
 		} catch (JsonMappingException e) {
-			FileModelingManager.LOGGER.error("file mapping error", e);
+			FileModelingSaver.LOGGER.error("file mapping error", e);
 		} catch (JsonParseException e) {
-			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
+			FileModelingSaver.LOGGER.error("non-well-formed content of the file", e);
 		} catch (IOException e) {
-			FileModelingManager.LOGGER.error("unable to load the file", e);
+			FileModelingSaver.LOGGER.error("unable to load the file", e);
 		} finally {
 			if (zis != null)
 				try {
 					zis.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the zip stream", e);
 				}
 			if (fis != null)
 				try {
 					fis.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
 		return (modeling);
@@ -70,7 +70,7 @@ public abstract class JacksonZippedFileModelingManager extends FileModelingManag
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(FileModelingManager.getDir(), FileModelingManager.addExtension(modeling.getName()));
+		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName()));
 		FileOutputStream fos = null;
 		ZipOutputStream zos = null;
 
@@ -84,26 +84,26 @@ public abstract class JacksonZippedFileModelingManager extends FileModelingManag
 			mapper.writerWithView(JSONViews.DISK.class).writeValue(zos, modelingParsed);
 			zos.finish();
 		} catch (JsonMappingException e) {
-			FileModelingManager.LOGGER.error("file mapping error", e);
+			FileModelingSaver.LOGGER.error("file mapping error", e);
 		} catch (JsonGenerationException e) {
-			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
+			FileModelingSaver.LOGGER.error("non-well-formed content of the file", e);
 		} catch (IOException e) {
-			FileModelingManager.LOGGER.error("unable to save the file", e);
+			FileModelingSaver.LOGGER.error("unable to save the file", e);
 		} finally {
 			if (zos != null)
 				try {
 					zos.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the zip stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the zip stream", e);
 				}
 			if (fos != null)
 				try {
 					fos.close();
 				} catch (IOException e) {
-					FileModelingManager.LOGGER.error("Unable to close the file stream", e);
+					FileModelingSaver.LOGGER.error("Unable to close the file stream", e);
 				}
 		}
-		FileModelingManager.LOGGER.info("Saved modelisation at " + file.getAbsolutePath());
+		FileModelingSaver.LOGGER.info("Saved modelisation at " + file.getAbsolutePath());
 	}
 
 	public void setCompressionLevel(int compressionLevel) {

@@ -77,7 +77,7 @@ public class ModelingLogic extends Modeling {
 		List<? extends Agent> agents = super.getAgents();
 		if (agents.isEmpty())
 			return (res);
-		for (AgentLogic a : Server.getServer().getAgentsAvailable())
+		for (AgentLogic a : Server.getServer().getAgentManager().getAgentsAvailable())
 			if (agents.contains(a))
 				res.add(a);
 		return res;
@@ -145,7 +145,7 @@ public class ModelingLogic extends Modeling {
 	private void updateAgents() {
 		ModelingLogic.LOGGER.trace("->Updating Agents...");
 		// for (AgentLogic agent : this.getAgents()) {
-		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
 			agent.updateState();
 			agent.run();
 		}
@@ -159,7 +159,7 @@ public class ModelingLogic extends Modeling {
 	@SuppressWarnings("static-method")
 	private void updateAreaAgentsAttributed() {
 		// for (AgentLogic agent : this.getAgents()) {
-		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
 			if (agent.getCurrentDestination() != null && agent.getCurrentDestination().equals(agent.getCurrentPosition()))
 				agent.setCurrentDestination(null);
 			PointCloud3DGenerator r = new PointCloud3DGenerator();

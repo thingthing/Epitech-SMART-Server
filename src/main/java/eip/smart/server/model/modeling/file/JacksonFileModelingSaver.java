@@ -14,27 +14,27 @@ import eip.smart.cscommons.model.modeling.Modeling;
 /**
  * This class implements storage of a Modeling through JSON serialization, using Jackson implementation of JSON.
  */
-public abstract class JacksonFileModelingManager extends FileModelingManager {
+public abstract class JacksonFileModelingSaver extends FileModelingSaver {
 
 	@Override
 	public Modeling load(String name) {
-		name = FileModelingManager.addExtension(name);
+		name = FileModelingSaver.addExtension(name);
 		Modeling modeling = null;
 		if (!this.exists(name))
 			return (null);
-		File file = new File(FileModelingManager.getDir(), name);
-		FileModelingManager.LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
+		File file = new File(FileModelingSaver.getDir(), name);
+		FileModelingSaver.LOGGER.info("Loading modelisation at " + file.getAbsolutePath());
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Modeling tmp = mapper.readerWithView(JSONViews.DISK.class).forType(Modeling.class).readValue(file);
 			modeling = new Modeling();
 		} catch (JsonMappingException e) {
-			FileModelingManager.LOGGER.error("file mapping error", e);
+			FileModelingSaver.LOGGER.error("file mapping error", e);
 		} catch (JsonParseException e) {
-			FileModelingManager.LOGGER.error("non-well-formed content of the file", e);
+			FileModelingSaver.LOGGER.error("non-well-formed content of the file", e);
 		} catch (IOException e) {
-			FileModelingManager.LOGGER.error("unable to load the file", e);
+			FileModelingSaver.LOGGER.error("unable to load the file", e);
 		}
 		return (modeling);
 
@@ -42,22 +42,22 @@ public abstract class JacksonFileModelingManager extends FileModelingManager {
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(FileModelingManager.getDir(), FileModelingManager.addExtension(modeling.getName()));
+		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName()));
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Modeling tmp = new Modeling(modeling);
 			mapper.writerWithView(JSONViews.DISK.class).writeValue(file, tmp);
 		} catch (JsonMappingException e) {
-			FileModelingManager.LOGGER.error("file mapping error", e);
+			FileModelingSaver.LOGGER.error("file mapping error", e);
 			return;
 		} catch (JsonGenerationException e) {
-			FileModelingManager.LOGGER.error("error with the json generation", e);
+			FileModelingSaver.LOGGER.error("error with the json generation", e);
 			return;
 		} catch (IOException e) {
-			FileModelingManager.LOGGER.error("error saving the modeling", e);
+			FileModelingSaver.LOGGER.error("error saving the modeling", e);
 			return;
 		}
-		FileModelingManager.LOGGER.info("Successfully saved modelisation at " + file.getAbsolutePath());
+		FileModelingSaver.LOGGER.info("Successfully saved modelisation at " + file.getAbsolutePath());
 	}
 }

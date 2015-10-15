@@ -31,7 +31,7 @@ public class AddWayPoint extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		AgentLogic agent = Server.getServer().getAgentByName(name);
+		AgentLogic agent = Server.getServer().getAgentManager().getAgentByName(name);
 
 		Point3D order = null;
 		if (JsonServlet.getParameter(req, "order") != null)

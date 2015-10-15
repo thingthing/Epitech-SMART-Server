@@ -33,7 +33,7 @@ public class GetAgents extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
-		Modeling currentModeling = Server.getServer().getCurrentModeling();
+		Modeling currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
 		if (currentModeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("agents");

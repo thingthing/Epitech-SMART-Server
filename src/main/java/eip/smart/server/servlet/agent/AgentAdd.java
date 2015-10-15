@@ -14,6 +14,7 @@ import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.model.agent.AgentLogic;
+import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -29,14 +30,15 @@ public class AgentAdd extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		AgentLogic agent = Server.getServer().getAgentByName(name);
+		AgentLogic agent = Server.getServer().getAgentManager().getAgentByName(name);
 		if (agent == null)
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
-		if (Server.getServer().getCurrentModeling() == null)
+		ModelingLogic currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
+		if (currentModeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		if (Server.getServer().getCurrentModeling().getAgents().contains(agent))
+		if (currentModeling.getAgents().contains(agent))
 			throw new StatusException(ServerStatus.AGENT_ALREADY_ADDED);
-		Server.getServer().getCurrentModeling().addAgent(new AgentLogic(agent));
+		currentModeling.addAgent(new AgentLogic(agent));
 	}
 
 }

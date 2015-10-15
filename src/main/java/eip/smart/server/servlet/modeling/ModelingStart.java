@@ -26,11 +26,11 @@ public class ModelingStart extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		if (Server.getServer().getCurrentModeling() == null)
+		if (Server.getServer().getModelingManager().getCurrentModeling() == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		if (Server.getServer().isRunning())
+		if (Server.getServer().getModelingManager().isRunning())
 			throw new StatusException(ServerStatus.MODELING_STATE_ERROR.addObjects("modeling already running"));
-		Server.getServer().modelingStart();
+		Server.getServer().getModelingManager().modelingStart();
 	}
 
 }

@@ -33,7 +33,7 @@ public class ModelingDelete extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(request, "name");
-		if (!Server.getServer().modelingDelete(name))
+		if (!Server.getServer().getModelingManager().getModelingSaver().delete(name))
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
 	}
 }

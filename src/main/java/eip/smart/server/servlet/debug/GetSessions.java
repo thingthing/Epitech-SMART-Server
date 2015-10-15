@@ -27,6 +27,6 @@ public class GetSessions extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException {
 		json.writeFieldName("sessions");
-		this.mapper.writerWithView(JSONViews.HTTP.class).writeValue(json, Server.getServer().getIoAgentContainer());
+		this.mapper.writerWithView(JSONViews.HTTP.class).writeValue(json, Server.getServer().getAgentManager().getIoAgentContainer());
 	}
 }

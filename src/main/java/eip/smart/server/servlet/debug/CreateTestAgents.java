@@ -33,9 +33,9 @@ public class CreateTestAgents extends JsonServlet {
 		nb = (nb > 10 ? 10 : nb);
 
 		for (int i = 1; i <= nb; i++)
-			if (Server.getServer().getIoAgentContainer().getByAgentName("TestAgent#" + i) != null)
+			if (Server.getServer().getAgentManager().getIoAgentContainer().getByAgentName("TestAgent#" + i) != null)
 				++nb;
 			else
-				Server.getServer().getIoAgentContainer().addAgent(new AgentLogic("TestAgent#" + i));
+				Server.getServer().getAgentManager().getIoAgentContainer().addAgent(new AgentLogic("TestAgent#" + i));
 	}
 }

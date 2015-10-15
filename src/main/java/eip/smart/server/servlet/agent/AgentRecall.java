@@ -29,10 +29,10 @@ public class AgentRecall extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(req, "name");
-		AgentLogic agent = Server.getServer().getAgentByName(name);
+		AgentLogic agent = Server.getServer().getAgentManager().getAgentByName(name);
 		if (agent == null)
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("agent", "name", name));
-		if (Server.getServer().getCurrentModeling() == null)
+		if (Server.getServer().getModelingManager().getCurrentModeling() == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		agent.recall();
 	}

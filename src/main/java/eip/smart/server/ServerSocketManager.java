@@ -30,7 +30,7 @@ public class ServerSocketManager {
 		this.acceptorTCP.getSessionConfig().setReuseAddress(true);
 		this.acceptorTCP.getFilterChain().addLast("logger", new LoggingFilter());
 		this.acceptorTCP.getFilterChain().addLast("protocol", new ProtocolCodecFilter(new TCPPacketCodecFactory()));
-		this.acceptorTCP.setHandler(new TCPHandler().setIoAgentContainer(Server.getServer().getIoAgentContainer()));
+		this.acceptorTCP.setHandler(new TCPHandler().setIoAgentContainer(Server.getServer().getAgentManager().getIoAgentContainer()));
 		// this.acceptorTCP.getSessionConfig().setReadBufferSize(2048);
 		this.acceptorTCP.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 0);
 		try {
@@ -60,7 +60,6 @@ public class ServerSocketManager {
 	 *
 	 * @throws IOException
 	 * @param server
-	 *            TODO
 	 * @throws IllegalArgumentException
 	 */
 	public void socketTCPListen() throws IOException, IllegalArgumentException {
@@ -72,7 +71,6 @@ public class ServerSocketManager {
 	 * Stop the TCP acceptor so it will not longer handle TCP connections.
 	 *
 	 * @param server
-	 *            TODO
 	 */
 	public void socketTCPListenStop() {
 		for (IoSession session : this.acceptorTCP.getManagedSessions().values())
@@ -85,7 +83,6 @@ public class ServerSocketManager {
 	 *
 	 * @throws IOException
 	 * @param server
-	 *            TODO
 	 * @throws IllegalArgumentException
 	 */
 	public void socketUDPListen() throws IOException, IllegalArgumentException {
@@ -97,7 +94,6 @@ public class ServerSocketManager {
 	 * Stop the UDP acceptor so it will not longer handle UDP connections.
 	 *
 	 * @param server
-	 *            TODO
 	 */
 	public void socketUDPListenStop() {
 		for (IoSession session : this.acceptorUDP.getManagedSessions().values())

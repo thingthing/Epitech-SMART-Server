@@ -7,9 +7,9 @@ import eip.smart.cscommons.model.modeling.Modeling;
 /**
  * General interface for a Modeling manager, its main purpose is to store and load modelings.
  */
-public interface ModelingManager {
+public interface ModelingSaver {
 
-	public boolean copy(String name, String copy);
+	public boolean copy(String name, String copy);// throws ModelingAlreadyExistsException, ModelingNotFoundException;
 
 	/**
 	 * Deletes the modeling associated with given name

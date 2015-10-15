@@ -14,6 +14,7 @@ import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.exception.StatusException;
+import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.servlet.JsonServlet;
 
 /**
@@ -32,11 +33,12 @@ public class GetPoints extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
-		Modeling modeling = Server.getServer().getCurrentModeling();
+		ModelingLogic currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
+		Modeling modeling = currentModeling;
 		if (modeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("pointcloud");
-		this.mapper.writeValue(json, Server.getServer().getCurrentModeling().getMapping());
+		this.mapper.writeValue(json, currentModeling.getMapping());
 	}
 
 }

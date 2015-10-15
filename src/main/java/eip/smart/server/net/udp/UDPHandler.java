@@ -29,7 +29,7 @@ public class UDPHandler implements IoHandler {
 
 	private void handleUDPPacketLandmark(UDPPacketLandmark packet) {
 		UDPHandler.LOGGER.info("Received landmark packet : {}", packet);
-		ModelingLogic currentModeling = Server.getServer().getCurrentModeling();
+		ModelingLogic currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
 		if (currentModeling != null) {
 			Landmark[] landmark = new Landmark[1];
 			landmark[0] = currentModeling.getSlam().landmarkDB.new Landmark(packet.getPos(), packet.getLife(), packet.getTotalTimeObserved(), packet.getRange(), packet.getRange(), packet.getRobotPos());
@@ -39,8 +39,8 @@ public class UDPHandler implements IoHandler {
 
 	private void handleUDPPacketPointCloud(UDPPacketPointCloud packet) {
 		UDPHandler.LOGGER.info("Received pointcloud packet : {}", packet);
-		if (Server.getServer().getCurrentModeling() != null)
-			Server.getServer().getCurrentModeling().addPoints(Arrays.asList(packet.getDataPoints()));
+		if (Server.getServer().getModelingManager().getCurrentModeling() != null)
+			Server.getServer().getModelingManager().getCurrentModeling().addPoints(Arrays.asList(packet.getDataPoints()));
 		UDPHandler.LOGGER.warn("Received {} PCL paquets until now", ++UDPHandler.nbPart);
 	}
 

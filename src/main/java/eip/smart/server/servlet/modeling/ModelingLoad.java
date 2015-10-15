@@ -33,11 +33,11 @@ public class ModelingLoad extends JsonServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
-		if (Server.getServer().getCurrentModeling() != null)
+		if (Server.getServer().getModelingManager().getCurrentModeling() != null)
 			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		String name = JsonServlet.getParameter(request, "name");
-		if (!Server.getServer().modelingLoad(name)) {
-			for (Modeling m : Server.getServer().modelingList())
+		if (!Server.getServer().getModelingManager().modelingLoad(name)) {
+			for (Modeling m : Server.getServer().getModelingManager().getModelingSaver().list())
 				if (m.getName().equals(name))
 					throw new StatusException(ServerStatus.MODELING_OBSOLETE.addObjects(name));
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));

@@ -23,9 +23,9 @@ public class CleanServer extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException {
-		for (AgentLogic a : Server.getServer().getAgentsAvailable())
-			Server.getServer().getIoAgentContainer().getByAgent(a).removeAgent();
-		for (Modeling m : Server.getServer().modelingList())
-			Server.getServer().modelingDelete(m.getName());
+		for (AgentLogic a : Server.getServer().getAgentManager().getAgentsAvailable())
+			Server.getServer().getAgentManager().getIoAgentContainer().getByAgent(a).removeAgent();
+		for (Modeling m : Server.getServer().getModelingManager().getModelingSaver().list())
+			Server.getServer().getModelingManager().getModelingSaver().delete(m.getName());
 	}
 }

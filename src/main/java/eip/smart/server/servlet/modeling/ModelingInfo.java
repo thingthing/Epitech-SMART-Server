@@ -27,7 +27,7 @@ public class ModelingInfo extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		Modeling modeling = Server.getServer().getCurrentModeling();
+		Modeling modeling = Server.getServer().getModelingManager().getCurrentModeling();
 		if (modeling == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
 		json.writeFieldName("modeling");

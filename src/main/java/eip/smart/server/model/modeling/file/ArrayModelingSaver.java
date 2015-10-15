@@ -9,7 +9,7 @@ import eip.smart.server.model.modeling.ModelingLogic;
 /**
  * Stores the modeling it handles as an ArrayList in the memory
  */
-public class ArrayModelingManager implements ModelingManager {
+public class ArrayModelingSaver implements ModelingSaver {
 
 	private ArrayList<Modeling>	modelings	= new ArrayList<>();
 

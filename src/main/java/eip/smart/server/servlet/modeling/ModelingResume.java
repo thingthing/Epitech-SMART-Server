@@ -26,13 +26,13 @@ public class ModelingResume extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		if (Server.getServer().getCurrentModeling() == null)
+		if (Server.getServer().getModelingManager().getCurrentModeling() == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		else if (!Server.getServer().isRunning())
+		else if (!Server.getServer().getModelingManager().isRunning())
 			throw new StatusException(ServerStatus.MODELING_STATE_ERROR.addObjects("modeling not running"));
-		else if (!Server.getServer().isPaused())
+		else if (!Server.getServer().getModelingManager().isPaused())
 			throw new StatusException(ServerStatus.MODELING_STATE_ERROR.addObjects("modeling not paused"));
-		Server.getServer().modelingResume();
+		Server.getServer().getModelingManager().modelingResume();
 	}
 
 }

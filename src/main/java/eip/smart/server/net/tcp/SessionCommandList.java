@@ -23,7 +23,7 @@ public enum SessionCommandList {
 			if (name.isEmpty())
 				throw new CommandException("Invalid name " + name);
 
-			IoAgentContainer ioAgentContainer = Server.getServer().getIoAgentContainer();
+			IoAgentContainer ioAgentContainer = Server.getServer().getAgentManager().getIoAgentContainer();
 			if (ioAgentContainer.getBySession(session).getAgent() != null)
 				throw new CommandException("Already connected");
 			IoAgent ioAgent = ioAgentContainer.getByAgentName(name);

@@ -26,9 +26,9 @@ public class ModelingStop extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
-		if (Server.getServer().getCurrentModeling() == null)
+		if (Server.getServer().getModelingManager().getCurrentModeling() == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		Server.getServer().modelingStop();
+		Server.getServer().getModelingManager().modelingStop();
 	}
 
 }

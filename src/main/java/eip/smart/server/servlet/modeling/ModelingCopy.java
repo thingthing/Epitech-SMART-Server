@@ -34,7 +34,7 @@ public class ModelingCopy extends JsonServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(request, "name");
 		String copy = JsonServlet.getParameter(request, "copy");
-		if (!Server.getServer().modelingCopy(name, copy))
+		if (!Server.getServer().getModelingManager().getModelingSaver().copy(name, copy))
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
 	}
 }
