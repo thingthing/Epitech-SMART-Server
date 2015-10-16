@@ -20,17 +20,15 @@ import eip.smart.server.util.exception.StatusException;
  * @author Pierre Demessence
  */
 
-@WebServlet("/modeling_stop")
-public class ModelingStop extends JsonServlet {
+@WebServlet("/modeling_unload")
+public class ModelingUnload extends JsonServlet {
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp, JsonGenerator json) throws ServletException, IOException, StatusException {
 		if (Server.getServer().getModelingManager().getCurrentModeling() == null)
 			throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
-		if (!Server.getServer().getModelingManager().isRunning())
-			throw new StatusException(ServerStatus.MODELING_STATE_ERROR.addObjects("modeling not running"));
-		Server.getServer().getModelingManager().modelingStop();
+		Server.getServer().getModelingManager().modelingUnload();
 	}
 
 }

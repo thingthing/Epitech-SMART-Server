@@ -3,7 +3,6 @@ package eip.smart.server;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.ModelingTask;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
@@ -76,8 +75,7 @@ public class ServerModelingManager {
 	public void modelingCreate(String name) throws ModelingAlreadyExistsException {
 		if (this.modelingSaver.exists(name))
 			throw new ModelingAlreadyExistsException();
-		this.currentModeling = new ModelingLogic(name);
-		this.modelingSaver.save(this.currentModeling);
+		this.modelingSaver.save(new ModelingLogic(name));
 	}
 
 	/**
@@ -89,8 +87,7 @@ public class ServerModelingManager {
 	 * @throws ModelingObsoleteException
 	 */
 	public void modelingLoad(String name) throws ModelingNotFoundException, ModelingObsoleteException {
-		Modeling modeling = this.modelingSaver.load(name);
-		this.currentModeling = new ModelingLogic(modeling);
+		this.currentModeling = new ModelingLogic(this.modelingSaver.load(name));
 	}
 
 	/**
@@ -126,7 +123,9 @@ public class ServerModelingManager {
 			this.running = false;
 			this.currentTask = null;
 		}
-		this.modelingSaver.save(this.currentModeling);
+	}
+
+	public void modelingUnload() {
 		this.currentModeling = null;
 	}
 
