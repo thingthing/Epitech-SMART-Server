@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import eip.smart.cscommons.configuration.Configuration;
-import eip.smart.server.configuration.LocationManager;
-import eip.smart.server.configuration.ServerDefaultConfiguration;
+import eip.smart.server.util.configuration.LocationManager;
+import eip.smart.server.util.configuration.ServerDefaultConfiguration;
 
 /**
  * Application Lifecycle Listener implementation class Server

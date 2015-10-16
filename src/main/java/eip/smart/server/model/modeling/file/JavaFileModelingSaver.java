@@ -9,9 +9,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.exception.ModelingNotFoundException;
-import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 /**
  * This class implements the standard way of storing a Modeling to a file, through Java serialization.

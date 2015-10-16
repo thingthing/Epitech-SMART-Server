@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.exception.ModelingAlreadyExistsException;
-import eip.smart.server.exception.ModelingNotFoundException;
 import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.util.exception.ModelingAlreadyExistsException;
+import eip.smart.server.util.exception.ModelingNotFoundException;
 
 /**
  * Stores the modeling it handles as an ArrayList in the memory

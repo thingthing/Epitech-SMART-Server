@@ -3,9 +3,9 @@ package eip.smart.server.model.modeling.file;
 import java.util.List;
 
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.exception.ModelingAlreadyExistsException;
-import eip.smart.server.exception.ModelingNotFoundException;
-import eip.smart.server.exception.ModelingObsoleteException;
+import eip.smart.server.util.exception.ModelingAlreadyExistsException;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 /**
  * General interface for a Modeling manager, its main purpose is to store and load modelings.

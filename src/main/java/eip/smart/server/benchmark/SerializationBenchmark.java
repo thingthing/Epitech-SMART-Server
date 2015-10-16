@@ -7,11 +7,11 @@ import java.util.List;
 
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.exception.ModelingNotFoundException;
-import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.file.FileModelingSaver;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 /**
  * Created by vincent on 2/28/15.

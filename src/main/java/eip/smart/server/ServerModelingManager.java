@@ -4,13 +4,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.exception.ModelingAlreadyExistsException;
-import eip.smart.server.exception.ModelingNotFoundException;
-import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.ModelingTask;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
 import eip.smart.server.model.modeling.file.ModelingSaver;
+import eip.smart.server.util.exception.ModelingAlreadyExistsException;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 public class ServerModelingManager {
 	/**

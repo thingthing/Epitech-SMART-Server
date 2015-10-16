@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.server.configuration.ServerDefaultConfiguration;
-import eip.smart.server.exception.ModelingAlreadyExistsException;
-import eip.smart.server.exception.ModelingNotFoundException;
-import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.util.configuration.ServerDefaultConfiguration;
+import eip.smart.server.util.exception.ModelingAlreadyExistsException;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 /**
  * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
