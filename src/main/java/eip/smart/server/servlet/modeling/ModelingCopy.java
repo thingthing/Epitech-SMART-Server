@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
+import eip.smart.server.exception.ModelingNotFoundException;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
@@ -34,7 +36,12 @@ public class ModelingCopy extends JsonServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(request, "name");
 		String copy = JsonServlet.getParameter(request, "copy");
-		if (!Server.getServer().getModelingManager().getModelingSaver().copy(name, copy))
+		try {
+			Server.getServer().getModelingManager().getModelingSaver().copy(name, copy);
+		} catch (ModelingAlreadyExistsException e) {
+			throw new StatusException(ServerStatus.DUPLICATE.addObjects("modeling", "name", name));
+		} catch (ModelingNotFoundException e) {
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
+		}
 	}
 }

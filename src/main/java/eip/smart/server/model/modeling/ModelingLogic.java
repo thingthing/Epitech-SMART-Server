@@ -71,6 +71,11 @@ public class ModelingLogic extends Modeling {
 		this.mapping.add(points);
 	}
 
+	public void calculateCompletion() {
+		// TODO
+		this.completion = 0;
+	}
+
 	@Override
 	public List<AgentLogic> getAgents() {
 		List<AgentLogic> res = new ArrayList<>();

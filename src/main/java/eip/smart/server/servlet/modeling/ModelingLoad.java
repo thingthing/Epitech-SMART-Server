@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
-import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
@@ -36,11 +37,13 @@ public class ModelingLoad extends JsonServlet {
 		if (Server.getServer().getModelingManager().getCurrentModeling() != null)
 			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		String name = JsonServlet.getParameter(request, "name");
-		if (!Server.getServer().getModelingManager().modelingLoad(name)) {
-			for (Modeling m : Server.getServer().getModelingManager().getModelingSaver().list())
-				if (m.getName().equals(name))
-					throw new StatusException(ServerStatus.MODELING_OBSOLETE.addObjects(name));
+		try {
+			Server.getServer().getModelingManager().modelingLoad(name);
+		} catch (ModelingNotFoundException e) {
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
+		} catch (ModelingObsoleteException e) {
+			throw new StatusException(ServerStatus.MODELING_OBSOLETE.addObjects(name));
 		}
+
 	}
 }

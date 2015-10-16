@@ -4,6 +4,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.ModelingTask;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
@@ -35,11 +38,6 @@ public class ServerModelingManager {
 	 * The threadPool allowing to run a Modeling.
 	 */
 	private ExecutorService	threadPool		= Executors.newSingleThreadExecutor();
-
-	public void destroy() {
-		this.threadPool.shutdown();
-		this.threadPool.shutdownNow();
-	}
 
 	public ModelingLogic getCurrentModeling() {
 		return this.currentModeling;
@@ -73,13 +71,13 @@ public class ServerModelingManager {
 	 * @param name
 	 *            the name of the modeling to create.
 	 * @return true if successful, false otherwise (modeling already exist).
+	 * @throws ModelingAlreadyExistsException
 	 */
-	public boolean modelingCreate(String name) {
+	public void modelingCreate(String name) throws ModelingAlreadyExistsException {
 		if (this.modelingSaver.exists(name))
-			return (false);
+			throw new ModelingAlreadyExistsException();
 		this.currentModeling = new ModelingLogic(name);
 		this.modelingSaver.save(this.currentModeling);
-		return (true);
 	}
 
 	/**
@@ -88,13 +86,11 @@ public class ServerModelingManager {
 	 * @param name
 	 *            the name of the modeling to load.
 	 * @return true if successful, false otherwise (another modeling is already the current modeling).
+	 * @throws ModelingObsoleteException
 	 */
-	public boolean modelingLoad(String name) {
+	public void modelingLoad(String name) throws ModelingNotFoundException, ModelingObsoleteException {
 		Modeling modeling = this.modelingSaver.load(name);
-		if (modeling == null)
-			return (false);
 		this.currentModeling = new ModelingLogic(modeling);
-		return (true);
 	}
 
 	/**
@@ -132,5 +128,10 @@ public class ServerModelingManager {
 		}
 		this.modelingSaver.save(this.currentModeling);
 		this.currentModeling = null;
+	}
+
+	public void stop() {
+		this.threadPool.shutdown();
+		this.threadPool.shutdownNow();
 	}
 }

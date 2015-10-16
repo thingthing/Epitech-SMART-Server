@@ -59,7 +59,7 @@ public class Server implements ServletContextListener {
 		Server.LOGGER.info("Server stopping");
 		if (this.modelingManager.getCurrentModeling() != null)
 			Server.getServer().modelingManager.modelingStop();
-		this.modelingManager.destroy();
+		this.modelingManager.stop();
 
 		this.socketManager.socketTCPListenStop();
 		this.socketManager.socketUDPListenStop();

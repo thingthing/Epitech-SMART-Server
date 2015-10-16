@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
@@ -30,7 +31,10 @@ public class ModelingCreate extends JsonServlet {
 		if (Server.getServer().getModelingManager().getCurrentModeling() != null)
 			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		String name = JsonServlet.getParameter(request, "name");
-		if (!Server.getServer().getModelingManager().modelingCreate(name))
+		try {
+			Server.getServer().getModelingManager().modelingCreate(name);
+		} catch (ModelingAlreadyExistsException e) {
 			throw new StatusException(ServerStatus.DUPLICATE.addObjects("modeling", "name", name));
+		}
 	}
 }

@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.configuration.ServerDefaultConfiguration;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 
 /**
@@ -46,13 +49,23 @@ public abstract class FileModelingSaver implements ModelingSaver {
 	public FileModelingSaver() {}
 
 	@Override
-	public boolean copy(String name, String copy) {
+	public void clear() {
+		for (Modeling m : this.list())
+			try {
+				this.delete(m.getName());
+			} catch (ModelingNotFoundException e) {
+				FileModelingSaver.LOGGER.error("Should never happen", e);
+			}
+	}
+
+	@Override
+	public void copy(String name, String copy) throws ModelingNotFoundException, ModelingAlreadyExistsException {
 		name = FileModelingSaver.addExtension(name);
 		copy = FileModelingSaver.addExtension(copy);
 		if (!this.exists(name))
-			return (false);
+			throw new ModelingNotFoundException();
 		if (this.exists(copy))
-			return (false);
+			throw new ModelingAlreadyExistsException();
 		File file = new File(FileModelingSaver.getDir(), name);
 		File fileCopy = new File(FileModelingSaver.getDir(), copy);
 		try {
@@ -60,17 +73,15 @@ public abstract class FileModelingSaver implements ModelingSaver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return (true);
 	}
 
 	@Override
-	public boolean delete(String name) {
+	public void delete(String name) throws ModelingNotFoundException {
 		name = FileModelingSaver.addExtension(name);
 		if (!this.exists(name))
-			return (false);
+			throw new ModelingNotFoundException();
 		File file = new File(FileModelingSaver.getDir(), name);
 		file.delete();
-		return (true);
 	}
 
 	@Override
@@ -83,23 +94,23 @@ public abstract class FileModelingSaver implements ModelingSaver {
 	@Override
 	public ArrayList<Modeling> list() {
 		ArrayList<Modeling> modelings = new ArrayList<>();
-		for (File file : FileModelingSaver.getDir().listFiles()) {
-			Modeling modeling = this.load(file.getName());
-			if (modeling != null) {
-				Modeling smp = new ModelingLogic(modeling);
-				modelings.add(smp);
-			} else {
-				ModelingLogic smpObsolete = new ModelingLogic();
-				smpObsolete.setName(FilenameUtils.removeExtension(file.getName()));
-				smpObsolete.setObsolete(true);
-				modelings.add(smpObsolete);
+		for (File file : FileModelingSaver.getDir().listFiles())
+			try {
+				Modeling modeling = this.load(file.getName());
+				modelings.add(new ModelingLogic(modeling));
+			} catch (ModelingNotFoundException e) {
+				FileModelingSaver.LOGGER.error("Should never happen", e);
+			} catch (ModelingObsoleteException e) {
+				ModelingLogic obsModeling = new ModelingLogic();
+				obsModeling.setName(FilenameUtils.removeExtension(file.getName()));
+				obsModeling.setObsolete(true);
+				modelings.add(obsModeling);
 			}
-		}
 		return (modelings);
 	}
 
 	@Override
-	public abstract Modeling load(String name);
+	public abstract Modeling load(String name) throws ModelingNotFoundException, ModelingObsoleteException;
 
 	@Override
 	public abstract void save(Modeling modeling);

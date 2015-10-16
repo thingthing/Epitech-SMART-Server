@@ -7,6 +7,8 @@ import java.util.List;
 
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.file.FileModelingSaver;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
@@ -150,7 +152,11 @@ public class SerializationBenchmark {
 	 */
 	public void clean() {
 		this.result = null;
-		this.benchmarkedManager.delete(this.modeling.getName());
+		try {
+			this.benchmarkedManager.delete(this.modeling.getName());
+		} catch (ModelingNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public FileModelingSaver getBenchmarkedManager() {
@@ -209,7 +215,11 @@ public class SerializationBenchmark {
 	 * Starts the benchmarking of reading methods
 	 */
 	private void startReadBenchmark() {
-		this.result = this.benchmarkedManager.load(this.modeling.getName());
+		try {
+			this.result = this.benchmarkedManager.load(this.modeling.getName());
+		} catch (ModelingNotFoundException | ModelingObsoleteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

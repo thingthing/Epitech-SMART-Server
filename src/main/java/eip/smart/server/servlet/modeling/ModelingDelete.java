@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
+import eip.smart.server.exception.ModelingNotFoundException;
 import eip.smart.server.exception.StatusException;
 import eip.smart.server.servlet.JsonServlet;
 
@@ -33,7 +34,10 @@ public class ModelingDelete extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(request, "name");
-		if (!Server.getServer().getModelingManager().getModelingSaver().delete(name))
+		try {
+			Server.getServer().getModelingManager().getModelingSaver().delete(name);
+		} catch (ModelingNotFoundException e) {
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
+		}
 	}
 }

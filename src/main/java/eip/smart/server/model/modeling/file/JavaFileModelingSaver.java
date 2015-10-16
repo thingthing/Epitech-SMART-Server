@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 import eip.smart.server.model.modeling.ModelingLogic;
 
 /**
@@ -17,11 +19,11 @@ import eip.smart.server.model.modeling.ModelingLogic;
 public class JavaFileModelingSaver extends FileModelingSaver {
 
 	@Override
-	public Modeling load(String name) {
+	public Modeling load(String name) throws ModelingNotFoundException, ModelingObsoleteException {
 		name = FileModelingSaver.addExtension(name);
 
 		if (!this.exists(name))
-			return (null);
+			throw new ModelingNotFoundException();
 		File file = new File(FileModelingSaver.getDir(), name);
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
@@ -40,8 +42,7 @@ public class JavaFileModelingSaver extends FileModelingSaver {
 			ois.close();
 			fis.close();
 		} catch (InvalidClassException | ClassNotFoundException e) {
-			FileModelingSaver.LOGGER.warn("Saved modelisation (" + name + ") is obsolete and will be ignored.");
-			return (null);
+			throw new ModelingObsoleteException();
 		} catch (IOException e) {
 			FileModelingSaver.LOGGER.error("file not found", e);
 		} finally {

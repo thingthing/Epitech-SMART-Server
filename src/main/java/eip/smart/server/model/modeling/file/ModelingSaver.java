@@ -3,13 +3,21 @@ package eip.smart.server.model.modeling.file;
 import java.util.List;
 
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
+import eip.smart.server.exception.ModelingNotFoundException;
+import eip.smart.server.exception.ModelingObsoleteException;
 
 /**
  * General interface for a Modeling manager, its main purpose is to store and load modelings.
  */
 public interface ModelingSaver {
 
-	public boolean copy(String name, String copy);// throws ModelingAlreadyExistsException, ModelingNotFoundException;
+	/**
+	 * Delete all the modelings
+	 */
+	public void clear();
+
+	public void copy(String name, String copy) throws ModelingAlreadyExistsException, ModelingNotFoundException;
 
 	/**
 	 * Deletes the modeling associated with given name
@@ -17,7 +25,7 @@ public interface ModelingSaver {
 	 * @param name
 	 * @return false if no suck modeling exists
 	 */
-	public boolean delete(String name);
+	public void delete(String name) throws ModelingNotFoundException;
 
 	/**
 	 * @param name
@@ -36,7 +44,7 @@ public interface ModelingSaver {
 	 * @param name
 	 * @return the fully loaded ready to use Modeling
 	 */
-	public Modeling load(String name);
+	public Modeling load(String name) throws ModelingNotFoundException, ModelingObsoleteException;
 
 	/**
 	 * Saves the given modeling

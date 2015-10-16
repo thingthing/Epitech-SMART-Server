@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.server.exception.ModelingAlreadyExistsException;
+import eip.smart.server.exception.ModelingNotFoundException;
 import eip.smart.server.model.modeling.ModelingLogic;
 
 /**
@@ -14,27 +16,34 @@ public class ArrayModelingSaver implements ModelingSaver {
 	private ArrayList<Modeling>	modelings	= new ArrayList<>();
 
 	@Override
-	public boolean copy(String name, String copy) {
-		if (!this.exists(name))
-			return (false);
-		if (this.exists(copy))
-			return (false);
-		ModelingLogic m = new ModelingLogic(this.load(name));
-		m.setName(copy);
-		this.save(m);
-		return (true);
+	public void clear() {
+		for (Iterator<Modeling> it = this.modelings.iterator(); it.hasNext();) {
+			it.next();
+			it.remove();
+		}
 	}
 
 	@Override
-	public boolean delete(String name) {
+	public void copy(String name, String copy) throws ModelingNotFoundException, ModelingAlreadyExistsException {
+		if (!this.exists(name))
+			throw new ModelingNotFoundException();
+		if (this.exists(copy))
+			throw new ModelingAlreadyExistsException();
+		ModelingLogic m = new ModelingLogic(this.load(name));
+		m.setName(copy);
+		this.save(m);
+	}
+
+	@Override
+	public void delete(String name) throws ModelingNotFoundException {
 		for (Iterator<Modeling> it = this.modelings.iterator(); it.hasNext();) {
 			Modeling modeling = it.next();
 			if (name.equals(modeling.getName())) {
 				it.remove();
-				return (true);
+				return;
 			}
 		}
-		return (false);
+		throw new ModelingNotFoundException();
 	}
 
 	@Override
@@ -54,11 +63,11 @@ public class ArrayModelingSaver implements ModelingSaver {
 	}
 
 	@Override
-	public Modeling load(String name) {
+	public Modeling load(String name) throws ModelingNotFoundException {
 		for (Modeling modeling : this.modelings)
 			if (name.equals(modeling.getName()))
 				return (modeling);
-		return (null);
+		throw new ModelingNotFoundException();
 	}
 
 	@Override
