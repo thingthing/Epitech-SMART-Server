@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.mina.core.session.IoSession;
 
 import eip.smart.cscommons.configuration.Configuration;
@@ -14,7 +15,7 @@ import eip.smart.server.net.tcp.IoAgentContainer;
 
 public class ServerAgentManager {
 
-	private ScheduledExecutorService	executorService		= Executors.newSingleThreadScheduledExecutor();
+	private ScheduledExecutorService	executorService		= Executors.newSingleThreadScheduledExecutor(new BasicThreadFactory.Builder().namingPattern("agents-pool-thread-%d").build());
 	/**
 	 * The ioAgentContainer to store Agents and bound TCP sessions.
 	 */

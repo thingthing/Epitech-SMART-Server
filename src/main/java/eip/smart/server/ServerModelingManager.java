@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class ServerModelingManager {
 	/**
 	 * The threadPool allowing to run a Modeling.
 	 */
-	private ScheduledExecutorService			executorService		= Executors.newSingleThreadScheduledExecutor();
+	private ScheduledExecutorService			executorService		= Executors.newSingleThreadScheduledExecutor(new BasicThreadFactory.Builder().namingPattern("modelings-pool-thread-%d").build());
 
 	/**
 	 * The Manager to manage Modelings and store it.
