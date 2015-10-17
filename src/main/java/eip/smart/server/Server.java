@@ -106,4 +106,9 @@ public class Server implements ServletContextListener {
 		return (this.socketManager);
 	}
 
+	@SuppressWarnings("static-method")
+	public void stop() {
+		System.exit(0);
+	}
+
 }

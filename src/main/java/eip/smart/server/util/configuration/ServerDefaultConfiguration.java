@@ -8,6 +8,7 @@ public enum ServerDefaultConfiguration implements DefaultConfiguration {
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
 	LOGGING_BRIDGE("FALSE", "logging"),
 	LOGGING_SLACK("FALSE", "logging"),
+	LOOP_DELAY("1000", "server"),
 	TCP_PORT("4200", "server"),
 	UDP_PORT("4300", "server");
 

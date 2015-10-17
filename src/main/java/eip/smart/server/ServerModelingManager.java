@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
 import eip.smart.server.model.modeling.file.ModelingSaver;
@@ -111,7 +112,7 @@ public class ServerModelingManager {
 			public void run() {
 				ServerModelingManager.this.getCurrentModeling().run();
 			}
-		}, 0, 1000, TimeUnit.MILLISECONDS));
+		}, 0, new Configuration("server").getPropertyInteger("LOOP_DELAY"), TimeUnit.MILLISECONDS));
 	}
 
 	/**

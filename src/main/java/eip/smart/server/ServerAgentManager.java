@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.mina.core.session.IoSession;
 
+import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.net.tcp.IoAgentContainer;
 
@@ -34,7 +35,7 @@ public class ServerAgentManager {
 					agent.run();
 				}
 			}
-		}, 0, 1000, TimeUnit.MILLISECONDS);
+		}, 0, new Configuration("server").getPropertyInteger("LOOP_DELAY"), TimeUnit.MILLISECONDS);
 	}
 
 	public AgentLogic getAgentByName(String name) {
