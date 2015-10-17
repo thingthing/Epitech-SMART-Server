@@ -82,7 +82,6 @@ public class AgentLogic extends Agent {
 	 */
 	public void pushOrder(Point3D order) {
 		this.orders.add(Math.max(0, this.orders.size()), order);
-		this.sendOrder(order);
 	}
 
 	/**

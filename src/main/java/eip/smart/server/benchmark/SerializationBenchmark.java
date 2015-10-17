@@ -8,11 +8,10 @@ import java.util.List;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
-import eip.smart.server.model.modeling.file.DefaultFileModelingManager;
-import eip.smart.server.model.modeling.file.DefaultZippedFileModelingManager;
-import eip.smart.server.model.modeling.file.FileModelingManager;
-import eip.smart.server.model.modeling.file.JacksonFileModelingManager;
-import eip.smart.server.model.modeling.file.JacksonZippedFileModelingManager;
+import eip.smart.server.model.modeling.file.FileModelingSaver;
+import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
 
 /**
  * Created by vincent on 2/28/15.
@@ -38,10 +37,10 @@ public class SerializationBenchmark {
 		mediumModeling.setName("medium_modeling_test");
 		largeModeling.setName("large_modeling_test");
 
-		DefaultFileModelingManager defaultManager = new DefaultFileModelingManager();
-		DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
-		JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
-		JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
+		JavaFileModelingSaver defaultManager = new JavaFileModelingSaver();
+		// DefaultZippedFileModelingManager defaultZippedManager = new DefaultZippedFileModelingManager();
+		// JacksonFileModelingManager jacksonManager = new JacksonFileModelingManager();
+		// JacksonZippedFileModelingManager jacksonZippedManager = new JacksonZippedFileModelingManager();
 
 		List<Area> smallAreas = new ArrayList<>();
 		List<Area> mediumAreas = new ArrayList<>();
@@ -82,7 +81,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// DEFAULT ZIP
-		benchmark.setBenchmarkedManager(defaultZippedManager);
+		// benchmark.setBenchmarkedManager(defaultZippedManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();
@@ -96,7 +95,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// JACKSON
-		benchmark.setBenchmarkedManager(jacksonManager);
+		// benchmark.setBenchmarkedManager(jacksonManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();
@@ -110,7 +109,7 @@ public class SerializationBenchmark {
 		benchmark.clean();
 
 		// JACKSON ZIP
-		benchmark.setBenchmarkedManager(jacksonZippedManager);
+		// benchmark.setBenchmarkedManager(jacksonZippedManager);
 		benchmark.setModeling(smallModeling);
 		benchmark.startBenchmark(System.out);
 		benchmark.clean();
@@ -142,7 +141,7 @@ public class SerializationBenchmark {
 		return size + " " + SerializationBenchmark.SIZE_UNITS[i];
 	}
 
-	FileModelingManager	benchmarkedManager;
+	FileModelingSaver	benchmarkedManager;
 
 	Modeling			modeling;
 
@@ -153,10 +152,14 @@ public class SerializationBenchmark {
 	 */
 	public void clean() {
 		this.result = null;
-		this.benchmarkedManager.delete(this.modeling.getName());
+		try {
+			this.benchmarkedManager.delete(this.modeling.getName());
+		} catch (ModelingNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public FileModelingManager getBenchmarkedManager() {
+	public FileModelingSaver getBenchmarkedManager() {
 		return this.benchmarkedManager;
 	}
 
@@ -164,7 +167,7 @@ public class SerializationBenchmark {
 		return this.modeling;
 	}
 
-	public void setBenchmarkedManager(FileModelingManager benchmarkedManager) {
+	public void setBenchmarkedManager(FileModelingSaver benchmarkedManager) {
 		this.benchmarkedManager = benchmarkedManager;
 	}
 
@@ -192,7 +195,7 @@ public class SerializationBenchmark {
 
 		elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
 		s.println("Elapsed time : " + elapsed / 1000000000 /* in seconds */+ " s " + elapsedDecimals);
-		file = new File(FileModelingManager.getDir(), this.modeling.getName() + FileModelingManager.EXTENSION);
+		file = new File(FileModelingSaver.getDir(), this.modeling.getName() + FileModelingSaver.EXTENSION);
 		size = file.length();
 		s.println("File size : " + size + " bytes (" + SerializationBenchmark.smartsize(size) + ")");
 
@@ -212,7 +215,11 @@ public class SerializationBenchmark {
 	 * Starts the benchmarking of reading methods
 	 */
 	private void startReadBenchmark() {
-		this.result = this.benchmarkedManager.load(this.modeling.getName());
+		try {
+			this.result = this.benchmarkedManager.load(this.modeling.getName());
+		} catch (ModelingNotFoundException | ModelingObsoleteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

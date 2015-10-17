@@ -53,7 +53,7 @@ public class TCPCommandManager {
 				TCPCommandManager.sendStatus(session, 0, "command " + key + " ok");
 				TCPCommandManager.LOGGER.debug("Command {} executed", key);
 			} else if (this.agentHandlers.containsKey(key)) {
-				IoAgent ioAgent = Server.getServer().getIoAgentContainer().getBySession(session);
+				IoAgent ioAgent = Server.getServer().getAgentManager().getIoAgentContainer().getBySession(session);
 				if (ioAgent.getAgent() != null) {
 					TCPCommandManager.LOGGER.debug("Executing agent command {}", key);
 					this.agentHandlers.get(key).handleCommand(value, ioAgent.getAgent());

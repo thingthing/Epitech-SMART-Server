@@ -11,6 +11,7 @@ import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
 import eip.smart.cscommons.model.modeling.Area;
 import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.cscommons.model.modeling.ModelingState;
 import eip.smart.server.Server;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.slam.Landmarks;
@@ -70,13 +71,18 @@ public class ModelingLogic extends Modeling {
 		this.mapping.add(points);
 	}
 
+	public void calculateCompletion() {
+		// TODO
+		this.completion = 0;
+	}
+
 	@Override
 	public List<AgentLogic> getAgents() {
 		List<AgentLogic> res = new ArrayList<>();
 		List<? extends Agent> agents = super.getAgents();
 		if (agents.isEmpty())
 			return (res);
-		for (AgentLogic a : Server.getServer().getAgentsAvailable())
+		for (AgentLogic a : Server.getServer().getAgentManager().getAgentsAvailable())
 			if (agents.contains(a))
 				res.add(a);
 		return res;
@@ -112,7 +118,6 @@ public class ModelingLogic extends Modeling {
 		++this.tick;
 		ModelingLogic.LOGGER.trace("Modeling (" + this.name + ") running (tick " + this.tick + ")");
 		this.updateAreaAgentsAttributed();
-		this.updateAgents();
 	}
 
 	public void setAgents(List<Agent> agents) {
@@ -131,19 +136,14 @@ public class ModelingLogic extends Modeling {
 		this.obsolete = obsolete;
 	}
 
-	/**
-	 * update agents'state
-	 *
-	 * @see Agent
-	 */
+	public void setState(ModelingState s) {
+		this.state = s;
+	}
+
 	@SuppressWarnings("static-method")
-	private void updateAgents() {
-		ModelingLogic.LOGGER.trace("->Updating Agents...");
-		// for (AgentLogic agent : this.getAgents()) {
-		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
-			agent.updateState();
-			agent.run();
-		}
+	public void stop() {
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable())
+			agent.setCurrentDestination(null);
 	}
 
 	/**
@@ -153,15 +153,11 @@ public class ModelingLogic extends Modeling {
 	 */
 	@SuppressWarnings("static-method")
 	private void updateAreaAgentsAttributed() {
-		// for (AgentLogic agent : this.getAgents()) {
-		for (AgentLogic agent : Server.getServer().getAgentsAvailable()) {
-			if (agent.getCurrentDestination() != null && agent.getCurrentDestination().equals(agent.getCurrentPosition()))
-				agent.setCurrentDestination(null);
+		// TODO for (AgentLogic agent : this.getAgents()) {
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
 			PointCloud3DGenerator r = new PointCloud3DGenerator();
 			if (agent.getCurrentDestination() == null)
 				agent.setCurrentDestination(r.generateIntPoint());
-			if (!agent.getOrders().isEmpty() && agent.getCurrentOrder().equals(agent.getCurrentPosition()))
-				agent.popCurrentOrder();
 		}
 	}
 }
