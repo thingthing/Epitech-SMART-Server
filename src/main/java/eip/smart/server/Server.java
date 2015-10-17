@@ -60,6 +60,7 @@ public class Server implements ServletContextListener {
 		if (this.modelingManager.getCurrentModeling() != null)
 			Server.getServer().modelingManager.modelingStop();
 		this.modelingManager.stop();
+		this.agentManager.stop();
 
 		this.socketManager.socketTCPListenStop();
 		this.socketManager.socketUDPListenStop();

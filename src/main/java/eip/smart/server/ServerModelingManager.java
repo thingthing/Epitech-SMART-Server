@@ -19,15 +19,15 @@ public class ServerModelingManager {
 	private HashMap<ModelingLogic, Future<?>>	currentModelings	= new HashMap<>();
 
 	/**
+	 * The threadPool allowing to run a Modeling.
+	 */
+	private ScheduledExecutorService			executorService		= Executors.newSingleThreadScheduledExecutor();
+
+	/**
 	 * The Manager to manage Modelings and store it.
 	 * Different implementations allow to different ways of storage.
 	 */
 	private ModelingSaver						modelingSaver		= new JavaFileModelingSaver();
-
-	/**
-	 * The threadPool allowing to run a Modeling.
-	 */
-	private ScheduledExecutorService			threadPool			= Executors.newSingleThreadScheduledExecutor();
 
 	public ModelingLogic getCurrentModeling() {
 		Iterator<ModelingLogic> it = this.currentModelings.keySet().iterator();
@@ -106,7 +106,7 @@ public class ServerModelingManager {
 	 * Start the current modeling.
 	 */
 	public void modelingStart() {
-		this.currentModelings.put(this.getCurrentModeling(), this.threadPool.scheduleWithFixedDelay(new Runnable() {
+		this.currentModelings.put(this.getCurrentModeling(), this.executorService.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
 				ServerModelingManager.this.getCurrentModeling().run();
@@ -121,6 +121,7 @@ public class ServerModelingManager {
 	public void modelingStop() {
 		if (this.isRunning()) {
 			this.currentModelings.get(this.getCurrentModeling()).cancel(true);
+			this.getCurrentModeling().stop();
 			this.currentModelings.put(this.getCurrentModeling(), null);
 		}
 	}
@@ -130,7 +131,7 @@ public class ServerModelingManager {
 	}
 
 	public void stop() {
-		this.threadPool.shutdown();
-		this.threadPool.shutdownNow();
+		this.executorService.shutdown();
+		this.executorService.shutdownNow();
 	}
 }

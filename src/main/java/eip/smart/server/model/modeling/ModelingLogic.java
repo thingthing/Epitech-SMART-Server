@@ -118,7 +118,6 @@ public class ModelingLogic extends Modeling {
 		++this.tick;
 		ModelingLogic.LOGGER.trace("Modeling (" + this.name + ") running (tick " + this.tick + ")");
 		this.updateAreaAgentsAttributed();
-		this.updateAgents();
 	}
 
 	public void setAgents(List<Agent> agents) {
@@ -141,19 +140,9 @@ public class ModelingLogic extends Modeling {
 		this.state = s;
 	}
 
-	/**
-	 * update agents'state
-	 *
-	 * @see Agent
-	 */
-	@SuppressWarnings("static-method")
-	private void updateAgents() {
-		ModelingLogic.LOGGER.trace("->Updating Agents...");
-		// for (AgentLogic agent : this.getAgents()) {
-		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
-			agent.updateState();
-			agent.run();
-		}
+	public void stop() {
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable())
+			agent.setCurrentDestination(null);
 	}
 
 	/**
@@ -163,15 +152,11 @@ public class ModelingLogic extends Modeling {
 	 */
 	@SuppressWarnings("static-method")
 	private void updateAreaAgentsAttributed() {
-		// for (AgentLogic agent : this.getAgents()) {
+		// TODO for (AgentLogic agent : this.getAgents()) {
 		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
-			if (agent.getCurrentDestination() != null && agent.getCurrentDestination().equals(agent.getCurrentPosition()))
-				agent.setCurrentDestination(null);
 			PointCloud3DGenerator r = new PointCloud3DGenerator();
 			if (agent.getCurrentDestination() == null)
 				agent.setCurrentDestination(r.generateIntPoint());
-			if (!agent.getOrders().isEmpty() && agent.getCurrentOrder().equals(agent.getCurrentPosition()))
-				agent.popCurrentOrder();
 		}
 	}
 }
