@@ -4,11 +4,12 @@ import eip.smart.cscommons.configuration.DefaultConfiguration;
 
 public enum ServerDefaultConfiguration implements DefaultConfiguration {
 	AGENTS_MAX_POS("50", "server"),
-	DEVELOPPEMENT("TRUE", "server"),
+	DEV_MAX_TICK("300", "server"),
 	LOCATION_MODELING(LocationManager.LOCATION_MODELINGS, "location"),
 	LOGGING_BRIDGE("FALSE", "logging"),
 	LOGGING_SLACK("FALSE", "logging"),
 	LOOP_DELAY("1000", "server"),
+	MODE("DEVELOPPEMENT", "server"),
 	TCP_PORT("4200", "server"),
 	UDP_PORT("4300", "server");
 

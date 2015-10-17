@@ -7,6 +7,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
@@ -16,6 +19,8 @@ import eip.smart.server.util.exception.ModelingNotFoundException;
 import eip.smart.server.util.exception.ModelingObsoleteException;
 
 public class ServerModelingManager {
+
+	private final static Logger					LOGGER				= LoggerFactory.getLogger(ServerModelingManager.class);
 
 	private HashMap<ModelingLogic, Future<?>>	currentModelings	= new HashMap<>();
 
@@ -107,10 +112,17 @@ public class ServerModelingManager {
 	 * Start the current modeling.
 	 */
 	public void modelingStart() {
+		int maxTick = new Configuration("server").getPropertyInteger("DEV_MAX_TICK");
+		ServerModelingManager.LOGGER.debug("Developpement mode : Modeling will stop after {} ticks.", maxTick);
 		this.currentModelings.put(this.getCurrentModeling(), this.executorService.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				ServerModelingManager.this.getCurrentModeling().run();
+				ModelingLogic modeling = ServerModelingManager.this.getCurrentModeling();
+				modeling.run();
+				if (new Configuration("server").getProperty("MODE").equals("DEVELOPPEMENT") && modeling.getTick() == maxTick) {
+					ServerModelingManager.LOGGER.debug("Developpement mode : Modeling stopped.");
+					ServerModelingManager.this.modelingStop();
+				}
 			}
 		}, 0, new Configuration("server").getPropertyInteger("LOOP_DELAY"), TimeUnit.MILLISECONDS));
 	}
