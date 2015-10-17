@@ -1,10 +1,13 @@
 package eip.smart.server;
 
-import java.util.concurrent.ExecutorService;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import eip.smart.server.model.modeling.ModelingLogic;
-import eip.smart.server.model.modeling.ModelingTask;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
 import eip.smart.server.model.modeling.file.ModelingSaver;
 import eip.smart.server.util.exception.ModelingAlreadyExistsException;
@@ -12,38 +15,33 @@ import eip.smart.server.util.exception.ModelingNotFoundException;
 import eip.smart.server.util.exception.ModelingObsoleteException;
 
 public class ServerModelingManager {
-	/**
-	 * The current selected modeling.
-	 */
-	private ModelingLogic	currentModeling	= null;
 
-	/**
-	 * The current thread task the threadPool is running.
-	 */
-	private ModelingTask	currentTask		= null;
+	private HashMap<ModelingLogic, Future<?>>	currentModelings	= new HashMap<>();
 
 	/**
 	 * The Manager to manage Modelings and store it.
 	 * Different implementations allow to different ways of storage.
 	 */
-	private ModelingSaver	modelingSaver	= new JavaFileModelingSaver();
-
-	/**
-	 * Is the current modeling running.
-	 */
-	private boolean			running			= false;
+	private ModelingSaver						modelingSaver		= new JavaFileModelingSaver();
 
 	/**
 	 * The threadPool allowing to run a Modeling.
 	 */
-	private ExecutorService	threadPool		= Executors.newSingleThreadExecutor();
+	private ScheduledExecutorService			threadPool			= Executors.newSingleThreadScheduledExecutor();
 
 	public ModelingLogic getCurrentModeling() {
-		return this.currentModeling;
+		Iterator<ModelingLogic> it = this.currentModelings.keySet().iterator();
+		if (it.hasNext())
+			return (it.next());
+		return (null);
+	}
+
+	public HashMap<ModelingLogic, Future<?>> getCurrentModelings() {
+		return (this.currentModelings);
 	}
 
 	public ModelingSaver getModelingSaver() {
-		return this.modelingSaver;
+		return (this.modelingSaver);
 	}
 
 	/**
@@ -52,7 +50,7 @@ public class ServerModelingManager {
 	 * @return
 	 */
 	public boolean isPaused() {
-		return (this.running && this.currentTask.isPaused());
+		return (this.isRunning() && false);// this.currentTask.isPaused());
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class ServerModelingManager {
 	 * @return
 	 */
 	public boolean isRunning() {
-		return (this.running);
+		return (this.currentModelings.get(this.getCurrentModeling()) != null);
 	}
 
 	/**
@@ -87,30 +85,33 @@ public class ServerModelingManager {
 	 * @throws ModelingObsoleteException
 	 */
 	public void modelingLoad(String name) throws ModelingNotFoundException, ModelingObsoleteException {
-		this.currentModeling = new ModelingLogic(this.modelingSaver.load(name));
+		this.currentModelings.put(new ModelingLogic(this.modelingSaver.load(name)), null);
 	}
 
 	/**
 	 * Pause the current modeling.
 	 */
 	public void modelingPause() {
-		this.currentTask.pause();
+		// this.currentTask.pause();
 	}
 
 	/**
 	 * Resume the current modeling.
 	 */
 	public void modelingResume() {
-		this.currentTask.resume();
+		// this.currentTask.resume();
 	}
 
 	/**
 	 * Start the current modeling.
 	 */
 	public void modelingStart() {
-		this.running = true;
-		this.currentTask = new ModelingTask(this.currentModeling);
-		this.threadPool.execute(this.currentTask);
+		this.currentModelings.put(this.getCurrentModeling(), this.threadPool.scheduleWithFixedDelay(new Runnable() {
+			@Override
+			public void run() {
+				ServerModelingManager.this.getCurrentModeling().run();
+			}
+		}, 0, 1000, TimeUnit.MILLISECONDS));
 	}
 
 	/**
@@ -118,15 +119,14 @@ public class ServerModelingManager {
 	 * The modeling is then no longer the current modeling.
 	 */
 	public void modelingStop() {
-		if (this.running) {
-			this.currentTask.stop();
-			this.running = false;
-			this.currentTask = null;
+		if (this.isRunning()) {
+			this.currentModelings.get(this.getCurrentModeling()).cancel(true);
+			this.currentModelings.put(this.getCurrentModeling(), null);
 		}
 	}
 
 	public void modelingUnload() {
-		this.currentModeling = null;
+		this.currentModelings.remove(this.getCurrentModeling());
 	}
 
 	public void stop() {
