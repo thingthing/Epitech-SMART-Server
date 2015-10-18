@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InvalidClassException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -41,8 +42,8 @@ public class JavaFileModelingSaver extends FileModelingSaver {
 
 			ois.close();
 			fis.close();
-		} catch (InvalidClassException | ClassNotFoundException e) {
-			throw new ModelingObsoleteException();
+		} catch (InvalidClassException | ClassNotFoundException | InvalidObjectException e) {
+			throw new ModelingObsoleteException(e);
 		} catch (IOException e) {
 			FileModelingSaver.LOGGER.error("file not found", e);
 		} finally {
