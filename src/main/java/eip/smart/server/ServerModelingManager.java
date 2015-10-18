@@ -2,6 +2,7 @@ package eip.smart.server;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eip.smart.cscommons.configuration.Configuration;
+import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.cscommons.model.modeling.ModelingState;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
 import eip.smart.server.model.modeling.file.ModelingSaver;
@@ -45,6 +48,14 @@ public class ServerModelingManager {
 
 	public HashMap<ModelingLogic, Future<?>> getCurrentModelings() {
 		return (this.currentModelings);
+	}
+
+	public List<Modeling> getModelings() {
+		List<Modeling> modelings = this.getModelingSaver().list();
+		for (int i = 0; i < modelings.size(); i++)
+			if (modelings.get(i).equals(this.getCurrentModeling()))
+				modelings.set(i, this.getCurrentModeling());
+		return (modelings);
 	}
 
 	public ModelingSaver getModelingSaver() {
@@ -126,6 +137,7 @@ public class ServerModelingManager {
 				}
 			}
 		}, 0, new Configuration("server").getPropertyInteger("LOOP_DELAY"), TimeUnit.MILLISECONDS));
+		this.getCurrentModeling().setState(ModelingState.RUNNING);
 	}
 
 	/**
@@ -136,6 +148,7 @@ public class ServerModelingManager {
 		if (this.isRunning()) {
 			this.currentModelings.get(this.getCurrentModeling()).cancel(true);
 			this.getCurrentModeling().stop();
+			this.getCurrentModeling().setState(ModelingState.STOPPED);
 			this.currentModelings.put(this.getCurrentModeling(), null);
 		}
 	}
