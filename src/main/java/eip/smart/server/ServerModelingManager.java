@@ -104,6 +104,7 @@ public class ServerModelingManager {
 	 */
 	public void modelingLoad(String name) throws ModelingNotFoundException, ModelingObsoleteException {
 		this.currentModelings.put(new ModelingLogic(this.modelingSaver.load(name)), null);
+		this.getCurrentModeling().setState(ModelingState.LOADED);
 	}
 
 	/**
@@ -148,12 +149,13 @@ public class ServerModelingManager {
 		if (this.isRunning()) {
 			this.currentModelings.get(this.getCurrentModeling()).cancel(true);
 			this.getCurrentModeling().stop();
-			this.getCurrentModeling().setState(ModelingState.STOPPED);
+			this.getCurrentModeling().setState(ModelingState.LOADED);
 			this.currentModelings.put(this.getCurrentModeling(), null);
 		}
 	}
 
 	public void modelingUnload() {
+		this.getCurrentModeling().setState(ModelingState.UNLOADED);
 		this.currentModelings.remove(this.getCurrentModeling());
 	}
 
