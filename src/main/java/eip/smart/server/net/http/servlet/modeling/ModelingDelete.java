@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.Server;
 import eip.smart.server.net.http.servlet.JsonServlet;
 import eip.smart.server.util.exception.ModelingNotFoundException;
@@ -34,6 +35,9 @@ public class ModelingDelete extends JsonServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
 		String name = JsonServlet.getParameter(request, "name");
+		Modeling currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
+		if (currentModeling != null && currentModeling.getName().equals(name))
+			throw new StatusException(ServerStatus.MODELING_STATE_ERROR.addObjects("can't delete loaded modeling"));
 		try {
 			Server.getServer().getModelingManager().getModelingSaver().delete(name);
 		} catch (ModelingNotFoundException e) {
