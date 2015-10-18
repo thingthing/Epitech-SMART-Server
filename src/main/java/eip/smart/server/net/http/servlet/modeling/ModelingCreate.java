@@ -28,8 +28,6 @@ public class ModelingCreate extends JsonServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
-		if (Server.getServer().getModelingManager().getCurrentModeling() != null)
-			throw new StatusException(ServerStatus.MODELING_ALREADY_CURRENT);
 		String name = JsonServlet.getParameter(request, "name");
 		try {
 			Server.getServer().getModelingManager().modelingCreate(name);
