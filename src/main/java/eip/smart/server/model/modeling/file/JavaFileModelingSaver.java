@@ -24,7 +24,7 @@ public class JavaFileModelingSaver extends FileModelingSaver {
 		name = FileModelingSaver.addExtension(name);
 
 		if (!this.exists(name))
-			throw new ModelingNotFoundException();
+			throw new ModelingNotFoundException(name);
 		File file = new File(FileModelingSaver.getDir(), name);
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;

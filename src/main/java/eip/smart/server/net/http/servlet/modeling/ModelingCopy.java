@@ -26,7 +26,7 @@ import eip.smart.server.util.exception.StatusException;
 
 @WebServlet(urlPatterns = { "/modeling_copy" }, initParams = { @WebInitParam(name = "name", value = ""), @WebInitParam(name = "copy", value = "") })
 public class ModelingCopy extends JsonServlet {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @throws StatusException
@@ -39,9 +39,9 @@ public class ModelingCopy extends JsonServlet {
 		try {
 			Server.getServer().getModelingManager().getModelingSaver().copy(name, copy);
 		} catch (ModelingAlreadyExistsException e) {
-			throw new StatusException(ServerStatus.DUPLICATE.addObjects("modeling", "name", name));
+			throw new StatusException(ServerStatus.DUPLICATE.addObjects("modeling", "name", e.getName()));
 		} catch (ModelingNotFoundException e) {
-			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
+			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", e.getName()));
 		}
 	}
 }

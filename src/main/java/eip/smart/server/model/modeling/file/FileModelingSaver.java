@@ -1,10 +1,8 @@
 package eip.smart.server.model.modeling.file;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,17 +58,16 @@ public abstract class FileModelingSaver implements ModelingSaver {
 
 	@Override
 	public void copy(String name, String copy) throws ModelingNotFoundException, ModelingAlreadyExistsException {
-		name = FileModelingSaver.addExtension(name);
-		copy = FileModelingSaver.addExtension(copy);
 		if (!this.exists(name))
-			throw new ModelingNotFoundException();
+			throw new ModelingNotFoundException(name);
 		if (this.exists(copy))
-			throw new ModelingAlreadyExistsException();
-		File file = new File(FileModelingSaver.getDir(), name);
-		File fileCopy = new File(FileModelingSaver.getDir(), copy);
+			throw new ModelingAlreadyExistsException(copy);
+		ModelingLogic m;
 		try {
-			FileUtils.copyFile(file, fileCopy);
-		} catch (IOException e) {
+			m = new ModelingLogic(this.load(name));
+			m.setName(copy);
+			this.save(m);
+		} catch (ModelingObsoleteException e) {
 			e.printStackTrace();
 		}
 	}
@@ -79,7 +76,7 @@ public abstract class FileModelingSaver implements ModelingSaver {
 	public void delete(String name) throws ModelingNotFoundException {
 		name = FileModelingSaver.addExtension(name);
 		if (!this.exists(name))
-			throw new ModelingNotFoundException();
+			throw new ModelingNotFoundException(name);
 		File file = new File(FileModelingSaver.getDir(), name);
 		file.delete();
 	}

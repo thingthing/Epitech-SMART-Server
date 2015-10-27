@@ -90,7 +90,7 @@ public class ServerModelingManager {
 	 */
 	public void modelingCreate(String name) throws ModelingAlreadyExistsException {
 		if (this.modelingSaver.exists(name))
-			throw new ModelingAlreadyExistsException();
+			throw new ModelingAlreadyExistsException(name);
 		this.modelingSaver.save(new ModelingLogic(name));
 	}
 

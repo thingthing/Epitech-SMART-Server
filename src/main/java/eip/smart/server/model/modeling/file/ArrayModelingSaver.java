@@ -26,9 +26,9 @@ public class ArrayModelingSaver implements ModelingSaver {
 	@Override
 	public void copy(String name, String copy) throws ModelingNotFoundException, ModelingAlreadyExistsException {
 		if (!this.exists(name))
-			throw new ModelingNotFoundException();
+			throw new ModelingNotFoundException(name);
 		if (this.exists(copy))
-			throw new ModelingAlreadyExistsException();
+			throw new ModelingAlreadyExistsException(copy);
 		ModelingLogic m = new ModelingLogic(this.load(name));
 		m.setName(copy);
 		this.save(m);
@@ -43,7 +43,7 @@ public class ArrayModelingSaver implements ModelingSaver {
 				return;
 			}
 		}
-		throw new ModelingNotFoundException();
+		throw new ModelingNotFoundException(name);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class ArrayModelingSaver implements ModelingSaver {
 		for (Modeling modeling : this.modelings)
 			if (name.equals(modeling.getName()))
 				return (modeling);
-		throw new ModelingNotFoundException();
+		throw new ModelingNotFoundException(name);
 	}
 
 	@Override
