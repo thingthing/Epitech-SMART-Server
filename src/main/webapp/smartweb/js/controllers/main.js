@@ -3,7 +3,7 @@
 angular.module('SMARTApp.controllers')
 .controller('MainCtrl', ['$scope', '$localStorage', '$http', '$interval', 'toaster', function($scope, $localStorage, $http, $interval, $toaster) {
 	$scope.server = "http://54.148.17.11:8080/smartserver";
-	//$scope.server = "http://localhost:8080/smartserver";
+	$scope.server = "http://"+window.location.host+"/smartserver";
 	
 	$scope.$storage = $localStorage.$default({
 		alerts: [],
