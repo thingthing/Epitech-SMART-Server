@@ -4,6 +4,24 @@
 
 <urlrewrite>
 
+	<rule match-type="wildcard">
+		<from>*/*/agents</from>
+		<to>index.html</to>
+	</rule>
 	
+	<rule match-type="wildcard">
+		<from>*/*/modelings</from>
+		<to>index.html</to>
+	</rule>
+	
+	<rule match-type="wildcard">
+		<from>*/*/log</from>
+		<to>index.html</to>
+	</rule>
+	
+	<rule match-type="wildcard">
+		<from>*/*/sessions</from>
+		<to>index.html</to>
+	</rule>
 
 </urlrewrite>
