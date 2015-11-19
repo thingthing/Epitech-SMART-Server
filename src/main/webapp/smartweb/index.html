@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="SMARTApp">
+	
+	<head>
+		
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<base href="/smartserver/panel/" />
+		
+		<title>SMART Panel</title>
+		
+		<!-- Bootstrap Core CSS -->
+		<link href="dist/css/bootstrap.min.css" rel="stylesheet">
+		
+		<!-- MetisMenu CSS -->
+		<link href="dist/css/metisMenu.min.css" rel="stylesheet">
+		
+		<!-- Theme CSS -->
+		<link href="dist/css/sb-admin-2.css" rel="stylesheet">
+		
+		<!-- Custom Fonts -->
+		<link href="dist/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		
+		<!-- Loading Bar CSS -->
+		<link href="dist/css/loading-bar.min.css" rel="stylesheet">
+		
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.16/toaster.min.css" rel="stylesheet" />
+		
+		<!-- Custom CSS -->
+		<link href="css/smart.css" rel="stylesheet">
+		
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+	</head>
+	
+	<body ng-controller="MainCtrl">
+		
+		<div id="wrapper">
+			
+			<!-- Navigation -->
+			<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html">SMART Web Interface</a>
+					<toaster-container></toaster-container>
+				</div>
+				<!-- /.navbar-header -->
+				
+				<ul class="nav navbar-top-links navbar-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-car fa-fw"></i>  <i class="fa fa-caret-down"></i>
+							<span class="badge">{{connectedAgents.length}}</span>
+							<span class="badge" ng-if="nbNonOKConnectedAgents > 0"><i class="fa fa-warning"></i></span>
+						</a>
+						<ul class="dropdown-menu dropdown-tasks">
+							<li ng-if="connectedAgents.length > 0">
+								<div class="text-center">
+									<strong>Connected Agents:</strong>
+								</div>
+							</li>
+							<span class="list-group-item" style="border-left:none;border-right:none;" ng-repeat="agent in connectedAgents track by agent.name">
+								<div>
+									<strong>{{agent.name}}</strong>
+									<span class="pull-right text-muted">{{agent.battery}}% Battery <i class="fa fa-bolt fa-fw"></i></span>
+									<div ng-repeat="(date, position) in agent.positions" ng-if="$index < 1">Current Position : ({{position.x}} ; {{position.y}} ; {{position.z}}) <span class="text-muted small pull-right" am-time-ago="date"></span></div>
+									<div ng-repeat="(date, position) in agent.positions" ng-if="$index < 1">State : {{agent.state}} <i ng-if="agent.state != 'OK'" class="fa fa-warning"></i></div>
+								</div>
+							</span>
+							<li ng-if="connectedAgents.length > 0">
+								<a class="text-center" href="agents">
+									<strong>See All Agents</strong>
+									<i class="fa fa-angle-right"></i>
+								</a>
+							</li>
+							<li ng-if="connectedAgents.length == 0">
+								<div class="text-center">
+									<strong>No Agent Connected</strong>
+								</div>
+							</li>
+						</ul>
+						<!-- /.dropdown-tasks -->
+					</li>
+					<!-- /.dropdown -->
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-tasks fa-fw"></i>  <i class="fa fa-caret-down"></i>
+							<span class="badge">{{loadedModelings.length}}</span>
+						</a>
+						<ul class="dropdown-menu dropdown-tasks">
+							<li ng-if="loadedModelings.length > 0">
+								<div class="text-center">
+									<strong>Loaded Modelings:</strong>
+								</div>
+							</li>
+							<span class="list-group-item" style="border-left:none;border-right:none;" ng-repeat="modeling in loadedModelings track by modeling.name">
+								<div>
+									<strong>{{modeling.name}}</strong>
+									<span class="pull-right text-muted">{{modeling.completion}}% Complete</span>
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped" ng-class="{RUNNING:'active progress-bar-success'}[modeling.state]" role="progressbar" aria-valuenow="{{modeling.completion}}" aria-valuemin="0" aria-valuemax="100" style="width: {{modeling.completion}}%;min-width: 2em;">
+											<span class="">{{modeling.completion}}%</span>
+										</div>
+									</div>
+									<div class="btn-group" role="group" aria-label="...">
+										<button class="btn btn-default" ng-click="modelingStart(modeling.name)"  ng-disabled="modeling.state != 'LOADED'"><span class="fa fa-play" /> Start</button>
+										<button class="btn btn-default" ng-click="modelingStop(modeling.name)"   ng-disabled="modeling.state != 'RUNNING'"><span class="fa fa-stop" /> Stop</button>
+									</div>
+								</div>
+							</span>
+							<li ng-if="loadedModelings.length > 0">
+								<a class="text-center" href="modelings">
+									<strong>See All Modelings</strong>
+									<i class="fa fa-angle-right"></i>
+								</a>
+							</li>
+							<li ng-if="loadedModelings.length == 0">
+								<div class="text-center">
+									<strong>No Modeling</strong>
+								</div>
+							</li>
+						</ul>
+						<!-- /.dropdown-tasks -->
+					</li>
+					<!-- /.dropdown -->
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+							<span class="badge">{{$storage.alerts.length}}</span>
+						</a>
+						<ul class="dropdown-menu dropdown-alerts">
+							<li ng-if="$storage.alerts.length > 0">
+								<div class="text-center">
+									<strong>Last 5 Alerts:</strong>
+								</div>
+							</li>
+							
+							<span class="list-group-item" style="border-left:none;border-right:none;cursor:pointer;" ng-click="removeAlert($index)" ng-repeat="alert in $storage.alerts | reverse | limitTo:5">
+								<span class="label label-{{alert.type}}" style="text-transform:capitalize;">{{alert.type}}</span> {{alert.msg}}
+								<span class="pull-right text-muted small"><em am-time-ago="{{alert.date}}"></em></span>
+							</span>
+							<li ng-if="$storage.alerts.length > 0">
+								<a class="text-center">
+									<strong ng-click="clearAlerts()">Dismiss All</strong>
+								</a>
+								<a class="text-center" href=" ">
+									<strong>See All Alerts</strong>
+									<i class="fa fa-angle-right"></i>
+								</a>
+							</li>
+							<li ng-if="$storage.alerts.length == 0">
+								<div class="text-center">
+									<strong>No Alert</strong>
+								</div>
+							</li>
+						</ul>
+						<!-- /.dropdown-alerts -->
+					</li>
+					<!-- /.dropdown -->
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-gear fa-fw"></i>  <i class="fa fa-caret-down"></i>
+						</a>
+						<ul class="dropdown-menu dropdown-user form-inline">
+							<li>
+								<a><i class="fa fa-cloud fa-fw"></i> Poll Interval <input class="form-control" type="number" min="500" ng-model="$storage.interval" /></a>
+							</li>
+							<!-- /.dropdown-user -->
+						</ul>
+						<!-- /.dropdown -->
+					</li>
+				</ul>
+				<!-- /.navbar-top-links -->
+				
+				<div class="navbar-default sidebar" role="navigation">
+					<div class="sidebar-nav navbar-collapse">
+						<ul class="nav" id="side-menu">
+							<li><a href=" "><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+							<li>
+								<a><i class="fa fa-car fa-fw"></i> Agents <span class="badge">{{agents.length}}</span> <span class="badge" ng-if="nbNonOKAgents > 0"><i class="fa fa-warning"></i></span><span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="agents">List</a></li>
+									<li><a href="affectation">Affectation</a></li>
+								</ul>
+							</li>
+							<li>
+								<a><i class="fa fa-tasks fa-fw"></i> Modelings <span class="badge">{{modelings.length}}</span><span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="modelings">List</a></li>
+								</ul>
+								<li><a href="log"><i class="fa fa-file-text-o fa-fw"></i> Log</a></li>
+								<li><a href="sessions"><i class="glyphicon glyphicon-transfer fa-fw"></i> TCP Sessions <span class="badge">42</span></a></li>
+							</li>
+						</ul>
+					</div>
+					<!-- /.sidebar-collapse -->
+				</div>
+				<!-- /.navbar-static-side -->
+			</nav>
+			
+			<!-- Page Content -->
+			<div id="page-wrapper">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-lg-12" ng-view ng-if="initDone">
+						</div>
+						<!-- /.col-lg-12 -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /#page-wrapper -->
+			
+		</div>
+		<!-- /#wrapper -->
+		
+		<!-- jQuery -->
+		<script src="dist/js/jquery.min.js"></script>
+		
+		<!-- Bootstrap Core JavaScript -->
+		<script src="dist/js/bootstrap.min.js"></script>
+		
+		<!-- Metis Menu Plugin JavaScript -->
+		<script src="dist/js/metisMenu.min.js"></script>
+		
+		<!-- Custom Theme JavaScript -->
+		<script src="dist/js/sb-admin-2.js"></script>
+		
+		<!-- AngularJS -->
+		<script src="dist/js/angular.min.js"></script>
+		<script src="dist/js/angular-route.min.js"></script>
+		<script src="dist/js/angular-animate.min.js"></script>
+		
+		<!-- Moment -->
+		<script src="dist/js/moment.js"></script>
+		
+		<!-- AngularJS Modules -->
+		<script src="dist/js/ngStorage.js"></script>
+		<script src="dist/js/angular-moment.min.js"></script>
+		<script src="dist/js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+		<script src="dist/js/loading-bar.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.16/toaster.min.js"></script>
+		
+		<script src="dist/js/babylon.js"></script>
+		
+		<script>
+			$('.dropdown-menu .btn').click(function(e) {
+				e.stopPropagation();
+			});
+		</script>
+		
+		<!-- Custom Scripts -->
+		<script src="js/utils.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/http_interceptor.js"></script>
+		<script src="js/filters.js"></script>
+		<script src="js/controllers/main.js"></script>
+		<script src="js/controllers/agents.js"></script>
+		<script src="js/controllers/modelings.js"></script>
+		<script src="js/controllers/modeling.js"></script>
+		<script src="js/controllers/sessions.js"></script>
+		
+	</body>
+	
+</html>																																														

@@ -1,0 +1,22 @@
+button[disabled="disabled"] {
+	cursor: not-allowed;
+	pointer-events: all !important;
+}
+
+a:hover {
+	cursor:pointer;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none !important;
+}
+
+.panel-agent .panel-body {
+	height:500px;
+	overflow-y:auto;
+}
+
+.panel-modeling .panel-body{
+	height:150px;
+	overflow-y:auto;
+}

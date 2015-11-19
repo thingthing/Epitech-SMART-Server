@@ -1,0 +1,54 @@
+<h1 class="page-header" ng-if="modelings.length > 0">Modelings :</h1>
+<h1 class="page-header" ng-if="modelings.length == 0">No Modeling</h1>
+<div class="row">
+	<div class="col-lg-4 col-md-6" ng-repeat="modeling in modelings track by modeling.name">
+		<div class="panel panel-modeling" ng-class="{true:'panel-danger', false:{RUNNING:'panel-success', LOADED:'panel-info', UNLOADED:'panel-default'}[modeling.state]}[modeling.obsolete]">
+			<div class="panel-heading">
+				<h3 class="text-center panel-title">
+					<a href="modeling/{{modeling.name}}" ng-if="modeling.state != 'UNLOADED'"><u>{{modeling.name}}</u></a>
+					<span ng-if="modeling.state == 'UNLOADED'">{{modeling.name}}</span>
+					<span class="label label-danger pull-right" ng-if="modeling.obsolete == true">Obsolete</span>
+					<span class="label label-warning pull-right" ng-if="modeling.state == 'UNLOADED' && modeling.obsolete == false">Unloaded</span>
+					<span class="label label-success pull-right" ng-if="modeling.state == 'RUNNING'">Running</span>
+					<span class="label label-info pull-right" ng-if="modeling.state == 'LOADED'">Loaded</span>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" ng-class="{RUNNING:'active progress-bar-success'}[modeling.state]" role="progressbar" aria-valuenow="{{modeling.completion}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+						{{modeling.completion}}%
+					</div>
+				</div>
+				<pre>{{modeling}}</pre>
+			</div>
+			<div class="panel-footer">
+				<div class="btn-group" role="group" aria-label="...">
+					<button class="btn btn-default" ng-click="modelingStart(modeling.name)"  ng-disabled="modeling.state != 'LOADED'"><span class="fa fa-play" /> Start</button>
+					<button class="btn btn-default" ng-click="modelingStop(modeling.name)"   ng-disabled="modeling.state != 'RUNNING'"><span class="fa fa-stop" /> Stop</button>
+					<button class="btn btn-default" ng-click="modelingLoad(modeling.name)"   ng-disabled="modeling.state != 'UNLOADED' || loadedModelings.length > 0 || modeling.obsolete == true"> <span class="fa fa-folder-open" /> Load</button>
+					<button class="btn btn-default" ng-click="modelingUnload(modeling.name)" ng-disabled="modeling.state != 'LOADED'"><span class="fa fa-eject" /> Unload</button>
+					<button class="btn btn-default" ng-click="modelingSave(modeling.name)" ng-disabled="modeling.obsolete == true"><span class="fa fa-save" /> Save</button>
+					<button class="btn btn-default" ng-click="modelingDelete(modeling.name)" ng-disabled="modeling.state != 'UNLOADED'"><span class="fa fa-times"></span> Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-6" ng-if="modelings">
+		<div class="panel panel-modeling panel-primary">
+			<div class="panel-heading">
+				<h3 class="text-center panel-title">
+					Create Modeling
+				</h3>
+			</div>
+			<div ng-form ng-controller="ModelingsCtrl" name="modelingCreateForm" ">
+				<div class="panel-body">
+					<label for="name">Name:</label>
+					<input type="text" class="form-control" ng-model="newModelingName"></input>
+				</div>
+				<div class="panel-footer">
+					<button ng-click="modelingCreate(newModelingName)" class="btn btn-default"><span class="fa fa-plus"> Create</span></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

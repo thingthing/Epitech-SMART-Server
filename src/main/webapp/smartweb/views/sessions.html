@@ -1,0 +1,45 @@
+<h1 class="page-header" ng-if="sessions.length > 0">TCP Sessions Connected :</h1>
+<h1 class="page-header" ng-if="sessions.length == 0">No TCP Sessions</h1>
+<div class="row">
+	<div class="col-lg-4 col-md-6" ng-repeat="session in sessions track by session.ip">
+		<div class="panel panel-agent" ng-class="{true:'panel-primary', false:'panel-default'}[agent.connected]">
+			<div class="panel-heading">
+				<h3 class="text-center panel-title">
+					{{agent.name}}
+					<span class="label label-warning pull-right" ng-if="agent.connected == false">Not connected</span>
+					<span class="label label-success pull-right" ng-if="agent.connected == true">Connected</span>
+					<span class="label label-danger pull-right" ng-if="agent.state != 'OK'" style="margin-right:3px;"><i class="fa fa-warning"></i> Warning</span>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<pre ng-if="false">{{agent}}</pre>
+				<table class="table table-condensed">
+					<tr><th>Data</th><th>Value</th></tr>
+					<tr><td>Battery</td><td>{{agent.battery}}%</td></tr>
+					<tr><td>CurrentDestination</td><td>({{agent.currentDestination.x}} ; {{agent.currentDestination.y}} ; {{agent.currentDestination.z}})</td></tr>
+					<tr><td>Destination</td><td>({{agent.destination.x}} ; {{agent.destination.y}} ; {{agent.destination.z}})</td></tr>
+					<tr><td>State</td><td>{{agent.state}} <i ng-if="agent.state != 'OK'" class="fa fa-warning"></i></td></tr>
+					<tr><td>Type</td><td>{{agent.type}}</td></tr>
+					<tr><td>Orders</td><td><ol>
+						<li ng-repeat="order in agent.orders">({{order.x}} ; {{order.y}} ; {{order.z}})</li>
+					</ol></td></tr>
+					<tr><td>Last 5 Positions</td><td><ul>
+						<li ng-repeat="(date, position) in agent.positions" ng-if="$index < 5">({{position.x}} ; {{position.y}} ; {{position.z}}) <span class="text-muted small" am-time-ago="date"></span></li>
+					</ul></td></tr>
+				</table>
+			</div>
+			<div class="panel-footer">
+				<div class="form-inline">					
+					<div class="input-group">
+						<div><input class="form-control" type="number" placeholder="x" ng-model="x"></div>
+						<div><input class="form-control" type="number" placeholder="y" ng-model="y"></div>
+						<div><input class="form-control" type="number" placeholder="z" ng-model="z"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-default" ng-click="func()">push me</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
