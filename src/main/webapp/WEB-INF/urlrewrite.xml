@@ -5,22 +5,22 @@
 <urlrewrite>
 
 	<rule match-type="wildcard">
-		<from>*/*/agents</from>
+		<from>*/agents</from>
 		<to>index.html</to>
 	</rule>
 	
 	<rule match-type="wildcard">
-		<from>*/*/modelings</from>
+		<from>*/modelings</from>
 		<to>index.html</to>
 	</rule>
 	
 	<rule match-type="wildcard">
-		<from>*/*/log</from>
+		<from>*/log</from>
 		<to>index.html</to>
 	</rule>
 	
 	<rule match-type="wildcard">
-		<from>*/*/sessions</from>
+		<from>*/sessions</from>
 		<to>index.html</to>
 	</rule>
 

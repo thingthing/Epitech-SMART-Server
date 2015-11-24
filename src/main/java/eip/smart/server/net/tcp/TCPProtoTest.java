@@ -16,25 +16,24 @@ import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.server.model.agent.TCPMessagePacket;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class TCPProtoTest extends IoHandlerAdapter {
 
-	private static Map<String, Class>	map	= new HashMap<String, Class>() {
-												{
-													this.put("position", Point3D.class);
-													this.put("exit", Byte.class);
-													this.put("battery", Float.class);
-												}
-											};
+	private static Map<String, Class> map = new HashMap<String, Class>() {
+		{
+			this.put("position", Point3D.class);
+			this.put("exit", Byte.class);
+			this.put("battery", Float.class);
+		}
+	};
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
