@@ -67,7 +67,7 @@ public enum AgentStateLogic {
 		@Override
 		public void doAction(AgentLogic agent) {
 			agent.recall();
-			agent.setState(AgentState.RECALL_BATTERY);
+			// agent.setState(AgentState.RECALL_BATTERY);
 			// switch agent status to RECALL_BATTERY
 		}
 	}),
