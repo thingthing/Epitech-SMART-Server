@@ -51,36 +51,50 @@ angular.module('SMARTApp.controllers')
 		// Dim the light a small amount
 		light.intensity = .5;
 		
-		// Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
-		var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-		
-		// Move the sphere upward 1/2 its height
-		sphere.position.y = 1;
-		
-		// Let's try our built-in 'ground' shape.  Params: name, width, depth, subdivisions, scene
-		var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
-		
-		// Leave this function
-		return scene;
-		
-	};  // End of createScene function
-	
-	// Now, call the createScene function that you just finished creating
-	var scene = createScene();
-	
-	// Register a render loop to repeatedly render the scene
-	engine.runRenderLoop(function () {
-		scene.render();
-	});
-	
-	// Watch for browser/canvas resize events
-	window.addEventListener("resize", function () {
-		engine.resize();
-	});
-	
-	startIntervals();
-	
-	$scope.$on('$destroy', function() {
-		stopIntervals();
-	});
+	    $.getJSON("http://54.148.17.11:8080/smartserver/get_points", function( data ) {        	
+		console.log(data);
+		var offset = 0.05;
+		if (data.status.code == 0)
+		{
+		    for (var i in data.data.pointcloud.points) {
+			
+			
+			/*       TEST segments
+				 var list = new Array;
+				 list.push(new BABYLON.Vector3(data.data.pointcloud.points[i].x - offset, data.data.pointcloud.points[i].y - offset, data.data.pointcloud.points[i].z - offset));
+				 list.push(new BABYLON.Vector3(data.data.pointcloud.points[i].x + offset, data.data.pointcloud.points[i].y + offset, data.data.pointcloud.points[i].z + offset));
+				 var lines = BABYLON.Mesh.CreateLines("Lines", list, scene);
+			*/		
+
+			/*      TEST cubes   */
+			var cube = BABYLON.Mesh.CreateBox("cube", 0.5, scene);
+			cube.position.x = data.data.pointcloud.points[i].x;
+			cube.position.y = data.data.pointcloud.points[i].y;
+			cube.position.z = data.data.pointcloud.points[i].z;
+		    }
+		    
+		}
+	    });
+	    
+	    return scene;
+	    
+	};
+    
+    var scene = createScene();
+    
+    engine.runRenderLoop(function () {
+	scene.render();
+    });
+    
+    
+    // Watch for browser/canvas resize events
+    window.addEventListener("resize", function () {
+	engine.resize();
+    });
+    
+    startIntervals();
+    
+    $scope.$on('$destroy', function() {
+	stopIntervals();
+    });
 }]);
