@@ -27,7 +27,7 @@
 					<button class="btn btn-default" ng-click="modelingStop(modeling.name)"   ng-disabled="modeling.state != 'RUNNING'"><span class="fa fa-stop" /> Stop</button>
 					<button class="btn btn-default" ng-click="modelingLoad(modeling.name)"   ng-disabled="modeling.state != 'UNLOADED' || loadedModelings.length > 0 || modeling.obsolete == true"> <span class="fa fa-folder-open" /> Load</button>
 					<button class="btn btn-default" ng-click="modelingUnload(modeling.name)" ng-disabled="modeling.state != 'LOADED'"><span class="fa fa-eject" /> Unload</button>
-					<button class="btn btn-default" ng-click="modelingSave(modeling.name)" ng-disabled="modeling.obsolete == true"><span class="fa fa-save" /> Save</button>
+					<button class="btn btn-default" ng-click="modelingSave(modeling.name)"   ng-disabled="modeling.obsolete == true" style="display: none;"><span class="fa fa-save" /> Save</button>
 					<button class="btn btn-default" ng-click="modelingDelete(modeling.name)" ng-disabled="modeling.state != 'UNLOADED'"><span class="fa fa-times"></span> Delete</button>
 				</div>
 			</div>
