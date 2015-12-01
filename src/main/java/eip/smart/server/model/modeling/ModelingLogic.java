@@ -1,6 +1,7 @@
 package eip.smart.server.model.modeling;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,14 +19,14 @@ import eip.smart.server.slam.Landmarks;
 import eip.smart.server.slam.Slam;
 
 public class ModelingLogic extends Modeling {
-	private final static Logger	LOGGER	= LoggerFactory.getLogger(ModelingLogic.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(ModelingLogic.class);
 
 	// TODO THIS METHOD IS SHIT
 	protected static double getDiffPoint(Point3D point3d, Point3D point3d2) {
 		return (Math.abs((Math.abs(point3d.getX() - point3d2.getX())) - (Math.abs(point3d.getY() - point3d2.getY()))));
 	}
 
-	protected Slam	slam;
+	protected Slam slam;
 
 	public ModelingLogic() {
 		super();
@@ -126,6 +127,10 @@ public class ModelingLogic extends Modeling {
 
 	public void setAreas(List<Area> areas) {
 		this.areas = areas;
+	}
+
+	public void setLastSave(Date lastSave) {
+		this.lastSave = lastSave;
 	}
 
 	public void setName(String name) {

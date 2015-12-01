@@ -1,5 +1,6 @@
 package eip.smart.server;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -119,6 +120,11 @@ public class ServerModelingManager {
 	 */
 	public void modelingResume() {
 		// this.currentTask.resume();
+	}
+
+	public void modelingSave() {
+		this.getModelingSaver().save(this.getCurrentModeling());
+		this.getCurrentModeling().setLastSave(new Date());
 	}
 
 	/**
