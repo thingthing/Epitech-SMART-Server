@@ -22,7 +22,7 @@ angular.module('SMARTApp.httpInterceptor', [])
 				maxID[a.pathname] = 0;
 			maxID[a.pathname] = Math.max(maxID[a.pathname], response.config.id);
 			if (response.config.id < maxID[a.pathname])
-			
+				$q.reject(response);
 			if (response.data.status && response.data.status.code != 0) {
 				$rootScope.$broadcast('httpError', {
 					type: 'danger',
