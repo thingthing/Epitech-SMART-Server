@@ -35,7 +35,13 @@ angular.module('SMARTApp.controllers')
 	//scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
 	
 	controls = new THREE.TrackballControls( camera );
-	controls.target.set( 0, 0, 0 )
+	controls.target.set( 0, 0, 0 );
+	
+	controls.rotateSpeed = 4.0;
+	controls.zoomSpeed = 1.2;
+	controls.panSpeed = 1.0;
+	
+	controls.staticMoving = false;
 	
 	geometry = new THREE.Geometry();
 	
