@@ -42,28 +42,6 @@ angular.module('SMARTApp.controllers')
 	controls.panSpeed = 1.0;
 	
 	controls.staticMoving = false;
-	
-	geometry = new THREE.Geometry();
-	
-	$http.get($scope.server + '/get_points').success(function(data) {
-    	for (var i in data.data.pointcloud.points) {
-    		var vertex = new THREE.Vector3();
-    		vertex.x = data.data.pointcloud.points[i].x;
-    		vertex.y = data.data.pointcloud.points[i].y;
-    		vertex.z = data.data.pointcloud.points[i].z;
-    		geometry.vertices.push( vertex );
-    	}
-    	
-    	sprite = THREE.ImageUtils.loadTexture( "css/img/disc.png" );
-    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, map: sprite, alphaTest: 0.1, transparent: true } );
-    	material.color.setHSL( 1.0, 0.3, 0.7 );
-
-    	particles = new THREE.Points( geometry, material );
-    	
-    	scene.add( particles );
-    	animate();
-    });
-	
 
 	renderer = new THREE.WebGLRenderer({ canvas: canvas });
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -80,6 +58,26 @@ angular.module('SMARTApp.controllers')
 		renderer.render( scene, camera );
 		
 	}
+
+    $http.get($scope.server + '/get_points').success(function(data) {
+	geometry = new THREE.Geometry();
+    	for (var i in data.data.pointcloud.points) {
+    		var vertex = new THREE.Vector3();
+    		vertex.x = data.data.pointcloud.points[i].x;
+    		vertex.y = data.data.pointcloud.points[i].y;
+    		vertex.z = data.data.pointcloud.points[i].z;
+    		geometry.vertices.push( vertex );
+    	}
+    	
+    	sprite = THREE.ImageUtils.loadTexture( "css/img/disc.png" );
+    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, map: sprite, alphaTest: 0.1, transparent: true } );
+    	material.color.setHSL( 1.0, 0.3, 0.7 );
+	
+    	particles = new THREE.Points( geometry, material );
+    	
+    	scene.add( particles );
+    	animate();
+    });
     
     startIntervals();
     
