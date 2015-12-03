@@ -31,7 +31,7 @@ angular.module('SMARTApp.controllers')
 		});
 	}
 	
-	$scope.timeout = 1000;
+	$scope.timeout = 10000;
 	
 	$scope.modelingList = function(ignoreLoadingBar) {
 		$http.get($scope.server + '/modeling_list', {timeout:$scope.timeout, ignoreLoadingBar: ignoreLoadingBar}).success(function(data) {

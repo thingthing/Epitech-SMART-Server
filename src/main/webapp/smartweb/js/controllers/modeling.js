@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('SMARTApp.controllers')
-.controller('ModelingCtrl', ['$scope', '$routeParams', '$interval', '$location', function($scope, $routeParams, $interval, $location) {
+.controller('ModelingCtrl', ['$scope', '$routeParams', '$interval', '$location', '$http', function($scope, $routeParams, $interval, $location, $http) {
 	
 	$scope.modelingInfo = function() {
 		for (var i in $scope.$parent.modelings)
@@ -22,79 +22,66 @@ angular.module('SMARTApp.controllers')
 		$interval.cancel(modelingInfoInterval);
 	}
 	
-	// Get the canvas element from our HTML above
-	var canvas = document.getElementById("visualizer");
-	// Load the BABYLON 3D engine
-	var engine = new BABYLON.Engine(canvas, true);
-	
-	// This begins the creation of a function that we will 'call' just after it's built
-	var createScene = function () {
-		
-		// Now create a basic Babylon Scene object 
-		var scene = new BABYLON.Scene(engine);
-		
-		// Change the scene background color to green.
-		scene.clearColor = new BABYLON.Color3(1, 1, 1);
-		
-		// This creates and positions a free camera
-		var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-		
-		// This targets the camera to scene origin
-		camera.setTarget(BABYLON.Vector3.Zero());
-		
-		// This attaches the camera to the canvas
-		camera.attachControl(canvas, false);
-		
-		// This creates a light, aiming 0,1,0 - to the sky.
-		var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-		
-		// Dim the light a small amount
-		light.intensity = .5;
-		
-	    $.getJSON("http://54.148.17.11:8080/smartserver/get_points", function( data ) {        	
-		console.log(data);
-		var offset = 0.05;
-		if (data.status.code == 0)
-		{
-		    for (var i in data.data.pointcloud.points) {
-			
-			
-			/*       TEST segments
-				 var list = new Array;
-				 list.push(new BABYLON.Vector3(data.data.pointcloud.points[i].x - offset, data.data.pointcloud.points[i].y - offset, data.data.pointcloud.points[i].z - offset));
-				 list.push(new BABYLON.Vector3(data.data.pointcloud.points[i].x + offset, data.data.pointcloud.points[i].y + offset, data.data.pointcloud.points[i].z + offset));
-				 var lines = BABYLON.Mesh.CreateLines("Lines", list, scene);
-			*/		
+	if (!Detector.webgl)
+		Detector.addGetWebGLMessage();
 
-			/*      TEST cubes   */
-			var cube = BABYLON.Mesh.CreateBox("cube", 0.5, scene);
-			cube.position.x = data.data.pointcloud.points[i].x;
-			cube.position.y = data.data.pointcloud.points[i].y;
-			cube.position.z = data.data.pointcloud.points[i].z;
-		    }
-		    
-		}
-	    });
-	    
-	    return scene;
-	    
-	};
-    
-    var scene = createScene();
-    
-    engine.runRenderLoop(function () {
-	scene.render();
+	var canvas = document.getElementById("visualizer");
+	var camera, scene, renderer, particles, geometry, material, i, h, color, sprite, size, controls;
+	
+	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 2, 2000 );
+	camera.position.z = 1000;
+
+	scene = new THREE.Scene();
+	//scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
+	
+	controls = new THREE.TrackballControls( camera );
+	controls.target.set( 0, 0, 0 )
+	
+	geometry = new THREE.Geometry();
+	
+	$http.get($scope.server + '/get_points').success(function(data) {
+    	for (var i in data.data.pointcloud.points) {
+    		var vertex = new THREE.Vector3();
+    		vertex.x = data.data.pointcloud.points[i].x;
+    		vertex.y = data.data.pointcloud.points[i].y;
+    		vertex.z = data.data.pointcloud.points[i].z;
+    		geometry.vertices.push( vertex );
+    	}
+    	
+    	sprite = THREE.ImageUtils.loadTexture( "css/img/disc.png" );
+    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, map: sprite, alphaTest: 0.1, transparent: true } );
+    	material.color.setHSL( 1.0, 0.3, 0.7 );
+
+    	particles = new THREE.Points( geometry, material );
+    	
+    	scene.add( particles );
+    	animate();
     });
-    
-    
-    // Watch for browser/canvas resize events
-    window.addEventListener("resize", function () {
-	engine.resize();
-    });
+	
+
+	renderer = new THREE.WebGLRenderer({ canvas: canvas });
+	renderer.setPixelRatio( window.devicePixelRatio );
+	
+	var req;
+	function animate() {
+		req = requestAnimationFrame( animate );
+		$scope.render();
+		controls.update()
+	}
+
+	$scope.render = function() {
+		material.color.setHSL( h, 0.5, 0.5 );
+		renderer.render( scene, camera );
+		
+	}
     
     startIntervals();
     
     $scope.$on('$destroy', function() {
-	stopIntervals();
+    	stopIntervals();
+    	cancelAnimationFrame(req);// Stop the animation
+        this.scene = null;
+        this.camera = null;
+        this.controls = null;
     });
 }]);
