@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @SuppressWarnings("static-method")
 public class BaseController {
 
-	@RequestMapping(value = "/panel/", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String webpanel() {
 		return "/smartweb/index.html";
 	}

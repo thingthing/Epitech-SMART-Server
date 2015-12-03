@@ -3,7 +3,7 @@
 angular.module('SMARTApp.controllers')
 .controller('MainCtrl', ['$scope', '$localStorage', '$http', '$interval', 'toaster', function($scope, $localStorage, $http, $interval, $toaster) {
 	$scope.server = "http://54.148.17.11:8080/smartserver";
-	$scope.server = "http://"+window.location.host+"/smartserver";
+	$scope.server = "http://"+window.location.host+"/smartserver/";
 	
 	$scope.$storage = $localStorage.$default({
 		alerts: [],
@@ -31,7 +31,7 @@ angular.module('SMARTApp.controllers')
 		});
 	}
 	
-	$scope.timeout = 1000;
+	$scope.timeout = 10000;
 	
 	$scope.modelingList = function(ignoreLoadingBar) {
 		$http.get($scope.server + '/modeling_list', {timeout:$scope.timeout, ignoreLoadingBar: ignoreLoadingBar}).success(function(data) {
