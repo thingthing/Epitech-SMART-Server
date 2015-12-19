@@ -12,7 +12,7 @@ import eip.smart.cscommons.model.geometry.Point3D;
 @SuppressWarnings({ "static-method", "unused" })
 public class UDPPacketDecoder extends CumulativeProtocolDecoder {
 
-	private final static Logger	LOGGER	= LoggerFactory.getLogger(UDPPacketDecoder.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(UDPPacketDecoder.class);
 
 	private boolean decodeLandmark(IoSession session, IoBuffer in, ProtocolDecoderOutput out, long chunkID, int oldPos) throws Exception {
 		UDPPacketDecoder.LOGGER.debug("Received UDP Landmark packet");
@@ -53,9 +53,9 @@ public class UDPPacketDecoder extends CumulativeProtocolDecoder {
 			float[] data = new float[dataSize / 4];
 			in.asFloatBuffer().get(data);
 			in.position(in.position() + dataSize);
-			Point3D[] dataPoints = new Point3D[data.length / 3];
-			for (int i = 0; i < data.length; i += 3)
-				dataPoints[i / 3] = new Point3D(data[i], data[i + 1], data[i + 2]);
+			Point3D[] dataPoints = new Point3D[data.length / 6];
+			for (int i = 0; i < data.length; i += 6)
+				dataPoints[i / 6] = new Point3D(data[i], data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], 0);
 			UDPPacketPointCloud packet = new UDPPacketPointCloud(chunkID, packetID, currentPart, totalPart, dataSize, data, dataPoints);
 			out.write(packet);
 			UDPPacketDecoder.LOGGER.debug("UDP PointCloud packet good.");
