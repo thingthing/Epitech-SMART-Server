@@ -15,7 +15,7 @@
 	</rule>
 	
 	<rule match-type="wildcard">
-		<from>/log</from>
+		<from>/logging</from>
 		<to>index.html</to>
 	</rule>
 	
