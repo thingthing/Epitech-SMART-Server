@@ -24,4 +24,9 @@
 		<to>index.html</to>
 	</rule>
 
+	<rule>
+		<from>modeling/.*</from>
+		<to>index.html</to>
+	</rule>
+
 </urlrewrite>
