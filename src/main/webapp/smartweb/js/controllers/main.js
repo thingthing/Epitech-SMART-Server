@@ -7,7 +7,7 @@ angular.module('SMARTApp.controllers')
 	
 	$scope.$storage = $localStorage.$default({
 		alerts: [],
-		interval: 500
+		interval: 5000
 	});
 	
 	$scope.addAlert = function(type, msg) {

@@ -26,13 +26,13 @@ angular.module('SMARTApp.controllers')
 		Detector.addGetWebGLMessage();
 
 	var canvas = document.getElementById("visualizer");
-	var camera, scene, renderer, particles, geometry, material, i, h, color, sprite, size, controls;
+	var camera, scene, renderer, particles, geometry, material, i, color, sprite, size, controls;
 	
-	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 2, 2000 );
+	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.01, 2000 );
 	camera.position.z = 1000;
 
 	scene = new THREE.Scene();
-	//scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
+	scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
 	
 	controls = new THREE.TrackballControls( camera );
 	controls.target.set( 0, 0, 0 );
@@ -54,25 +54,26 @@ angular.module('SMARTApp.controllers')
 	}
 
 	$scope.render = function() {
-		material.color.setHSL( h, 0.5, 0.5 );
 		renderer.render( scene, camera );
-		
 	}
 
     $http.get($scope.server + '/get_points').success(function(data) {
-	geometry = new THREE.Geometry();
+		geometry = new THREE.Geometry();
+		var colors = [];
     	for (var i in data.data.pointcloud.points) {
     		var vertex = new THREE.Vector3();
-    		vertex.x = data.data.pointcloud.points[i].x;
-    		vertex.y = data.data.pointcloud.points[i].y;
-    		vertex.z = data.data.pointcloud.points[i].z;
+			var point = data.data.pointcloud.points[i];
+    		vertex.x = point.x;
+    		vertex.y = point.y;
+    		vertex.z = point.z;
+			colors[i] = new THREE.Color("rgb("+(20+point.color.red)+","+(20+point.color.green+20)+","+(20+point.color.blue)+")");
     		geometry.vertices.push( vertex );
     	}
-    	
+		console.log(colors);
+    	geometry.colors = colors;
     	sprite = THREE.ImageUtils.loadTexture( "css/img/disc.png" );
-    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, map: sprite, alphaTest: 0.1, transparent: true } );
-    	material.color.setHSL( 1.0, 0.3, 0.7 );
-	
+    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, vertexColors: THREE.VertexColors, map: sprite, alphaTest: 0.1, transparent: true } );
+
     	particles = new THREE.Points( geometry, material );
     	
     	scene.add( particles );

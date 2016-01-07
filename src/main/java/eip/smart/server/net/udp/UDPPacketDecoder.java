@@ -50,14 +50,22 @@ public class UDPPacketDecoder extends CumulativeProtocolDecoder {
 				in.position(oldPos);
 				return (false);
 			}
+			/*
+				for (int i = 0; i < dataSize / UDPPacketPointCloud.POINT_SIZE ;++i)
+			*/
 			float[] data = new float[dataSize / 4];
 			in.asFloatBuffer().get(data);
 			in.position(in.position() + dataSize);
-			Point3D[] dataPoints = new Point3D[data.length / 6];
-			for (int i = 0; i < data.length; i += 6)
-				dataPoints[i / 6] = new Point3D(data[i], data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], 0);
-			UDPPacketPointCloud packet = new UDPPacketPointCloud(chunkID, packetID, currentPart, totalPart, dataSize, data, dataPoints);
+			try {
+				Point3D[] dataPoints = new Point3D[data.length / 6];
+				for (int i = 0; i < data.length; i += 6)
+					dataPoints[i / 6] = new Point3D(data[i], data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], 0);
+				UDPPacketPointCloud packet = new UDPPacketPointCloud(chunkID, packetID, currentPart, totalPart, dataSize, data, dataPoints);
+
 			out.write(packet);
+			} catch (Exception e) {
+				LOGGER.error("error", e);
+			}
 			UDPPacketDecoder.LOGGER.debug("UDP PointCloud packet good.");
 			return (true);
 		}

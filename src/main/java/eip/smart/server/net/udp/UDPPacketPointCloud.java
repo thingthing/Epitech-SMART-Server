@@ -8,6 +8,7 @@ public class UDPPacketPointCloud extends UDPPacket {
 
 	public static final byte	HEADER_SIZE	= 19;	// 1 + 4 + 4 + 4 + 2;
 	public static final byte	MAGIC		= 'P';
+	public static final byte	POINT_SIZE	= 3 * 4 + 3 * 1;
 
 	private long				currentPart;
 	private float[]				data;
