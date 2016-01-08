@@ -35,7 +35,7 @@ angular.module('SMARTApp.controllers')
 
 	scene = new THREE.Scene();
 
-	controls = new THREE.TrackballControls( camera );
+	controls = new THREE.TrackballControls( camera, canvas );
 	controls.target.set( 0, 0, 0 );
 	
 	controls.rotateSpeed = 4.0;
