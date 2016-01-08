@@ -2,10 +2,19 @@
 
 angular.module('SMARTApp.httpInterceptor', [])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
-	
+
 	var nextID = {};
 	var maxID = {};
-	
+	var cumulatedError = 0;
+	var isOpen = false;
+	var dialog = bootbox.dialog({
+		title: "<center>Connection Error</center>",
+		message: "<p style='text-align:center;'>It seems that the server is unreachable.<br>This dialog will automatically disappear when the problem is solved.</p>",
+		show: false,
+		closeButton: false,
+		onEscape: false
+	});
+
 	return {
 		request: function (config) {
 			var a = document.createElement('a');
@@ -16,6 +25,8 @@ angular.module('SMARTApp.httpInterceptor', [])
 			return config || $q.when(config)
 		},
 		response: function (response) {
+			cumulatedError = 0;
+			dialog.modal('hide');
 			var a = document.createElement('a');
 			a.href = response.config.url;
 			if (maxID[a.pathname] === undefined)
@@ -36,6 +47,12 @@ angular.module('SMARTApp.httpInterceptor', [])
 			return $q.reject(response);
 		},
 		responseError: function (response) {
+			++cumulatedError;
+			console.log(cumulatedError);
+			console.log($rootScope.noDialog);
+			if (cumulatedError >= 5 && !$rootScope.noDialog) {
+				dialog.modal('show');
+			}
 			return $q.reject(response);
 		}
 	};

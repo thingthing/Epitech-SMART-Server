@@ -2,7 +2,9 @@
 
 angular.module('SMARTApp.controllers')
 .controller('ModelingCtrl', ['$scope', '$routeParams', '$interval', '$location', '$http', function($scope, $routeParams, $interval, $location, $http) {
-	
+
+	$scope.$root.noDialog = true;
+
 	$scope.modelingInfo = function() {
 		for (var i in $scope.$parent.modelings)
 		if ($scope.$parent.modelings[i].name == $routeParams.name)
@@ -99,8 +101,9 @@ angular.module('SMARTApp.controllers')
     $scope.$on('$destroy', function() {
     	stopIntervals();
     	cancelAnimationFrame(req);// Stop the animation
-        this.scene = null;
-        this.camera = null;
-        this.controls = null;
+        scene = null;
+        camera = null;
+        controls = null;
+		$scope.$root.noDialog = false;
     });
 }]);

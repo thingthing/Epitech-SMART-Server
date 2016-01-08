@@ -6,6 +6,7 @@ angular.module('SMARTApp.controllers')
 	$scope.server = "http://"+window.location.host+"/";
 
 	$scope.debug = false;
+	$scope.$root.noDialog = false;
 	$scope.$storage = $localStorage.$default({
 		alerts: [],
 		interval: 5000
