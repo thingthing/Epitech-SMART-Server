@@ -31,6 +31,14 @@ angular.module('SMARTApp.controllers')
 		$http.get($scope.server + '/modeling_stop?name='+name).success(function(data) {
 		});
 	}
+
+	$scope.getModelingByName = function(name) {
+		for (var i in $scope.modelings) {
+			if ($scope.modelings[i].name == name)
+				return $scope.modelings[i];
+		}
+		return (null);
+	}
 	
 	$scope.timeout = 10000;
 	

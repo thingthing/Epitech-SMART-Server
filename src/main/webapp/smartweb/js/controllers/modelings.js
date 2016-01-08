@@ -10,9 +10,20 @@ angular.module('SMARTApp.controllers')
 	}
 		
 	$scope.modelingUnload = function(name) {
-		$http.get($scope.server + '/modeling_unload?name='+name).success(function(data) {
-			$scope.modelingList();
-		});
+		if ($scope.getModelingByName(name).modified)
+			bootbox.confirm("Do you want to save before unloading the modeling ?", function(result) {
+				if (result) {
+					$scope.modelingSave(name);
+				}
+				$http.get($scope.server + '/modeling_unload?name=' + name).success(function (data) {
+					$scope.modelingList();
+				});
+			});
+		else {
+			$http.get($scope.server + '/modeling_unload?name=' + name).success(function (data) {
+				$scope.modelingList();
+			});
+		}
 	}
 	
 	$scope.modelingDelete = function(name) {
