@@ -123,6 +123,7 @@ public class ServerModelingManager {
 
 	public void modelingSave() {
 		this.getCurrentModeling().setLastSave(new Date());
+		this.getCurrentModeling().setModified(false);
 		this.getModelingSaver().save(this.getCurrentModeling());
 	}
 

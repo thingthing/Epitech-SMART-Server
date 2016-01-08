@@ -67,6 +67,7 @@ public class ModelingLogic extends Modeling {
 	public void addPoints(List<Point3D> points) {
 		this.mapping.add(points);
 		this.nbPoints = this.mapping.size();
+		this.setModified(true);
 	}
 
 	public void calculateCompletion() {
@@ -116,6 +117,11 @@ public class ModelingLogic extends Modeling {
 		++this.tick;
 		ModelingLogic.LOGGER.trace("Modeling (" + this.name + ") running (tick " + this.tick + ")");
 		this.updateAreaAgentsAttributed();
+		this.setModified(true);
+	}
+
+	public void setModified(boolean b) {
+		this.modified = b;
 	}
 
 	public void setAgents(List<Agent> agents) {
