@@ -28,12 +28,11 @@ angular.module('SMARTApp.controllers')
 	var canvas = document.getElementById("visualizer");
 	var camera, scene, renderer, particles, geometry, material, i, color, sprite, size, controls;
 	
-	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.01, 2000 );
+	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 20000 );
 	camera.position.z = 1000;
 
 	scene = new THREE.Scene();
-	scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
-	
+
 	controls = new THREE.TrackballControls( camera );
 	controls.target.set( 0, 0, 0 );
 	
@@ -45,12 +44,16 @@ angular.module('SMARTApp.controllers')
 
 	renderer = new THREE.WebGLRenderer({ canvas: canvas });
 	renderer.setPixelRatio( window.devicePixelRatio );
-	
+
 	var req;
 	function animate() {
 		req = requestAnimationFrame( animate );
-		$scope.render();
 		controls.update()
+		if (THREEx.FullScreen.activated())
+			renderer.setSize( width, height );
+		else if (renderer.getSize().width != 800)
+			resize(800, 600);
+		$scope.render();
 	}
 
 	$scope.render = function() {
@@ -66,20 +69,34 @@ angular.module('SMARTApp.controllers')
     		vertex.x = point.x;
     		vertex.y = point.y;
     		vertex.z = point.z;
-			colors[i] = new THREE.Color("rgb("+(20+point.color.red)+","+(20+point.color.green+20)+","+(20+point.color.blue)+")");
+			colors[i] = new THREE.Color("rgb("+(point.color.red)+","+(point.color.green+20)+","+(point.color.blue)+")");
     		geometry.vertices.push( vertex );
     	}
-		console.log(colors);
     	geometry.colors = colors;
-    	sprite = THREE.ImageUtils.loadTexture( "css/img/disc.png" );
-    	material = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false, vertexColors: THREE.VertexColors, map: sprite, alphaTest: 0.1, transparent: true } );
+    	sprite = THREE.ImageUtils.loadTexture( "css/img/ball.png" );
+    	material = new THREE.PointsMaterial( { size: (6 - 2) / 1000, sizeAttenuation: true, vertexColors: THREE.VertexColors, map: sprite, alphaTest: 0.1, transparent: true } );
 
     	particles = new THREE.Points( geometry, material );
+		window.geometry = geometry;
+		window.particles = particles;
+		window.material = material;
     	
     	scene.add( particles );
     	animate();
     });
-    
+	window.renderer = renderer;
+
+	$("#fullscreen").click(function() {
+		THREEx.FullScreen.request(canvas);
+		resize(window.innerWidth, window.innerHeight);
+	});
+
+	function resize(width, height) {
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		renderer.setSize( width, height );
+	}
+
     startIntervals();
     
     $scope.$on('$destroy', function() {
