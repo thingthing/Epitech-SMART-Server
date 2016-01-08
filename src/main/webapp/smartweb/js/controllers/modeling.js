@@ -77,9 +77,6 @@ angular.module('SMARTApp.controllers')
     	material = new THREE.PointsMaterial( { size: (6 - 2) / 1000, sizeAttenuation: true, vertexColors: THREE.VertexColors, map: sprite, alphaTest: 0.1, transparent: true } );
 
     	particles = new THREE.Points( geometry, material );
-		window.geometry = geometry;
-		window.particles = particles;
-		window.material = material;
     	
     	scene.add( particles );
     	animate();

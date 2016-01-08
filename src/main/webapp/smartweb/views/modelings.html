@@ -11,6 +11,7 @@
 					<span class="label label-warning pull-right" ng-if="modeling.state == 'UNLOADED' && modeling.obsolete == false">Unloaded</span>
 					<span class="label label-success pull-right" ng-if="modeling.state == 'RUNNING'">Running</span>
 					<span class="label label-info pull-right" ng-if="modeling.state == 'LOADED'">Loaded</span>
+					<span class="label label-warning pull-right" ng-if="modeling.modified" style="margin-right: 5px">Unsaved</span>
 				</h3>
 			</div>
 			<div class="panel-body">
@@ -19,7 +20,13 @@
 						{{modeling.completion}}%
 					</div>
 				</div>
-				<pre>{{modeling}}</pre>
+				<table class="table table-condensed">
+					<tr><th>Data</th><th>Value</th></tr>
+					<tr><td>Last Save</td><td><span am-time-ago="modeling.lastSave"></span><span ng-if="!modeling.lastSave">Never</span></td></tr>
+					<tr><td>Points</td><td>{{modeling.nbPoints}}</td></tr>
+					<tr><td>Tick</td><td>{{modeling.tick}}</td></tr>
+				</table>
+				<pre ng-if="debug">{{modeling}}</pre>
 			</div>
 			<div class="panel-footer">
 				<div class="btn-group" role="group" aria-label="...">
@@ -27,7 +34,7 @@
 					<button class="btn btn-default" ng-click="modelingStop(modeling.name)"   ng-disabled="modeling.state != 'RUNNING'"><span class="fa fa-stop" /> Stop</button>
 					<button class="btn btn-default" ng-click="modelingLoad(modeling.name)"   ng-disabled="modeling.state != 'UNLOADED' || loadedModelings.length > 0 || modeling.obsolete == true"> <span class="fa fa-folder-open" /> Load</button>
 					<button class="btn btn-default" ng-click="modelingUnload(modeling.name)" ng-disabled="modeling.state != 'LOADED'"><span class="fa fa-eject" /> Unload</button>
-					<button class="btn btn-default" ng-click="modelingSave(modeling.name)"   ng-disabled="modeling.obsolete == true"><span class="fa fa-save" /> Save</button>
+					<button class="btn btn-default" ng-click="modelingSave(modeling.name)"   ng-disabled="modeling.state == 'UNLOADED' || modeling.obsolete == true"><span class="fa fa-save" /> Save</button>
 					<button class="btn btn-default" ng-click="modelingDelete(modeling.name)" ng-disabled="modeling.state != 'UNLOADED'"><span class="fa fa-times"></span> Delete</button>
 				</div>
 			</div>
