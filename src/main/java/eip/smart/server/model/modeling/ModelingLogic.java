@@ -1,12 +1,5 @@
 package eip.smart.server.model.modeling;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eip.smart.cscommons.model.agent.Agent;
 import eip.smart.cscommons.model.geometry.Point3D;
 import eip.smart.cscommons.model.geometry.PointCloud3DGenerator;
@@ -17,6 +10,12 @@ import eip.smart.server.Server;
 import eip.smart.server.model.agent.AgentLogic;
 import eip.smart.server.slam.Landmarks;
 import eip.smart.server.slam.Slam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ModelingLogic extends Modeling {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ModelingLogic.class);
@@ -39,6 +38,7 @@ public class ModelingLogic extends Modeling {
 
 	public ModelingLogic(String name) {
 		super(name);
+		//this.addPoints(new PointCloud3DGenerator().generatePointCloud(300000).getPoints());
 		this.slam = new Slam(this, new ArrayList<Landmarks.Landmark>());
 	}
 
@@ -64,12 +64,9 @@ public class ModelingLogic extends Modeling {
 		this.areas.add(area);
 	}
 
-	public void addPoint(Point3D point) {
-		this.mapping.add(point);
-	}
-
 	public void addPoints(List<Point3D> points) {
 		this.mapping.add(points);
+		this.nbPoints = this.mapping.size();
 	}
 
 	public void calculateCompletion() {

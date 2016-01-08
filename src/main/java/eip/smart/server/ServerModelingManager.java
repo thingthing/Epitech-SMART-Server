@@ -1,5 +1,18 @@
 package eip.smart.server;
 
+import eip.smart.cscommons.configuration.Configuration;
+import eip.smart.cscommons.model.modeling.Modeling;
+import eip.smart.cscommons.model.modeling.ModelingState;
+import eip.smart.server.model.modeling.ModelingLogic;
+import eip.smart.server.model.modeling.file.ModelingSaver;
+import eip.smart.server.model.modeling.file.OptimizedFileModelingSaver;
+import eip.smart.server.util.exception.ModelingAlreadyExistsException;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,20 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eip.smart.cscommons.configuration.Configuration;
-import eip.smart.cscommons.model.modeling.Modeling;
-import eip.smart.cscommons.model.modeling.ModelingState;
-import eip.smart.server.model.modeling.ModelingLogic;
-import eip.smart.server.model.modeling.file.JavaFileModelingSaver;
-import eip.smart.server.model.modeling.file.ModelingSaver;
-import eip.smart.server.util.exception.ModelingAlreadyExistsException;
-import eip.smart.server.util.exception.ModelingNotFoundException;
-import eip.smart.server.util.exception.ModelingObsoleteException;
 
 public class ServerModelingManager {
 
@@ -38,7 +37,7 @@ public class ServerModelingManager {
 	 * The Manager to manage Modelings and store it.
 	 * Different implementations allow to different ways of storage.
 	 */
-	private ModelingSaver						modelingSaver		= new JavaFileModelingSaver();
+	private ModelingSaver						modelingSaver		= new OptimizedFileModelingSaver();
 
 	public ModelingLogic getCurrentModeling() {
 		Iterator<ModelingLogic> it = this.currentModelings.keySet().iterator();
@@ -123,8 +122,8 @@ public class ServerModelingManager {
 	}
 
 	public void modelingSave() {
-		this.getModelingSaver().save(this.getCurrentModeling());
 		this.getCurrentModeling().setLastSave(new Date());
+		this.getModelingSaver().save(this.getCurrentModeling());
 	}
 
 	/**

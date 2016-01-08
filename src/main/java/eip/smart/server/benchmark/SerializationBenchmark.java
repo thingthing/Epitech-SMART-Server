@@ -195,7 +195,7 @@ public class SerializationBenchmark {
 
 		elapsedDecimals = (elapsed / 1000000) % 1000; // in milliseconds
 		s.println("Elapsed time : " + elapsed / 1000000000 /* in seconds */+ " s " + elapsedDecimals);
-		file = new File(FileModelingSaver.getDir(), this.modeling.getName() + FileModelingSaver.EXTENSION);
+		file = new File(FileModelingSaver.getDir(), this.modeling.getName() + FileModelingSaver.MODELING_EXTENSION);
 		size = file.length();
 		s.println("File size : " + size + " bytes (" + SerializationBenchmark.smartsize(size) + ")");
 

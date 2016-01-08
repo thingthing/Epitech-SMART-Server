@@ -1,6 +1,12 @@
 package eip.smart.server.net.http.servlet.modeling;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import eip.smart.cscommons.model.ServerStatus;
+import eip.smart.server.Server;
+import eip.smart.server.net.http.servlet.JsonServlet;
+import eip.smart.server.util.exception.ModelingNotFoundException;
+import eip.smart.server.util.exception.ModelingObsoleteException;
+import eip.smart.server.util.exception.StatusException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -8,15 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-
-import eip.smart.cscommons.model.ServerStatus;
-import eip.smart.server.Server;
-import eip.smart.server.net.http.servlet.JsonServlet;
-import eip.smart.server.util.exception.ModelingNotFoundException;
-import eip.smart.server.util.exception.ModelingObsoleteException;
-import eip.smart.server.util.exception.StatusException;
+import java.io.IOException;
 
 /**
  * <b>The servlet ModelingLoad take a name as parameter and set the corresponding modeling as current modeling.</b>
@@ -42,6 +40,7 @@ public class ModelingLoad extends JsonServlet {
 		} catch (ModelingNotFoundException e) {
 			throw new StatusException(ServerStatus.NOT_FOUND.addObjects("modeling", "name", name));
 		} catch (ModelingObsoleteException e) {
+			JsonServlet.LOGGER.warn("Obsolete Modeling", e);
 			throw new StatusException(ServerStatus.MODELING_OBSOLETE.addObjects(name));
 		}
 

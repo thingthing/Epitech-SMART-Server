@@ -1,15 +1,14 @@
 package eip.smart.server.model.modeling.file;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eip.smart.cscommons.model.JSONViews;
 import eip.smart.cscommons.model.modeling.Modeling;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class implements storage of a Modeling through JSON serialization, using Jackson implementation of JSON.
@@ -18,7 +17,7 @@ public abstract class JacksonFileModelingSaver extends FileModelingSaver {
 
 	@Override
 	public Modeling load(String name) {
-		name = FileModelingSaver.addExtension(name);
+		name = FileModelingSaver.addExtension(name, MODELING_EXTENSION);
 		Modeling modeling = null;
 		if (!this.exists(name))
 			return (null);
@@ -42,7 +41,7 @@ public abstract class JacksonFileModelingSaver extends FileModelingSaver {
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName()));
+		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName(), MODELING_EXTENSION));
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();

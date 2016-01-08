@@ -1,18 +1,11 @@
 package eip.smart.server.model.modeling.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
 import eip.smart.server.util.exception.ModelingNotFoundException;
 import eip.smart.server.util.exception.ModelingObsoleteException;
+
+import java.io.*;
 
 /**
  * This class implements the standard way of storing a Modeling to a file, through Java serialization.
@@ -21,7 +14,7 @@ public class JavaFileModelingSaver extends FileModelingSaver {
 
 	@Override
 	public Modeling load(String name) throws ModelingNotFoundException, ModelingObsoleteException {
-		name = FileModelingSaver.addExtension(name);
+		name = FileModelingSaver.addExtension(name, MODELING_EXTENSION);
 
 		if (!this.exists(name))
 			throw new ModelingNotFoundException(name);
@@ -65,7 +58,7 @@ public class JavaFileModelingSaver extends FileModelingSaver {
 
 	@Override
 	public void save(Modeling modeling) {
-		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName()));
+		File file = new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(modeling.getName(), MODELING_EXTENSION));
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 

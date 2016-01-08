@@ -1,27 +1,24 @@
 package eip.smart.server.net.http.servlet;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import eip.smart.cscommons.model.ServerStatus;
 import eip.smart.server.Server;
 import eip.smart.server.util.exception.StatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public abstract class JsonServlet extends HttpServlet {
-	private final static Logger	LOGGER	= LoggerFactory.getLogger(Server.class);
+	protected final static Logger	LOGGER	= LoggerFactory.getLogger(Server.class);
 
 	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
 		String param = req.getParameter(name);

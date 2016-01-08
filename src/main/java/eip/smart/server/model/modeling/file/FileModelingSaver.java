@@ -1,12 +1,5 @@
 package eip.smart.server.model.modeling.file;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eip.smart.cscommons.configuration.Configuration;
 import eip.smart.cscommons.model.modeling.Modeling;
 import eip.smart.server.model.modeling.ModelingLogic;
@@ -14,6 +7,12 @@ import eip.smart.server.util.configuration.ServerDefaultConfiguration;
 import eip.smart.server.util.exception.ModelingAlreadyExistsException;
 import eip.smart.server.util.exception.ModelingNotFoundException;
 import eip.smart.server.util.exception.ModelingObsoleteException;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * This class is the base class for the file based modeling managers, it handles the name and creation of the files,
@@ -21,7 +20,8 @@ import eip.smart.server.util.exception.ModelingObsoleteException;
  */
 public abstract class FileModelingSaver implements ModelingSaver {
 
-	public static final String	EXTENSION	= ".modeling";
+	public static final String MODELING_EXTENSION = "modeling";
+	public static final String MAPPING_EXTENSION = "mapping";
 
 	protected static Logger		LOGGER		= LoggerFactory.getLogger(FileModelingSaver.class);
 
@@ -31,10 +31,10 @@ public abstract class FileModelingSaver implements ModelingSaver {
 	 * @param name
 	 * @return New name with .modeling extension
 	 */
-	protected static String addExtension(String name) {
+	protected static String addExtension(String name, String extension) {
 		String res = name;
-		if (!res.matches(".*\\" + FileModelingSaver.EXTENSION + "$"))
-			res += FileModelingSaver.EXTENSION;
+		if (!res.matches(".*\\." + extension + "$"))
+			res += "." + extension;
 		return (res);
 	}
 
@@ -74,27 +74,28 @@ public abstract class FileModelingSaver implements ModelingSaver {
 
 	@Override
 	public void delete(String name) throws ModelingNotFoundException {
-		name = FileModelingSaver.addExtension(name);
 		if (!this.exists(name))
 			throw new ModelingNotFoundException(name);
-		File file = new File(FileModelingSaver.getDir(), name);
-		file.delete();
+		getModelingFile(name).delete();
+		getMappingFile(name).delete();
 	}
 
 	@Override
 	public boolean exists(String name) {
-		name = FileModelingSaver.addExtension(name);
-		File file = new File(FileModelingSaver.getDir(), name);
-		return (file.exists());
+		return (getModelingFile(name).exists());
 	}
 
 	@Override
 	public ArrayList<Modeling> list() {
 		ArrayList<Modeling> modelings = new ArrayList<>();
-		for (File file : FileModelingSaver.getDir().listFiles())
+		for (File file : FileModelingSaver.getDir().listFiles()) {
+			if (!FilenameUtils.getExtension(file.getName()).equals(MODELING_EXTENSION))
+				continue;
 			try {
-				Modeling modeling = this.load(file.getName());
-				modelings.add(new ModelingLogic(modeling));
+				Modeling modeling = this.preview(file.getName());
+				if (modeling == null)
+					throw new ModelingNotFoundException(file.getName());
+				modelings.add(modeling);
 			} catch (ModelingNotFoundException e) {
 				FileModelingSaver.LOGGER.error("Should never happen", e);
 			} catch (ModelingObsoleteException e) {
@@ -103,11 +104,24 @@ public abstract class FileModelingSaver implements ModelingSaver {
 				obsModeling.setObsolete(true);
 				modelings.add(obsModeling);
 			}
+		}
 		return (modelings);
+	}
+
+	public Modeling preview(String name) throws ModelingNotFoundException, ModelingObsoleteException {
+		return (this.load(name));
 	}
 
 	@Override
 	public abstract Modeling load(String name) throws ModelingNotFoundException, ModelingObsoleteException;
+
+	protected static File getModelingFile(String name) {
+		return (new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(name, MODELING_EXTENSION)));
+	}
+
+	protected static File getMappingFile(String name) {
+		return (new File(FileModelingSaver.getDir(), FileModelingSaver.addExtension(name, MAPPING_EXTENSION)));
+	}
 
 	@Override
 	public abstract void save(Modeling modeling);

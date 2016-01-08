@@ -10,3 +10,4 @@ doc/
 modelings/
 null/log/log.html
 *.iml
+.idea/
