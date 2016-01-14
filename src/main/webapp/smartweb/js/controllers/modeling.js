@@ -36,7 +36,7 @@ angular.module('SMARTApp.controllers')
 
 	scene = new THREE.Scene();
 
-	if (true) {
+	if (false) {
 		controls = new THREE.FirstPersonControls(camera, canvas);
 
 		controls.movementSpeed = 1;
