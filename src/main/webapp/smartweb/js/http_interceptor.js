@@ -48,8 +48,8 @@ angular.module('SMARTApp.httpInterceptor', [])
 		},
 		responseError: function (response) {
 			++cumulatedError;
-			console.log(cumulatedError);
-			console.log($rootScope.noDialog);
+			//console.log(cumulatedError);
+			//console.log($rootScope.noDialog);
 			if (cumulatedError >= 5 && !$rootScope.noDialog) {
 				dialog.modal('show');
 			}
