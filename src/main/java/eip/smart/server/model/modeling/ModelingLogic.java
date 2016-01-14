@@ -165,7 +165,7 @@ public class ModelingLogic extends Modeling {
 		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
 			PointCloud3DGenerator r = new PointCloud3DGenerator();
 			if (agent.getCurrentDestination() == null)
-				agent.setCurrentDestination(r.generateIntPoint());
+				agent.setCurrentDestination(r.generateIntPointNoZ());
 		}
 	}
 }
