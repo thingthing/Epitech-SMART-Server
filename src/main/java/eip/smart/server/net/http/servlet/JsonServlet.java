@@ -20,11 +20,19 @@ import java.io.IOException;
 public abstract class JsonServlet extends HttpServlet {
 	protected final static Logger	LOGGER	= LoggerFactory.getLogger(Server.class);
 
-	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
+	protected static String getParameter(HttpServletRequest req, String name, boolean failOnMissing) throws StatusException {
 		String param = req.getParameter(name);
-		if (!JsonServlet.hasParameter(req, name))
-			throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects(name));
+		if (!JsonServlet.hasParameter(req, name)) {
+			if (failOnMissing)
+				throw new StatusException(ServerStatus.MISSING_PARAMETER.addObjects(name));
+			else
+				return (null);
+		}
 		return (param);
+	}
+
+	protected static String getParameter(HttpServletRequest req, String name) throws StatusException {
+		return (getParameter(req, name, true));
 	}
 
 	protected static boolean hasParameter(HttpServletRequest req, String name) {
