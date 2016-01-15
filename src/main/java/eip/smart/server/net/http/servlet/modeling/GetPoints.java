@@ -36,15 +36,21 @@ public class GetPoints extends JsonServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response, JsonGenerator json) throws ServletException, IOException, StatusException {
         ModelingLogic currentModeling = Server.getServer().getModelingManager().getCurrentModeling();
         Modeling modeling = currentModeling;
+        String from = getParameter(request, "from", false);
+        String nb = getParameter(request, "nb", false);
         PointCloud p;
+
         if (modeling == null) {
-            p = new PointCloud3DGenerator().generatePointCloud(10);
+            int n = 10;
+            if (nb != null)
+                n = Integer.parseInt(nb);
+            p = new PointCloud3DGenerator().generatePointCloud(n);
             // throw new StatusException(ServerStatus.MODELING_NO_CURRENT);
         } else {
             p = currentModeling.getMapping();
         }
-        String from, nb;
-        if ((from = getParameter(request, "from", false)) != null && (nb = getParameter(request, "nb", false)) != null) {
+
+        if (from != null && nb != null) {
             try {
                 p = p.getSubPointCloud(Integer.parseInt(from), Integer.parseInt(nb));
             } catch (NumberFormatException e) {
