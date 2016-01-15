@@ -2,13 +2,16 @@
 
 angular.module('SMARTApp.controllers')
 .controller('ModelingCtrl', ['$scope', '$routeParams', '$interval', '$location', '$http', '$timeout', function($scope, $routeParams, $interval, $location, $http, $timeout) {
+	
+	var CONTINOUS_NBPOINTSTOLOAD = 1000;
+	var CONTINOUS_DELAY = 250
+	var CONTINOUS_NBVERTEX = 50000;
+	var CONTINOUSMAPPING = false;
 
 	var nbPoints = 0;
-	var nbPointsToLoad = 100000;
 	var modelingInfoInterval;
 	var getPointTimeout;
 	var stop = false;
-	var continousMapping = false;
 
 	$scope.$root.noDialog = true;
 
@@ -37,12 +40,12 @@ angular.module('SMARTApp.controllers')
 	var camera, scene, renderer, particles, geometry, material, i, color, sprite, size, controls;
 	
 	camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 20000 );
-	//camera.position.z = 1000;
+	camera.x = -100;
 	window.camera = camera
 
 	scene = new THREE.Scene();
 
-	if (false) {
+	if (true) {
 		controls = new THREE.FirstPersonControls(camera, canvas);
 
 		controls.movementSpeed = 1;
@@ -50,7 +53,6 @@ angular.module('SMARTApp.controllers')
 		controls.noFly = false;
 		controls.lookVertical = true;
 	} else {
-
 		controls = new THREE.TrackballControls(camera, canvas);
 
 		controls.rotateSpeed = 4.0;
@@ -71,6 +73,12 @@ angular.module('SMARTApp.controllers')
 		renderer.render( scene, camera );
 	}
 
+	var stats
+	/*
+	stats = new Stats();
+	$("#visualizer").parent().append( stats.domElement );
+	*/
+
 	var req;
 	$scope.animate = function() {
 		if (stop)
@@ -84,6 +92,9 @@ angular.module('SMARTApp.controllers')
 		if (controls)
 			controls.update(delta)
 
+		if (stats)
+			stats.update()
+
 		if (THREEx.FullScreen.activated())
 			renderer.setSize( width, height );
 		else if (renderer.getSize().width != 800)
@@ -94,46 +105,65 @@ angular.module('SMARTApp.controllers')
 
 	sprite = THREE.ImageUtils.loadTexture("css/img/ball.png");
 	material = new THREE.PointsMaterial({size: (25 - 2) / 1000, sizeAttenuation: true, vertexColors: THREE.VertexColors, map: sprite, alphaTest: 0.1, transparent: false});
+	geometry = new THREE.Geometry();
+	particles = new THREE.Points(geometry, material);
+
+	function initGeometry() {
+		for(var i = 0 ; i < CONTINOUS_NBVERTEX ; ++i) {
+			geometry.colors.push(new THREE.Color(0, 0, 0));
+			geometry.vertices.push(new THREE.Vector3(-42000, -42000, -42000	));
+		}
+	}
+
+
+	if (CONTINOUSMAPPING) {
+		initGeometry();
+		particles = new THREE.Points(geometry, material);
+		scene.add(particles);
+	}
 
 	function getPoints(from, nb) {
 		var url = $scope.server + '/get_points';
-		if (continousMapping)
+		if (CONTINOUSMAPPING)
 			url += '?from='+from+'&nb='+nb;
-		$http.get(url, {ignoreLoadingBar: continousMapping}).success(function (data) {
+		$http.get(url, {ignoreLoadingBar: CONTINOUSMAPPING}).success(function (data) {
 			if (data.data.pointcloud.points.length > 0) {
-				geometry = new THREE.Geometry();
-				geometry.colors = [];
 
 				for (var i in data.data.pointcloud.points) {
-					var vertex = new THREE.Vector3();
+					i = parseInt(i);
 					var point = data.data.pointcloud.points[i];
-					vertex.x = point.x;
-					vertex.y = -point.y;
-					vertex.z = -point.z;
-					if (vertex.x && vertex.y && vertex.z) {
-						geometry.colors.push(new THREE.Color("rgb(" + (point.color.red) + "," + (point.color.green + 20) + "," + (point.color.blue) + ")"));
-						geometry.vertices.push(vertex);
+					if (point.x && point.y && point.z) {
+						if (!CONTINOUSMAPPING) {
+							geometry.colors.push(new THREE.Color("rgb(" + (point.color.red) + "," + (point.color.green) + "," + (point.color.blue) + ")"));
+							geometry.vertices.push(new THREE.Vector3(point.x, -point.y, -point.z));
+						} else {
+							geometry.colors[(i + nbPoints) % CONTINOUS_NBVERTEX].setStyle("rgb(" + (point.color.red) + "," + (point.color.green) + "," + (point.color.blue) + ")");
+							geometry.vertices[(i + nbPoints) % CONTINOUS_NBVERTEX].set(point.x, -point.y, -point.z);
+						}
 					}
 				}
 				nbPoints += data.data.pointcloud.points.length;
-				if (!continousMapping)
-					controls.target.set(data.data.pointcloud.points[i].x, -data.data.pointcloud.points[i].y, -data.data.pointcloud.points[i].z);
 
-				//geometry.verticesNeedUpdate = true;
-				//geometry.colorsNeedUpdate = true;
+				//if (controls.target.equals(new THREE.Vector3(0, 0, 0)))
+					//controls.target.set(data.data.pointcloud.points[nbPoints-1].x, -data.data.pointcloud.points[nbPoints-1].y, -data.data.pointcloud.points[nbPoints-1].z);
 
-				particles = new THREE.Points(geometry, material);
-				scene.add(particles);
+				if (CONTINOUSMAPPING) {
+					geometry.verticesNeedUpdate = true;
+					geometry.colorsNeedUpdate = true;
+				} else {
+					particles = new THREE.Points(geometry, material);
+					scene.add(particles);
+				}
 
 				$scope.animate();
 			}
-			if (continousMapping)
+			if (CONTINOUSMAPPING)
 				getPointTimeout = $timeout(function() {
-					getPoints(nbPoints, nbPointsToLoad);
-				}, 250);
+					getPoints(nbPoints, CONTINOUS_NBPOINTSTOLOAD);
+				}, CONTINOUS_DELAY);
 		});
 	}
-	getPoints(nbPoints, nbPointsToLoad);
+	getPoints(nbPoints, CONTINOUS_NBPOINTSTOLOAD);
 
 	$("#fullscreen").click(function() {
 		THREEx.FullScreen.request(canvas);
@@ -157,6 +187,7 @@ angular.module('SMARTApp.controllers')
         scene = null;
         camera = null;
         controls = null;
+		stats = null;
 		$scope.$root.noDialog = false;
     });
 }]);

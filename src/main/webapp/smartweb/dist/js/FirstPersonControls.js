@@ -36,7 +36,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	this.mouseY = 0;
 
 	this.lat = 0;
-	this.lon = 0;
+	this.lon = -90;
 	this.phi = 0;
 	this.theta = 0;
 
@@ -129,8 +129,13 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 		} else {
 
+			/*
 			this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
 			this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
+			*/
+
+			this.mouseX = event.pageX - $(this.domElement).offset().left - this.domElement.width / 2;
+			this.mouseY = event.pageY - $(this.domElement).offset().top - this.domElement.height / 2;
 
 		}
 
@@ -143,9 +148,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		switch ( event.keyCode ) {
 
 			case 38: /*up*/
+			case 90: /*Z*/
 			case 87: /*W*/ this.moveForward = true; break;
 
 			case 37: /*left*/
+			case 81: /*Z*/
 			case 65: /*A*/ this.moveLeft = true; break;
 
 			case 40: /*down*/
@@ -157,6 +164,8 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			case 82: /*R*/ this.moveUp = true; break;
 			case 70: /*F*/ this.moveDown = true; break;
 
+			case 27: /*ESC*/ $(this.domElement).blur(); break;
+
 		}
 
 	};
@@ -166,9 +175,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		switch ( event.keyCode ) {
 
 			case 38: /*up*/
+			case 90: /*Z*/
 			case 87: /*W*/ this.moveForward = false; break;
 
 			case 37: /*left*/
+			case 81: /*Q*/
 			case 65: /*A*/ this.moveLeft = false; break;
 
 			case 40: /*down*/
@@ -227,29 +238,37 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
 
 		}
+		
+		if ($(this.domElement).is(':focus')) {
 
-		this.lon += this.mouseX * actualLookSpeed;
-		if ( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+			var offset = 50;
 
-		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-		this.phi = THREE.Math.degToRad( 90 - this.lat );
+			if (this.mouseX > offset || this.mouseX < -offset)
+				this.lon += this.mouseX * actualLookSpeed;
+			if (this.mouseY > offset || this.mouseY < -offset)
+				if (this.lookVertical) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
-		this.theta = THREE.Math.degToRad( this.lon );
+			this.lat = Math.max(-85, Math.min(85, this.lat));
+			this.phi = THREE.Math.degToRad(90 - this.lat);
 
-		if ( this.constrainVertical ) {
+			this.theta = THREE.Math.degToRad(this.lon);
 
-			this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+			if (this.constrainVertical) {
 
+				this.phi = THREE.Math.mapLinear(this.phi, 0, Math.PI, this.verticalMin, this.verticalMax);
+
+			}
+
+
+			var targetPosition = this.target,
+				position = this.object.position;
+
+			targetPosition.x = position.x + 100 * Math.sin(this.phi) * Math.cos(this.theta);
+			targetPosition.y = position.y + 100 * Math.cos(this.phi);
+			targetPosition.z = position.z + 100 * Math.sin(this.phi) * Math.sin(this.theta);
+			this.object.lookAt(targetPosition);
 		}
 
-		var targetPosition = this.target,
-			position = this.object.position;
-
-		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-
-		this.object.lookAt( targetPosition );
 
 	};
 
