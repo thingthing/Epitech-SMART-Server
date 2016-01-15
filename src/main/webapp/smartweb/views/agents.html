@@ -52,7 +52,7 @@
                         <td>Last 5 Positions</td>
                         <td>
                             <ul>
-                                <li ng-repeat="(date, position) in agent.positions" ng-if="$index < 5">({{position.x}} ; {{position.y}} ; {{position.z}}) <span class="text-muted small" am-time-ago="date"></span></li>
+                                <li ng-repeat="(date, position) in agent.positions" ng-if="$index < 5">({{position.x | number:3}} ; {{position.y | number:3}} ; {{position.z | number:3}}) <span class="text-muted small" am-time-ago="date"></span></li>
                             </ul>
                         </td>
                     </tr>
