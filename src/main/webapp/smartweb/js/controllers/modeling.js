@@ -2,8 +2,10 @@
 
 angular.module('SMARTApp.controllers')
 .controller('ModelingCtrl', ['$scope', '$routeParams', '$interval', '$location', '$http', '$timeout', function($scope, $routeParams, $interval, $location, $http, $timeout) {
-	
-	var CONTINOUS_NBPOINTSTOLOAD = 1000;
+
+	var FPS = false;
+
+	var CONTINOUS_NBPOINTSTOLOAD = 200000;
 	var CONTINOUS_DELAY = 250
 	var CONTINOUS_NBVERTEX = 50000;
 	var CONTINOUSMAPPING = false;
@@ -19,9 +21,11 @@ angular.module('SMARTApp.controllers')
 		for (var i in $scope.$parent.modelings)
 			if ($scope.$parent.modelings[i].name == $routeParams.name)
 				$scope.modeling = $scope.$parent.modelings[i];
-		
+
+		/*
 		if (!$scope.modeling || $scope.modeling.state == "UNLOADED")
 			$location.path('modelings');
+		*/
 	}
 	
 	function startIntervals() {
@@ -74,10 +78,10 @@ angular.module('SMARTApp.controllers')
 	}
 
 	var stats
-	/*
-	stats = new Stats();
-	$("#visualizer").parent().append( stats.domElement );
-	*/
+	if (FPS) {
+		stats = new Stats();
+		$("#visualizer").parent().append(stats.domElement);
+	}
 
 	var req;
 	$scope.animate = function() {
@@ -133,11 +137,12 @@ angular.module('SMARTApp.controllers')
 					i = parseInt(i);
 					var point = data.data.pointcloud.points[i];
 					if (point.x && point.y && point.z) {
+						var color = "rgb(" + (point.color.red) + "," + (point.color.green) + "," + (point.color.blue) + ")";
 						if (!CONTINOUSMAPPING) {
-							geometry.colors.push(new THREE.Color("rgb(" + (point.color.red) + "," + (point.color.green) + "," + (point.color.blue) + ")"));
+							geometry.colors.push(new THREE.Color(color));
 							geometry.vertices.push(new THREE.Vector3(point.x, -point.y, -point.z));
 						} else {
-							geometry.colors[(i + nbPoints) % CONTINOUS_NBVERTEX].setStyle("rgb(" + (point.color.red) + "," + (point.color.green) + "," + (point.color.blue) + ")");
+							geometry.colors[(i + nbPoints) % CONTINOUS_NBVERTEX].setStyle(color);
 							geometry.vertices[(i + nbPoints) % CONTINOUS_NBVERTEX].set(point.x, -point.y, -point.z);
 						}
 					}
