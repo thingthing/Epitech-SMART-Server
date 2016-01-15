@@ -148,10 +148,11 @@ public class ModelingLogic extends Modeling {
 		this.state = s;
 	}
 
-	@SuppressWarnings("static-method")
 	public void stop() {
-		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable())
+		for (AgentLogic agent : Server.getServer().getAgentManager().getAgentsAvailable()) {
 			agent.setCurrentDestination(null);
+			agent.sendStatus(42, "STOP");
+		}
 	}
 
 	/**
