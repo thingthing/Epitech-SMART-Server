@@ -109,6 +109,10 @@ public class AgentLogic extends Agent {
 			this.messageCallback.callback(message);
 	}
 
+	public void sendDownloadOrder() {
+		this.sendMessage(new ImmutablePair<>("download", true));
+	}
+	
 	public void sendOrder(Point3D order) {
 		if (order.equals(this.lastOrder))
 			return;
