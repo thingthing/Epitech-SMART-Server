@@ -8,7 +8,18 @@ angular.module('SMARTApp.controllers')
 			$scope.modelingList();
 		});
 	}
+	
+	$scope.modelingDownload = function(name) {
+		for(var i in $scope.agents) {
+			if ($scope.agents[i].connected)	{
+				$http.get($scope.server + '/download?name='+$scope.agents[i].name).success(function(data) {
+					//$scope.agentList(true);
+				});
+			}
+		}
 		
+	}
+	
 	$scope.modelingUnload = function(name) {
 		if ($scope.getModelingByName(name).modified)
 			bootbox.confirm({
